@@ -14,7 +14,7 @@ entity register_16 is
   ) ;
 end entity ; -- register_16
 
-architecture arch of register_16 is
+architecture arch of register_16 
 begin
 identifier : process (clk) 
 begin

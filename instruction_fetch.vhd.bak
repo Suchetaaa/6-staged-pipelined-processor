@@ -32,10 +32,10 @@ entity instruction_fetch is
 	alu2_out : in std_logic_vector(15 downto 0);
 
 	--instruction coming out 
-	instruction_int_out : out std_logic_vector(15 downto 0);
+	instruction_out : out std_logic_vector(15 downto 0);
 
 	--PC value going out (address of present instruction)
-	pc_register_int_out : out std_logic_vector(15 downto 0)
+	pc_register_out : out std_logic_vector(15 downto 0)
 
   ) ;
 end entity ; -- instruction_fetch
@@ -101,10 +101,9 @@ begin
 	InstructionRegister : register_16 
 		port map (
 			reg_data_in => instruction_reg_in,
-			reg_enable => ir_enable,
+			reg_enable => instruction_reg_out,
 			clk => clk,
-			reg_data_out => instruction_int_out
+			reg_data_out => instruction_out
 		);
-	pc_register_int_out <= pc_register_out;
 
 end architecture ; -- arch
