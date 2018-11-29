@@ -37,5 +37,7 @@ begin
 			priority_out_signal = "10000000";
 		end if;
 	end if;
+
+	priority_out <= priority_out_signal;
 	
 end architecture ; -- arch
