@@ -8,6 +8,7 @@ use work.components_init.all;
 entity instruction_decode is
   port (
 	clk : in std_logic;
+	reset : in std_logic;
 
 	--PC (address of the present instruction given by IF stage)
 	pc_register_int_out : in std_logic_vector(15 downto 0);
@@ -48,13 +49,16 @@ entity instruction_decode is
 	mem_data_sel : out std_logic;
 	mem_address_sel : out std_logic;
 
+	--RA
 	ir_11_9 : out std_logic_vector(2 downto 0);
+	--RB
 	ir_8_6 : out std_logic_vector(2 downto 0);
+	--RC
 	ir_5_3 : out std_logic_vector(2 downto 0);
 	--After sign extensions 6 and 9 respectively
-	ir_5_0 : out std_logic_vector(5 downto 0);
-	ir_8_0 : out std_logic_vector(8 downto 0);
-	--Data coming out of dataextender block 
+	ir_5_0 : out std_logic_vector(15 downto 0);
+	ir_8_0 : out std_logic_vector(15 downto 0);
+	--Data coming out of data extender block 
 	data_extender_out : out std_logic_vector(15 downto 0);
 
 	--Carry and zero enables
@@ -96,6 +100,19 @@ architecture arch of instruction_decode is
 
 	signal se9_out : std_logic_vector(15 downto 0);
 
+	--LM signals 
+	signal first_later_check_in : std_logic;
+	signal first_later_check_out : std_logic;
+	signal first_later_check_enable : std_logic;
+
+	--XOR signals 
+	signal xor_in : std_logic_vector(7 downto 0);
+	signal xor_out : std_logic_vector(7 downto 0);
+
+
+
+
+
 
 
 begin
@@ -117,35 +134,44 @@ begin
 	--00 - ADDITION 
 	--01 - SUBTRACTION 
 	--10 - NAND
-	alu1_op <= "00" when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0101" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" else 
+	alu1_op <= "00" when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0101" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" else 
+		--BEQ instruction
 		"01" when instruction_int_out(15 downto 12) = "1100" else 
+		--NAND instruction
 		"10" when instruction_int_out(15 downto 12) = "0010" else
+
 		"11";
 
 	--0 - Data1 
 	--1 - Data2
-	alu1_a_select <= '0' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" else 
-		'1' when instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0101";
+	alu1_a_select <= '0' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" or instruction_int_out(15 downto 12) = "1100" else 
+		'1';
 
 	--00 - Data2
 	--01 - SE6 out
 	--10 - constant 1
-	alu2_b_select <= "00" when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0010" else 
+	--11 - constant 0
+	alu2_b_select <= "00" when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0010"  or instruction_int_out(15 downto 12) = "1100" else 
 		"01" when instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0101" else 
-		"10" when instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111"
+		"10" when instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" else 
+		"11";
 
 
 	--Register file read and write, write to where, data from where 
-	rf_a1_read <= '1' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" or instruction_int_out(15 downto 12) = "0101" or instruction_int_out(15 downto 12) = "1100" else 
+	rf_a1_read <= '1' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0101" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" or instruction_int_out(15 downto 12) = "1100" else 
 		'0';
 
-	rf_a2_read <= '1' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0101" or instruction_int_out(15 downto 12) = "1100" else 
+	rf_a2_read <= '1' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0101" or instruction_int_out(15 downto 12) = "1100" or instruction_int_out(15 downto 12) = "1001" else 
 		'0';
 
-	--Tells where data has tobe written 
+	--Tells where data has to be written 
+	--RC 
 	rf_a3 <= instruction_int_out(5 downto 3) when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0010" else 
-		instruction_int_out(11 downto 9) when instruction_int_out(15 downto 12) = "1000" or instruction_int_out(15 downto 12) = "1001" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0011"
+		--RA
+		instruction_int_out(11 downto 9) when instruction_int_out(15 downto 12) = "0011" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "1000" or instruction_int_out(15 downto 12) = "1001" or  else 
+		--RB
 		instruction_int_out(8 downto 6) when instruction_int_out(15 downto 12) = "0001" else 
+		--Decoder output which gives the register to which data is written for LM/SM
 		decoder_out when instruction_int_out(15 downto 12) = "0110" else 
 		"1111"; -- for rf_write = 0
 
@@ -154,7 +180,7 @@ begin
 	--001 - data_extender_out
 	--010 - memory_out
 	--011 - pc 
-	rf_data_select <= "000" when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0001" else
+	rf_data_select <= "000" when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" else
 		"001" when instruction_int_out(15 downto 12) = "0011" else 
 		"010" when instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0110" else 
 		"011" when instruction_int_out(15 downto 12) = "1000" or instruction_int_out(15 downto 12) = "1001" else 
@@ -201,6 +227,15 @@ begin
 	cz <= instruction_int_out(1 downto 0);
 	opcode <= instruction_int_out(15 downto 12);
 
+	--LM signals 
+	lm_detect <= '1' when instruction_int_out(15 downto 12) = "0110" else 
+		0;
+
+	first_later_check_in <= '1' when instruction_int_out(15 downto 12) = "0110" and 
+
+
+
+
 	--Port mapping 
 	signextend_6 : se6 
 		port map (
@@ -218,13 +253,21 @@ begin
 		port map (
 			alu2_a => alu2_a,
 			alu2_b => alu2_b,
-			alu2_out => alu2_out
+			alu2_out => alu2_out_signal
 		);
 
 	de : data_extender 
 		port map (
 			data_extender_in => instruction_int_out(8 downto 0),
 			data_extender_out => data_extender_out
+		);
+
+	first_later : register_1 
+		port map (
+			reg_data_in => first_later_check_in,
+			reg_enable => first_later_check_enable,
+			clk => clk,
+			reg_data_out => first_later_check_out
 		);
 
 
