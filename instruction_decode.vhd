@@ -74,14 +74,15 @@ entity instruction_decode is
 	lm_detect : out std_logic;
 	sm_detect : out std_logic;
 
-	lw_stop : out std_logic;
-	sw_stop : out std_logic;
+	lw_sw_stop : out std_logic;
 
 	first_lw_sw : out std_logic;
 
 	right_shift_lm_sm_bit : out std_logic;
 
 	lm_sm_reg_write : out std_logic_vector(2 downto 0);
+
+	lm_sm_write_load : out std_logic;
 
 	--alu2_out to IF stage
 	alu2_out : out std_logic_vector(15 downto 0)
@@ -106,14 +107,20 @@ architecture arch of instruction_decode is
 	signal first_later_check_enable : std_logic;
 
 	--XOR signals 
-	signal xor_in : std_logic_vector(7 downto 0);
+	signal xor_1_in : std_logic_vector(7 downto 0);
+	signal xor_2_in : std_logic_vector(7 downto 0);
 	signal xor_out : std_logic_vector(7 downto 0);
+	signal xor_reg_out : std_logic_vector(7 downto 0);
 
+	--Right shift signals 
+	signal right_shift_in : std_logic_vector(7 downto 0);
+	signal right_shift_out : std_logic_vector(7 downto 0);
+	signal right_shift_reg_out : std_logic_vector(7 downto 0);
 
-
-
-
-
+	--Priotity encoder signals 
+	signal priority_enc_in : std_logic_vector(7 downto 0);
+	signal priority_enc_out : std_logic_vector(7 downto 0);
+	signal priority_enable : std_logic;
 
 begin
 
@@ -231,12 +238,79 @@ begin
 	lm_detect <= '1' when instruction_int_out(15 downto 12) = "0110" else 
 		0;
 
-	first_later_check_in <= '1' when instruction_int_out(15 downto 12) = "0110" and 
+	lw_sw_stop <= '1' when xor_reg_out = "00000000" and first_later_check_out = '1' else 
+		'0';
+
+	--Right shift signals 
+	right_shift_in <= instruction_int_out(7 downto 0) when first_later_check_out = '0' else 
+		right_shift_reg_out;
+
+	--First later check tells if it is the first stage LM is encountered
+	first_later_check_in <= '1' when instruction_int_out(15 downto 12) = "0110";
+
+	if reset = '1' then 
+		xor_reg_out <= "00000000";
+		priority_enc_out <= "00000000"; 
+	end if;
+
+	--XOR in signals 
+	xor_1_in <= instruction_int_out(7 downto 0) when first_later_check_out = '0' else 
+		xor_reg_out;
+	xor_2_in <= priority_enc_out;
+
+	--Priority encoder in and enable signals 
+	priority_enc_in <= instruction_int_out(7 downto 0) when first_later_check_out = '0' else 
+		xor_reg_out;
+
+	priority_enable <= instruction_int_out(0) when first_later_check_out = '0' else 
+		right_shift_reg_out(0);
+
+
+
+
+
 
 
 
 
 	--Port mapping 
+
+	decoder_wb : decoder 
+		port map (
+			decoder_in => priority_enc_out, 
+			decoder_out => lm_sm_reg_write
+		);
+
+	rightshift : right_shift
+		port map (
+			right_shift_in => right_shift_in,
+			right_shift_out => right_shift_out
+		);
+
+	priorityencoder : priority_encoder 
+		port map (
+			priority_in => priority_enc_in,
+			priority_enable => priority_enable,
+			priority_out => priority_enc_out
+		);
+
+	xor_register : register_8 
+		port map (
+			reg_data_in => xor_out,
+			reg_enable => priority_enable,
+			clk => clk,
+			reg_data_out => xor_reg_out
+		);
+
+	right_shift_reg : register_8 
+		port map (
+			reg_data_in => right_shift_out,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => right_shift_reg_out
+		);
+
+
 	signextend_6 : se6 
 		port map (
 			se6_in => instruction_int_out(5 downto 0),
@@ -269,11 +343,6 @@ begin
 			clk => clk,
 			reg_data_out => first_later_check_out
 		);
-
-
-
-
-
 
 end architecture ; -- arch
 
