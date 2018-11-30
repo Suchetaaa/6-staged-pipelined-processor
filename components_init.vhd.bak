@@ -13,22 +13,6 @@ package components_init is
 		);
 	end component incrementer_pc;
 	
-	component data_extender is
-	  port (
-			data_extender_in : in std_logic_vector(8 downto 0);
-			data_extender_out : out std_logic_vector(15 downto 0)
-	  ) ;
-	end component data_extender ; -- data_extender
-	
-	component alu2 is
-		port (
-			--No clock and no register
-			alu2_a : in std_logic_vector(15 downto 0);
-			alu2_b : in std_logic_vector(15 downto 0);
-			alu2_out : out std_logic_vector(15 downto 0)
-		) ;
-	end component alu2 ; -- alu2
-	
 	component register_16 is 
 		port (
 			reg_data_in : in std_logic_vector(15 downto 0);
@@ -59,20 +43,15 @@ package components_init is
 			right_shift_out : out std_logic_vector(7 downto 0)
 		) ;
 	end component right_shift ; -- right_shift
-	
-	component sign_extender_9 is
+
+	component register_16 is
 		port (
-			se9_in : in std_logic_vector(8 downto 0);
-			se9_out : out std_logic_vector(15 downto 0)
+		  	reg_data_in : in std_logic_vector(15 downto 0);
+		  	reg_enable : in std_logic;
+			clk : in std_logic;
+		  	reg_data_out : out std_logic_vector(15 downto 0)
 		) ;
-	end component sign_extender_9 ; -- sign_extender_9
-	
-	component sign_extender_6 is
-		port (
-			se6_in : in std_logic_vector(5 downto 0);
-			se6_out : out std_logic_vector(15 downto 0)
-		) ;
-	end component sign_extender_6 ; -- sign_extender_6
+	end component register_16 ; -- register_16
 
 	component register_1 is
 	  	port (
@@ -82,15 +61,6 @@ package components_init is
 		  	reg_data_out : out std_logic
 	  	) ;
 	end component register_1 ; -- register_1
-	
-	component register_8 is
-		port (
-			reg_data_in : in std_logic_vector(7 downto 0);
-			reg_enable : in std_logic;
-			clk : in std_logic;
-			reg_data_out : out std_logic_vector(7 downto 0)
-		) ;
-	end component register_8 ; -- register_8
 
 	component register_2 is
 		port (

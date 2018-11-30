@@ -27,7 +27,7 @@ entity instruction_decode is
 	--Select signals for alu1 - a
 	--0 - D1
 	--1 - D2
-	alu1_a_select : out std_logic;
+	alu1_a_select : out std_logic_vector(0 downto 0);
 	--0 - D2
 	--1 - SE6
 	alu1_b_select : out std_logic_vector(1 downto 0);
@@ -101,12 +101,10 @@ architecture arch of instruction_decode is
 	signal se6_out : std_logic_vector(15 downto 0);
 
 	signal se9_out : std_logic_vector(15 downto 0);
-	signal data_extender_out_signal : std_logic_vector(15 downto 0);
 
 	signal alu1_op_signal : std_logic_vector(1 downto 0);
-	signal alu1_a_select_signal : std_logic;
-	signal alu1_b_select_signal : std_logic_vector(1 downto 0);
-	signal alu2_b_select_signal : std_logic;
+	signal alu1_a_select_signal : std_logic_vector(0 downto 0);
+	signal alu1_b_select_signal : std_logic_vector(0 downto 0);
 
 	signal rf_write_signal : std_logic;
 	signal rf_a1_read_signal : std_logic;
@@ -156,15 +154,15 @@ architecture arch of instruction_decode is
 	signal priority_enc_in : std_logic_vector(7 downto 0);
 	signal priority_enc_out : std_logic_vector(7 downto 0);
 	signal priority_enable : std_logic;
-	
-	signal decoder_out_signal : std_logic_vector(2 downto 0);
 
 begin
 
-	alu2_a <= pc_register_int_out;
+	alu2_a <= pc_register_int;
 
-	alu2_b <= se6_out when alu2_b_select_signal = '0' else 
-		se9_out when alu2_b_select_signal = '1';
+	alu2_b <= se6_out when alu2_b_select = "0" else 
+		se9_out when alu2_b_select = "1";
+
+	alu2_out <= alu2_out_signal;
 
 	--0000 - ADD, ADC, ADZ, 
 	--0001 - ADI
@@ -210,12 +208,12 @@ begin
 	--RC 
 	rf_a3_signal <= instruction_int_out(5 downto 3) when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0010" else 
 		--RA
-		instruction_int_out(11 downto 9) when instruction_int_out(15 downto 12) = "0011" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "1000" or instruction_int_out(15 downto 12) = "1001" else 
+		instruction_int_out(11 downto 9) when instruction_int_out(15 downto 12) = "0011" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "1000" or instruction_int_out(15 downto 12) = "1001" or  else 
 		--RB
 		instruction_int_out(8 downto 6) when instruction_int_out(15 downto 12) = "0001" else 
 		--Decoder output which gives the register to which data is written for LM/SM
-		decoder_out_signal when instruction_int_out(15 downto 12) = "0110" else 
-		"111"; -- for rf_write = 0
+		decoder_out when instruction_int_out(15 downto 12) = "0110" else 
+		"1111"; -- for rf_write = 0
 
 	--Tells what data has to be written 
 	--000 - alu1_out
@@ -255,13 +253,23 @@ begin
 	zero_en_mem_signal <= '1' when instruction_int_out(15 downto 12) = "0100" else 
 		'0';
 
+	--Instruction values 
+	--ir_8_0 <= se9_out;
+	--ir_5_0 <= se6_out;
+	----RA
+	--ir_11_9 <= instruction_int_out(11 downto 9); 
+	----RB 
+	--ir_8_6 <= instruction_int_out(8 downto 6);
+	----RC 
+	--ir_5_3 <= instruction_int_out(5 downto 3);
+
 	--Other stuff 
 	cz_signal <= instruction_int_out(1 downto 0);
 	opcode_signal <= instruction_int_out(15 downto 12);
 
 	--LM signals 
 	lm_detect_signal <= '1' when instruction_int_out(15 downto 12) = "0110" else 
-		'0';
+		0;
 
 	lw_sw_stop_signal <= '1' when xor_reg_out = "00000000" and first_later_check_out = '1' else 
 		'0';
@@ -273,9 +281,10 @@ begin
 	--First later check tells if it is the first stage LM is encountered
 	first_later_check_in <= '1' when instruction_int_out(15 downto 12) = "0110";
 
-	--xor_reg_out <= "00000000" when reset = '1';
-	--priority_enc_out <= "00000000" when reset = '1'; 
-
+	if reset = '1' then 
+		xor_reg_out <= "00000000";
+		priority_enc_out <= "00000000"; 
+	end if;
 
 	--XOR in signals 
 	xor_1_in <= instruction_int_out(7 downto 0) when first_later_check_out = '0' else 
@@ -290,14 +299,13 @@ begin
 		right_shift_reg_out(0);
 
 	right_shift_lm_sm_bit_signal <= right_shift_out(0);
-	--lm_sm_reg_write <= decoder_out_signal;
 
 	--Port mapping 
 
 	decoder_wb : decoder 
 		port map (
 			decoder_in => priority_enc_out, 
-			decoder_out => decoder_out_signal
+			decoder_out => lm_sm_reg_write
 		);
 
 	rightshift : right_shift
@@ -330,7 +338,7 @@ begin
 		);
 
 
-	signextend_6 : sign_extender_6 
+	signextend_6 : se6 
 		port map (
 			se6_in => instruction_int_out(5 downto 0),
 			se6_out => se6_out
@@ -345,7 +353,7 @@ begin
 		);
 	------------------------------------------------------------------------Interfacing register for SE6_out---------------------------------------------------------
 	
-	signextend_9 : sign_extender_9 
+	signextend_9 : se9 
 		port map (
 			se9_in => instruction_int_out(8 downto 0),
 			se9_out => se9_out
@@ -370,7 +378,7 @@ begin
 	de : data_extender 
 		port map (
 			data_extender_in => instruction_int_out(8 downto 0),
-			data_extender_out => data_extender_out_signal
+			data_extender_out => data_extender_out
 		);
 
 	first_later : register_1 
@@ -424,10 +432,10 @@ begin
 	------------------------------------------------------------------------Interfacing register for Data Extender -----------------------------------------------------
 	de_reg_out : register_16
 		port map (
-			reg_data_in => data_extender_out_signal,
+			reg_data_in => se9_out,
 			reg_enable => '1',
 			clk => clk,
-			reg_data_out => data_extender_out
+			reg_data_out => ir_9_0
 		);
 	------------------------------------------------------------------------Interfacing register for Data Extender ------------------------------------------------------
 
@@ -512,7 +520,7 @@ begin
 	------------------------------------------------------------------------Interfacing register for rf_a3 ---------------------------------------------------------
 
 	------------------------------------------------------------------------Interfacing register for rf_data_select ---------------------------------------------------------
-	rfdataselect : register_3
+	rfdataselect : register_1
 		port map (
 			reg_data_in => rf_data_select_signal,
 			reg_enable => '1',
@@ -592,7 +600,7 @@ begin
 	------------------------------------------------------------------------Interfacing register for zero enable mem ---------------------------------------------------------
 
 	------------------------------------------------------------------------Interfacing register for cz ---------------------------------------------------------
-	czzz : register_2
+	cz : register_2
 		port map (
 			reg_data_in => cz_signal,
 			reg_enable => '1',
@@ -602,7 +610,7 @@ begin
 	------------------------------------------------------------------------Interfacing register for cz ---------------------------------------------------------
 
 	------------------------------------------------------------------------Interfacing register for opcode ---------------------------------------------------------
-	opcodee : register_4
+	opcode : register_4
 		port map (
 			reg_data_in => opcode_signal,
 			reg_enable => '1',
@@ -672,7 +680,7 @@ begin
 	------------------------------------------------------------------------Interfacing register for lmsmregwrite ---------------------------------------------------
 
 	------------------------------------------------------------------------Interfacing register for lmsmwriteload ---------------------------------------------------------
-	lmsmwriteload : register_1
+	rightshiftlwswbit : register_1
 		port map (
 			reg_data_in => lm_sm_write_load_signal,
 			reg_enable => '1',

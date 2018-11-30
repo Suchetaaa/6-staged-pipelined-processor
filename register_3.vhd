@@ -10,7 +10,7 @@ entity register_3 is
   	reg_data_in : in std_logic_vector(2 downto 0);
   	reg_enable : in std_logic;
 	clk : in std_logic;
-  	reg_data_out : out std_logic(2 downto 0)
+  	reg_data_out : out std_logic_vector(2 downto 0)
   ) ;
 end entity ; -- register_1
 

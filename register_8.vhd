@@ -5,18 +5,18 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.components_init.all;
 
-entity register_2 is
+entity register_8 is
   port (
-  	reg_data_in : in std_logic_vector(1 downto 0);
+  	reg_data_in : in std_logic_vector(7 downto 0);
   	reg_enable : in std_logic;
 	clk : in std_logic;
-  	reg_data_out : out std_logic_vector(1 downto 0)
+  	reg_data_out : out std_logic_vector(7 downto 0)
   ) ;
-end entity ; -- register_1
+end entity ; -- register_8
 
-architecture arch of register_2 is
+architecture reg of register_8 is
 begin
-identifier : process (clk) 
+process (clk) 
 begin
 
 	if (clk'event and clk = '1') then 

@@ -14,9 +14,9 @@ entity register_1 is
   ) ;
 end entity ; -- register_1
 
-architecture arch of register_1 is
+architecture reg of register_1 is
 begin
-identifier : process (clk) 
+process (clk) 
 begin
 
 	if (clk'event and clk = '1') then 

@@ -5,16 +5,16 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.components_init.all;
 
-entity register_2 is
+entity register_1 is
   port (
-  	reg_data_in : in std_logic_vector(1 downto 0);
+  	reg_data_in : in std_logic;
   	reg_enable : in std_logic;
 	clk : in std_logic;
-  	reg_data_out : out std_logic_vector(1 downto 0)
+  	reg_data_out : out std_logic
   ) ;
 end entity ; -- register_1
 
-architecture arch of register_2 is
+architecture arch of register_1 is
 begin
 identifier : process (clk) 
 begin
