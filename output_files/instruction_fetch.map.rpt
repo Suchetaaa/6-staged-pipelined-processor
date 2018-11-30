@@ -1,5 +1,5 @@
 Analysis & Synthesis report for instruction_fetch
-Fri Nov 30 17:44:57 2018
+Fri Nov 30 17:47:18 2018
 Quartus Prime Version 16.0.0 Build 211 04/27/2016 SJ Lite Edition
 
 
@@ -10,7 +10,19 @@ Quartus Prime Version 16.0.0 Build 211 04/27/2016 SJ Lite Edition
   2. Analysis & Synthesis Summary
   3. Analysis & Synthesis Settings
   4. Parallel Compilation
-  5. Analysis & Synthesis Messages
+  5. Analysis & Synthesis Source Files Read
+  6. Analysis & Synthesis Resource Usage Summary
+  7. Analysis & Synthesis Resource Utilization by Entity
+  8. Analysis & Synthesis RAM Summary
+  9. General Register Statistics
+ 10. Registers Packed Into Inferred Megafunctions
+ 11. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 12. Source assignments for instruction_memory:InstructionMemory|altsyncram:memory_database_rtl_0|altsyncram_i3a1:auto_generated
+ 13. Parameter Settings for Inferred Entity Instance: instruction_memory:InstructionMemory|altsyncram:memory_database_rtl_0
+ 14. altsyncram Parameter Settings by Entity Instance
+ 15. Post-Synthesis Netlist Statistics for Top Partition
+ 16. Elapsed Time Per Partition
+ 17. Analysis & Synthesis Messages
 
 
 
@@ -37,20 +49,20 @@ agreement for further details.
 +----------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                     ;
 +------------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status        ; Failed - Fri Nov 30 17:44:57 2018           ;
+; Analysis & Synthesis Status        ; Successful - Fri Nov 30 17:47:18 2018       ;
 ; Quartus Prime Version              ; 16.0.0 Build 211 04/27/2016 SJ Lite Edition ;
 ; Revision Name                      ; instruction_fetch                           ;
 ; Top-level Entity Name              ; instruction_fetch                           ;
 ; Family                             ; Cyclone IV E                                ;
-; Total logic elements               ; N/A until Partition Merge                   ;
-;     Total combinational functions  ; N/A until Partition Merge                   ;
-;     Dedicated logic registers      ; N/A until Partition Merge                   ;
-; Total registers                    ; N/A until Partition Merge                   ;
-; Total pins                         ; N/A until Partition Merge                   ;
-; Total virtual pins                 ; N/A until Partition Merge                   ;
-; Total memory bits                  ; N/A until Partition Merge                   ;
-; Embedded Multiplier 9-bit elements ; N/A until Partition Merge                   ;
-; Total PLLs                         ; N/A until Partition Merge                   ;
+; Total logic elements               ; 81                                          ;
+;     Total combinational functions  ; 49                                          ;
+;     Dedicated logic registers      ; 48                                          ;
+; Total registers                    ; 48                                          ;
+; Total pins                         ; 86                                          ;
+; Total virtual pins                 ; 0                                           ;
+; Total memory bits                  ; 2,048                                       ;
+; Embedded Multiplier 9-bit elements ; 0                                           ;
+; Total PLLs                         ; 0                                           ;
 +------------------------------------+---------------------------------------------+
 
 
@@ -151,13 +163,251 @@ Parallel compilation was disabled, but you have multiple processors available. E
 +----------------------------+--------+
 
 
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                                                                                                                      ;
++---------------------------------------------------------------+-----------------+-------------------------------------------------------+---------------------------------------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path                              ; Used in Netlist ; File Type                                             ; File Name with Absolute Path                                                                            ; Library ;
++---------------------------------------------------------------+-----------------+-------------------------------------------------------+---------------------------------------------------------------------------------------------------------+---------+
+; register_16.vhd                                               ; yes             ; User VHDL File                                        ; /home/karman/6-staged-pipelined-processor/register_16.vhd                                               ;         ;
+; instruction_memory.vhd                                        ; yes             ; User VHDL File                                        ; /home/karman/6-staged-pipelined-processor/instruction_memory.vhd                                        ;         ;
+; incrementer_pc.vhd                                            ; yes             ; User VHDL File                                        ; /home/karman/6-staged-pipelined-processor/incrementer_pc.vhd                                            ;         ;
+; memory.vhd                                                    ; yes             ; User VHDL File                                        ; /home/karman/6-staged-pipelined-processor/memory.vhd                                                    ;         ;
+; components_init.vhd                                           ; yes             ; User VHDL File                                        ; /home/karman/6-staged-pipelined-processor/components_init.vhd                                           ;         ;
+; instruction_fetch.vhd                                         ; yes             ; User VHDL File                                        ; /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd                                         ;         ;
+; altsyncram.tdf                                                ; yes             ; Megafunction                                          ; /home/karman/altera_lite/16.0/quartus/libraries/megafunctions/altsyncram.tdf                            ;         ;
+; stratix_ram_block.inc                                         ; yes             ; Megafunction                                          ; /home/karman/altera_lite/16.0/quartus/libraries/megafunctions/stratix_ram_block.inc                     ;         ;
+; lpm_mux.inc                                                   ; yes             ; Megafunction                                          ; /home/karman/altera_lite/16.0/quartus/libraries/megafunctions/lpm_mux.inc                               ;         ;
+; lpm_decode.inc                                                ; yes             ; Megafunction                                          ; /home/karman/altera_lite/16.0/quartus/libraries/megafunctions/lpm_decode.inc                            ;         ;
+; aglobal160.inc                                                ; yes             ; Megafunction                                          ; /home/karman/altera_lite/16.0/quartus/libraries/megafunctions/aglobal160.inc                            ;         ;
+; a_rdenreg.inc                                                 ; yes             ; Megafunction                                          ; /home/karman/altera_lite/16.0/quartus/libraries/megafunctions/a_rdenreg.inc                             ;         ;
+; altrom.inc                                                    ; yes             ; Megafunction                                          ; /home/karman/altera_lite/16.0/quartus/libraries/megafunctions/altrom.inc                                ;         ;
+; altram.inc                                                    ; yes             ; Megafunction                                          ; /home/karman/altera_lite/16.0/quartus/libraries/megafunctions/altram.inc                                ;         ;
+; altdpram.inc                                                  ; yes             ; Megafunction                                          ; /home/karman/altera_lite/16.0/quartus/libraries/megafunctions/altdpram.inc                              ;         ;
+; db/altsyncram_i3a1.tdf                                        ; yes             ; Auto-Generated Megafunction                           ; /home/karman/6-staged-pipelined-processor/db/altsyncram_i3a1.tdf                                        ;         ;
+; db/instruction_fetch.ram0_instruction_memory_68fd8bb8.hdl.mif ; yes             ; Auto-Generated Auto-Found Memory Initialization File  ; /home/karman/6-staged-pipelined-processor/db/instruction_fetch.ram0_instruction_memory_68fd8bb8.hdl.mif ;         ;
++---------------------------------------------------------------+-----------------+-------------------------------------------------------+---------------------------------------------------------------------------------------------------------+---------+
+
+
++---------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary             ;
++---------------------------------------------+-----------+
+; Resource                                    ; Usage     ;
++---------------------------------------------+-----------+
+; Estimated Total logic elements              ; 81        ;
+;                                             ;           ;
+; Total combinational functions               ; 49        ;
+; Logic element usage by number of LUT inputs ;           ;
+;     -- 4 input functions                    ; 32        ;
+;     -- 3 input functions                    ; 0         ;
+;     -- <=2 input functions                  ; 17        ;
+;                                             ;           ;
+; Logic elements by mode                      ;           ;
+;     -- normal mode                          ; 34        ;
+;     -- arithmetic mode                      ; 15        ;
+;                                             ;           ;
+; Total registers                             ; 48        ;
+;     -- Dedicated logic registers            ; 48        ;
+;     -- I/O registers                        ; 0         ;
+;                                             ;           ;
+; I/O pins                                    ; 86        ;
+; Total memory bits                           ; 2048      ;
+;                                             ;           ;
+; Embedded Multiplier 9-bit elements          ; 0         ;
+;                                             ;           ;
+; Maximum fan-out node                        ; clk~input ;
+; Maximum fan-out                             ; 64        ;
+; Total fan-out                               ; 567       ;
+; Average fan-out                             ; 1.99      ;
++---------------------------------------------+-----------+
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                                                                                 ;
++-------------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+-------------------------------------------------------------------------------------------------------------------------+--------------------+--------------+
+; Compilation Hierarchy Node                ; LC Combinationals ; LC Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                                     ; Entity Name        ; Library Name ;
++-------------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+-------------------------------------------------------------------------------------------------------------------------+--------------------+--------------+
+; |instruction_fetch                        ; 49 (33)           ; 48 (16)      ; 2048        ; 0            ; 0       ; 0         ; 86   ; 0            ; |instruction_fetch                                                                                                      ; instruction_fetch  ; work         ;
+;    |incrementer_pc:incrementer|           ; 16 (16)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |instruction_fetch|incrementer_pc:incrementer                                                                           ; incrementer_pc     ; work         ;
+;    |instruction_memory:InstructionMemory| ; 0 (0)             ; 0 (0)        ; 2048        ; 0            ; 0       ; 0         ; 0    ; 0            ; |instruction_fetch|instruction_memory:InstructionMemory                                                                 ; instruction_memory ; work         ;
+;       |altsyncram:memory_database_rtl_0|  ; 0 (0)             ; 0 (0)        ; 2048        ; 0            ; 0       ; 0         ; 0    ; 0            ; |instruction_fetch|instruction_memory:InstructionMemory|altsyncram:memory_database_rtl_0                                ; altsyncram         ; work         ;
+;          |altsyncram_i3a1:auto_generated| ; 0 (0)             ; 0 (0)        ; 2048        ; 0            ; 0       ; 0         ; 0    ; 0            ; |instruction_fetch|instruction_memory:InstructionMemory|altsyncram:memory_database_rtl_0|altsyncram_i3a1:auto_generated ; altsyncram_i3a1    ; work         ;
+;    |register_16:PC_int_Register|          ; 0 (0)             ; 16 (16)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |instruction_fetch|register_16:PC_int_Register                                                                          ; register_16        ; work         ;
+;    |register_16:pc_reg|                   ; 0 (0)             ; 16 (16)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |instruction_fetch|register_16:pc_reg                                                                                   ; register_16        ; work         ;
++-------------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+-------------------------------------------------------------------------------------------------------------------------+--------------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis RAM Summary                                                                                                                                                                                                                                 ;
++-----------------------------------------------------------------------------------------------------------------+------+------+--------------+--------------+--------------+--------------+------+---------------------------------------------------------------+
+; Name                                                                                                            ; Type ; Mode ; Port A Depth ; Port A Width ; Port B Depth ; Port B Width ; Size ; MIF                                                           ;
++-----------------------------------------------------------------------------------------------------------------+------+------+--------------+--------------+--------------+--------------+------+---------------------------------------------------------------+
+; instruction_memory:InstructionMemory|altsyncram:memory_database_rtl_0|altsyncram_i3a1:auto_generated|ALTSYNCRAM ; AUTO ; ROM  ; 128          ; 16           ; --           ; --           ; 2048 ; db/instruction_fetch.ram0_instruction_memory_68fd8bb8.hdl.mif ;
++-----------------------------------------------------------------------------------------------------------------+------+------+--------------+--------------+--------------+--------------+------+---------------------------------------------------------------+
+
+
++------------------------------------------------------+
+; General Register Statistics                          ;
++----------------------------------------------+-------+
+; Statistic                                    ; Value ;
++----------------------------------------------+-------+
+; Total registers                              ; 48    ;
+; Number of registers using Synchronous Clear  ; 0     ;
+; Number of registers using Synchronous Load   ; 0     ;
+; Number of registers using Asynchronous Clear ; 16    ;
+; Number of registers using Asynchronous Load  ; 0     ;
+; Number of registers using Clock Enable       ; 32    ;
+; Number of registers using Preset             ; 0     ;
++----------------------------------------------+-------+
+
+
++-------------------------------------------------------------------------------------------------------------------------+
+; Registers Packed Into Inferred Megafunctions                                                                            ;
++-----------------------------------------------------+------------------------------------------------------------+------+
+; Register Name                                       ; Megafunction                                               ; Type ;
++-----------------------------------------------------+------------------------------------------------------------+------+
+; register_16:InstructionRegister|reg_data_out[0..15] ; instruction_memory:InstructionMemory|memory_database_rtl_0 ; RAM  ;
++-----------------------------------------------------+------------------------------------------------------------+------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                     ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+--------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output           ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+--------------------------------------+
+; 5:1                ; 16 bits   ; 48 LEs        ; 32 LEs               ; 16 LEs                 ; Yes        ; |instruction_fetch|pc_register_in[0] ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+--------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------+
+; Source assignments for instruction_memory:InstructionMemory|altsyncram:memory_database_rtl_0|altsyncram_i3a1:auto_generated ;
++---------------------------------+--------------------+------+---------------------------------------------------------------+
+; Assignment                      ; Value              ; From ; To                                                            ;
++---------------------------------+--------------------+------+---------------------------------------------------------------+
+; OPTIMIZE_POWER_DURING_SYNTHESIS ; NORMAL_COMPILATION ; -    ; -                                                             ;
++---------------------------------+--------------------+------+---------------------------------------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: instruction_memory:InstructionMemory|altsyncram:memory_database_rtl_0 ;
++------------------------------------+---------------------------------------------------------------+-------------------+
+; Parameter Name                     ; Value                                                         ; Type              ;
++------------------------------------+---------------------------------------------------------------+-------------------+
+; BYTE_SIZE_BLOCK                    ; 8                                                             ; Untyped           ;
+; AUTO_CARRY_CHAINS                  ; ON                                                            ; AUTO_CARRY        ;
+; IGNORE_CARRY_BUFFERS               ; OFF                                                           ; IGNORE_CARRY      ;
+; AUTO_CASCADE_CHAINS                ; ON                                                            ; AUTO_CASCADE      ;
+; IGNORE_CASCADE_BUFFERS             ; OFF                                                           ; IGNORE_CASCADE    ;
+; WIDTH_BYTEENA                      ; 1                                                             ; Untyped           ;
+; OPERATION_MODE                     ; ROM                                                           ; Untyped           ;
+; WIDTH_A                            ; 16                                                            ; Untyped           ;
+; WIDTHAD_A                          ; 7                                                             ; Untyped           ;
+; NUMWORDS_A                         ; 128                                                           ; Untyped           ;
+; OUTDATA_REG_A                      ; UNREGISTERED                                                  ; Untyped           ;
+; ADDRESS_ACLR_A                     ; NONE                                                          ; Untyped           ;
+; OUTDATA_ACLR_A                     ; NONE                                                          ; Untyped           ;
+; WRCONTROL_ACLR_A                   ; NONE                                                          ; Untyped           ;
+; INDATA_ACLR_A                      ; NONE                                                          ; Untyped           ;
+; BYTEENA_ACLR_A                     ; NONE                                                          ; Untyped           ;
+; WIDTH_B                            ; 1                                                             ; Untyped           ;
+; WIDTHAD_B                          ; 1                                                             ; Untyped           ;
+; NUMWORDS_B                         ; 1                                                             ; Untyped           ;
+; INDATA_REG_B                       ; CLOCK1                                                        ; Untyped           ;
+; WRCONTROL_WRADDRESS_REG_B          ; CLOCK1                                                        ; Untyped           ;
+; RDCONTROL_REG_B                    ; CLOCK1                                                        ; Untyped           ;
+; ADDRESS_REG_B                      ; CLOCK1                                                        ; Untyped           ;
+; OUTDATA_REG_B                      ; UNREGISTERED                                                  ; Untyped           ;
+; BYTEENA_REG_B                      ; CLOCK1                                                        ; Untyped           ;
+; INDATA_ACLR_B                      ; NONE                                                          ; Untyped           ;
+; WRCONTROL_ACLR_B                   ; NONE                                                          ; Untyped           ;
+; ADDRESS_ACLR_B                     ; NONE                                                          ; Untyped           ;
+; OUTDATA_ACLR_B                     ; NONE                                                          ; Untyped           ;
+; RDCONTROL_ACLR_B                   ; NONE                                                          ; Untyped           ;
+; BYTEENA_ACLR_B                     ; NONE                                                          ; Untyped           ;
+; WIDTH_BYTEENA_A                    ; 1                                                             ; Untyped           ;
+; WIDTH_BYTEENA_B                    ; 1                                                             ; Untyped           ;
+; RAM_BLOCK_TYPE                     ; AUTO                                                          ; Untyped           ;
+; BYTE_SIZE                          ; 8                                                             ; Untyped           ;
+; READ_DURING_WRITE_MODE_MIXED_PORTS ; DONT_CARE                                                     ; Untyped           ;
+; READ_DURING_WRITE_MODE_PORT_A      ; NEW_DATA_NO_NBE_READ                                          ; Untyped           ;
+; READ_DURING_WRITE_MODE_PORT_B      ; NEW_DATA_NO_NBE_READ                                          ; Untyped           ;
+; INIT_FILE                          ; db/instruction_fetch.ram0_instruction_memory_68fd8bb8.hdl.mif ; Untyped           ;
+; INIT_FILE_LAYOUT                   ; PORT_A                                                        ; Untyped           ;
+; MAXIMUM_DEPTH                      ; 0                                                             ; Untyped           ;
+; CLOCK_ENABLE_INPUT_A               ; NORMAL                                                        ; Untyped           ;
+; CLOCK_ENABLE_INPUT_B               ; NORMAL                                                        ; Untyped           ;
+; CLOCK_ENABLE_OUTPUT_A              ; NORMAL                                                        ; Untyped           ;
+; CLOCK_ENABLE_OUTPUT_B              ; NORMAL                                                        ; Untyped           ;
+; CLOCK_ENABLE_CORE_A                ; USE_INPUT_CLKEN                                               ; Untyped           ;
+; CLOCK_ENABLE_CORE_B                ; USE_INPUT_CLKEN                                               ; Untyped           ;
+; ENABLE_ECC                         ; FALSE                                                         ; Untyped           ;
+; ECC_PIPELINE_STAGE_ENABLED         ; FALSE                                                         ; Untyped           ;
+; WIDTH_ECCSTATUS                    ; 3                                                             ; Untyped           ;
+; DEVICE_FAMILY                      ; Cyclone IV E                                                  ; Untyped           ;
+; CBXI_PARAMETER                     ; altsyncram_i3a1                                               ; Untyped           ;
++------------------------------------+---------------------------------------------------------------+-------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-------------------------------------------------------------------------------------------------------------------+
+; altsyncram Parameter Settings by Entity Instance                                                                  ;
++-------------------------------------------+-----------------------------------------------------------------------+
+; Name                                      ; Value                                                                 ;
++-------------------------------------------+-----------------------------------------------------------------------+
+; Number of entity instances                ; 1                                                                     ;
+; Entity Instance                           ; instruction_memory:InstructionMemory|altsyncram:memory_database_rtl_0 ;
+;     -- OPERATION_MODE                     ; ROM                                                                   ;
+;     -- WIDTH_A                            ; 16                                                                    ;
+;     -- NUMWORDS_A                         ; 128                                                                   ;
+;     -- OUTDATA_REG_A                      ; UNREGISTERED                                                          ;
+;     -- WIDTH_B                            ; 1                                                                     ;
+;     -- NUMWORDS_B                         ; 1                                                                     ;
+;     -- ADDRESS_REG_B                      ; CLOCK1                                                                ;
+;     -- OUTDATA_REG_B                      ; UNREGISTERED                                                          ;
+;     -- RAM_BLOCK_TYPE                     ; AUTO                                                                  ;
+;     -- READ_DURING_WRITE_MODE_MIXED_PORTS ; DONT_CARE                                                             ;
++-------------------------------------------+-----------------------------------------------------------------------+
+
+
++-----------------------------------------------------+
+; Post-Synthesis Netlist Statistics for Top Partition ;
++-----------------------+-----------------------------+
+; Type                  ; Count                       ;
++-----------------------+-----------------------------+
+; boundary_port         ; 86                          ;
+; cycloneiii_ff         ; 48                          ;
+;     CLR               ; 16                          ;
+;     ENA               ; 32                          ;
+; cycloneiii_lcell_comb ; 49                          ;
+;     arith             ; 15                          ;
+;         2 data inputs ; 15                          ;
+;     normal            ; 34                          ;
+;         1 data inputs ; 1                           ;
+;         2 data inputs ; 1                           ;
+;         4 data inputs ; 32                          ;
+; cycloneiii_ram_block  ; 16                          ;
+;                       ;                             ;
+; Max LUT depth         ; 3.50                        ;
+; Average LUT depth     ; 1.66                        ;
++-----------------------+-----------------------------+
+
+
++-------------------------------+
+; Elapsed Time Per Partition    ;
++----------------+--------------+
+; Partition Name ; Elapsed Time ;
++----------------+--------------+
+; Top            ; 00:00:00     ;
++----------------+--------------+
+
+
 +-------------------------------+
 ; Analysis & Synthesis Messages ;
 +-------------------------------+
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 16.0.0 Build 211 04/27/2016 SJ Lite Edition
-    Info: Processing started: Fri Nov 30 17:44:46 2018
+    Info: Processing started: Fri Nov 30 17:47:05 2018
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off instruction_fetch -c instruction_fetch
 Warning (20028): Parallel compilation is not licensed and has been disabled
 Info (12021): Found 2 design units, including 1 entities, in source file register_16.vhd
@@ -178,45 +428,47 @@ Info (12021): Found 2 design units, including 1 entities, in source file instruc
     Info (12023): Found entity 1: instruction_fetch File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 8
 Info (12127): Elaborating entity "instruction_fetch" for the top level hierarchy
 Warning (10492): VHDL Process Statement warning at instruction_fetch.vhd(63): signal "reset" is read inside the Process Statement but isn't in the Process Statement's sensitivity list File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 63
-Warning (10631): VHDL Process Statement warning at instruction_fetch.vhd(61): inferring latch(es) for signal or variable "pc_register_out", which holds its previous value in one or more paths through the process File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[0]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[1]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[2]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[3]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[4]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[5]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[6]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[7]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[8]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[9]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[10]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[11]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[12]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[13]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[14]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Info (10041): Inferred latch for "pc_register_out[15]" at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[15]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10029): Constant driver at instruction_fetch.vhd(61) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 61
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[14]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[13]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[12]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[11]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[10]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[9]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[8]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[7]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[6]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[5]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[4]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[3]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[2]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[1]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (10028): Can't resolve multiple constant drivers for net "pc_register_out[0]" at instruction_fetch.vhd(80) File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
-Error (12153): Can't elaborate top-level user hierarchy
-Error: Quartus Prime Analysis & Synthesis was unsuccessful. 18 errors, 3 warnings
-    Error: Peak virtual memory: 1228 megabytes
-    Error: Processing ended: Fri Nov 30 17:44:57 2018
-    Error: Elapsed time: 00:00:11
-    Error: Total CPU time (on all processors): 00:00:26
+Info (12128): Elaborating entity "register_16" for hierarchy "register_16:pc_reg" File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 80
+Info (12128): Elaborating entity "incrementer_pc" for hierarchy "incrementer_pc:incrementer" File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 88
+Info (12128): Elaborating entity "instruction_memory" for hierarchy "instruction_memory:InstructionMemory" File: /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd Line: 94
+Info (19000): Inferred 1 megafunctions from design logic
+    Info (276029): Inferred altsyncram megafunction from the following design logic: "instruction_memory:InstructionMemory|memory_database_rtl_0" 
+        Info (286033): Parameter OPERATION_MODE set to ROM
+        Info (286033): Parameter WIDTH_A set to 16
+        Info (286033): Parameter WIDTHAD_A set to 7
+        Info (286033): Parameter NUMWORDS_A set to 128
+        Info (286033): Parameter OUTDATA_REG_A set to UNREGISTERED
+        Info (286033): Parameter ADDRESS_ACLR_A set to NONE
+        Info (286033): Parameter OUTDATA_ACLR_A set to NONE
+        Info (286033): Parameter INDATA_ACLR_A set to NONE
+        Info (286033): Parameter WRCONTROL_ACLR_A set to NONE
+        Info (286033): Parameter INIT_FILE set to db/instruction_fetch.ram0_instruction_memory_68fd8bb8.hdl.mif
+Info (12130): Elaborated megafunction instantiation "instruction_memory:InstructionMemory|altsyncram:memory_database_rtl_0"
+Info (12133): Instantiated megafunction "instruction_memory:InstructionMemory|altsyncram:memory_database_rtl_0" with the following parameter:
+    Info (12134): Parameter "OPERATION_MODE" = "ROM"
+    Info (12134): Parameter "WIDTH_A" = "16"
+    Info (12134): Parameter "WIDTHAD_A" = "7"
+    Info (12134): Parameter "NUMWORDS_A" = "128"
+    Info (12134): Parameter "OUTDATA_REG_A" = "UNREGISTERED"
+    Info (12134): Parameter "ADDRESS_ACLR_A" = "NONE"
+    Info (12134): Parameter "OUTDATA_ACLR_A" = "NONE"
+    Info (12134): Parameter "INDATA_ACLR_A" = "NONE"
+    Info (12134): Parameter "WRCONTROL_ACLR_A" = "NONE"
+    Info (12134): Parameter "INIT_FILE" = "db/instruction_fetch.ram0_instruction_memory_68fd8bb8.hdl.mif"
+Info (12021): Found 1 design units, including 1 entities, in source file db/altsyncram_i3a1.tdf
+    Info (12023): Found entity 1: altsyncram_i3a1 File: /home/karman/6-staged-pipelined-processor/db/altsyncram_i3a1.tdf Line: 28
+Info (286030): Timing-Driven Synthesis is running
+Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
+    Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
+Info (21057): Implemented 183 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 54 input pins
+    Info (21059): Implemented 32 output pins
+    Info (21061): Implemented 81 logic cells
+    Info (21064): Implemented 16 RAM segments
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 2 warnings
+    Info: Peak virtual memory: 1280 megabytes
+    Info: Processing ended: Fri Nov 30 17:47:18 2018
+    Info: Elapsed time: 00:00:13
+    Info: Total CPU time (on all processors): 00:00:31
 
 

@@ -1,0 +1,353 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "instruction_int_out[0]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[1]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[2]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[3]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[4]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[5]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[6]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[7]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[8]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[9]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[10]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[11]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[12]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[13]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[14]",
+					"strict" : false
+				},
+				{
+					"name" : "instruction_int_out[15]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[0]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[1]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[2]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[3]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[4]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[5]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[6]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[7]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[8]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[9]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[10]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[11]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[12]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[13]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[14]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_int_out[15]",
+					"strict" : false
+				},
+				{
+					"name" : "clk",
+					"strict" : false
+				},
+				{
+					"name" : "ir_enable",
+					"strict" : false
+				},
+				{
+					"name" : "pc_register_enable",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[0]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_select[0]",
+					"strict" : false
+				},
+				{
+					"name" : "pc_select[1]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[0]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[0]",
+					"strict" : false
+				},
+				{
+					"name" : "reset",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[1]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[1]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[1]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[2]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[2]",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[2]",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[3]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[3]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[3]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[4]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[4]",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[4]",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[5]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[5]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[5]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[6]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[6]",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[6]",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[7]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[7]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[7]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[8]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[8]",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[8]",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[9]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[9]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[9]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[10]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[10]",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[10]",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[11]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[11]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[11]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[12]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[12]",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[12]",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[13]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[13]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[13]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[14]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[14]",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[14]",
+					"strict" : false
+				},
+				{
+					"name" : "alu1_out[15]",
+					"strict" : false
+				},
+				{
+					"name" : "mem_data_out[15]",
+					"strict" : false
+				},
+				{
+					"name" : "alu2_out[15]",
+					"strict" : false
+				}
+			]
+		}
+	]
+}
