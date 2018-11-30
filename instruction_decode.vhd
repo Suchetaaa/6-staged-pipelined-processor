@@ -265,14 +265,6 @@ begin
 	priority_enable <= instruction_int_out(0) when first_later_check_out = '0' else 
 		right_shift_reg_out(0);
 
-
-
-
-
-
-
-
-
 	--Port mapping 
 
 	decoder_wb : decoder 
