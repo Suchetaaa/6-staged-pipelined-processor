@@ -35,7 +35,7 @@ entity instruction_fetch is
 	instruction_int_out : out std_logic_vector(15 downto 0);
 
 	--PC value going out (address of present instruction)
-	pc_register_int_out : out std_logic_vector(15 downto 0)
+	pc_register_int : out std_logic_vector(15 downto 0)
 
   ) ;
 end entity ; -- instruction_fetch
@@ -105,6 +105,6 @@ begin
 			clk => clk,
 			reg_data_out => instruction_int_out
 		);
-	pc_register_int_out <= pc_register_out;
+	pc_register_int <= pc_register_out;
 
 end architecture ; -- arch
