@@ -298,6 +298,8 @@ begin
 	priority_enable <= instruction_int_out(0) when first_later_check_out = '0' else 
 		right_shift_reg_out(0);
 
+	right_shift_lm_sm_bit_signal <= right_shift_out(0);
+
 	--Port mapping 
 
 	decoder_wb : decoder 
@@ -527,16 +529,165 @@ begin
 		);
 	------------------------------------------------------------------------Interfacing register for rf_data_select ---------------------------------------------------------
 
-	------------------------------------------------------------------------Interfacing register for rf_a1_read ---------------------------------------------------------
-	rfa1read : register_1
+	------------------------------------------------------------------------Interfacing register for mem_write ---------------------------------------------------------
+	memwrite : register_1
 		port map (
-			reg_data_in => rf_a1_read_signal,
+			reg_data_in => mem_write_signal,
 			reg_enable => '1',
 			clk => clk,
-			reg_data_out => rf_a1_read
+			reg_data_out => mem_write
 		);
-	------------------------------------------------------------------------Interfacing register for rf_a1_read ---------------------------------------------------------
+	------------------------------------------------------------------------Interfacing register for mem_write ---------------------------------------------------------
 
+	------------------------------------------------------------------------Interfacing register for mem_read ---------------------------------------------------------
+	memread : register_1
+		port map (
+			reg_data_in => mem_read_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => mem_read
+		);
+	------------------------------------------------------------------------Interfacing register for mem_read ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for mem data select ---------------------------------------------------------
+	memdatasel : register_1
+		port map (
+			reg_data_in => mem_data_sel_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => mem_data_sel
+		);
+	------------------------------------------------------------------------Interfacing register for mem data select ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for mem addr sel ---------------------------------------------------------
+	memadrsel : register_1
+		port map (
+			reg_data_in => mem_address_sel_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => mem_address_sel
+		);
+	------------------------------------------------------------------------Interfacing register for mem addr sel ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for carry enable ---------------------------------------------------------
+	carryen : register_1
+		port map (
+			reg_data_in => carry_en_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => carry_en
+		);
+	------------------------------------------------------------------------Interfacing register for carry enable ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for zero enable alu ---------------------------------------------------------
+	zeroenalu : register_1
+		port map (
+			reg_data_in => zero_en_alu_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => zero_en_alu
+		);
+	------------------------------------------------------------------------Interfacing register for zero enable alu ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for zero enable mem ---------------------------------------------------------
+	zeroenmem : register_1
+		port map (
+			reg_data_in => zero_en_mem_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => zero_en_mem
+		);
+	------------------------------------------------------------------------Interfacing register for zero enable mem ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for cz ---------------------------------------------------------
+	cz : register_2
+		port map (
+			reg_data_in => cz_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => cz
+		);
+	------------------------------------------------------------------------Interfacing register for cz ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for opcode ---------------------------------------------------------
+	opcode : register_4
+		port map (
+			reg_data_in => opcode_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => opcode
+		);
+	------------------------------------------------------------------------Interfacing register for opcode ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for LM Detect ---------------------------------------------------------
+	lmdetect : register_1
+		port map (
+			reg_data_in => lm_detect_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => lm_detect
+		);
+	------------------------------------------------------------------------Interfacing register for LM Detect ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for SM Detect ---------------------------------------------------------
+	smdetect : register_1
+		port map (
+			reg_data_in => sm_detect_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => sm_detect
+		);
+	------------------------------------------------------------------------Interfacing register for SM Detect ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for lw sw stop ---------------------------------------------------------
+	lwswstop : register_1
+		port map (
+			reg_data_in => lw_sw_stop_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => lw_sw_stop
+		);
+	------------------------------------------------------------------------Interfacing register for lw sw stop ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for first lw sw ---------------------------------------------------------
+	firstlwsw : register_1
+		port map (
+			reg_data_in => first_lw_sw_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => first_lw_sw
+		);
+	------------------------------------------------------------------------Interfacing register for first lw sw ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for rightshiftlmsmbit ---------------------------------------------------------
+	rightshiftlwswbit : register_1
+		port map (
+			reg_data_in => right_shift_lm_sm_bit_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => right_shift_lm_sm_bit
+		);
+	------------------------------------------------------------------------Interfacing register for right shift lm sm bit ---------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for lmsmregwrite ---------------------------------------------------------
+	lmsmregwrite : register_3
+		port map (
+			reg_data_in => lm_sm_reg_write_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => lm_sm_reg_write
+		);
+	------------------------------------------------------------------------Interfacing register for lmsmregwrite ---------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for lmsmwriteload ---------------------------------------------------------
+	rightshiftlwswbit : register_1
+		port map (
+			reg_data_in => lm_sm_write_load_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => lm_sm_write_load
+		);
+	------------------------------------------------------------------------Interfacing register for lmsmwriteload ---------------------------------------------------
 
 
 end architecture ; -- arch
