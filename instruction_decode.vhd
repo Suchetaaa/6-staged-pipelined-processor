@@ -16,6 +16,9 @@ entity instruction_decode is
 	--instruction 
 	instruction_int_out : in std_logic_vector(15 downto 0);
 
+	--pc_out 
+	pc_out : out std_logic_vector(15 downto 0);
+
 	--Tells what operation has to be performed by ALU1
 	--00 - Addition 
 	--01 - Subtraction 
@@ -27,10 +30,7 @@ entity instruction_decode is
 	alu1_a_select : out std_logic_vector(0 downto 0);
 	--0 - D2
 	--1 - SE6
-	alu1_b_select : out std_logic_vector(0 downto 0);
-
-	--alu2 - b select
-	alu2_b_select : out std_logic_vector(1 downto 0);
+	alu1_b_select : out std_logic_vector(1 downto 0);
 
 	--Register File 
 	rf_write : out std_logic;
@@ -82,6 +82,7 @@ entity instruction_decode is
 
 	lm_sm_reg_write : out std_logic_vector(2 downto 0);
 
+	--Tells if loading or writing to or from register has to be done or not 
 	lm_sm_write_load : out std_logic;
 
 	--alu2_out to IF stage
@@ -100,6 +101,38 @@ architecture arch of instruction_decode is
 	signal se6_out : std_logic_vector(15 downto 0);
 
 	signal se9_out : std_logic_vector(15 downto 0);
+
+	signal alu1_op_signal : std_logic_vector(1 downto 0);
+	signal alu1_a_select_signal : std_logic_vector(0 downto 0);
+	signal alu1_b_select_signal : std_logic_vector(0 downto 0);
+
+	signal rf_write_signal : std_logic;
+	signal rf_a1_read_signal : std_logic;
+	signal rf_a2_read_signal : std_logic;
+	signal rf_a3_signal : std_logic_vector(2 downto 0);
+	signal rf_data_select_signal : std_logic_vector(2 downto 0);
+
+	signal mem_write_signal : std_logic;
+	signal mem_read_signal : std_logic;
+	signal mem_data_sel_signal : std_logic;
+	signal mem_address_sel_signal : std_logic;
+
+	signal carry_en_signal : std_logic;
+	signal zero_en_alu_signal : std_logic;
+	signal zero_en_mem_signal : std_logic;
+
+	signal cz_signal : std_logic_vector(1 downto 0);
+	signal opcode_signal : std_logic_vector(3 downto 0);
+
+	signal lm_detect_signal : std_logic;
+	signal sm_detect_signal : std_logic;
+
+	signal lw_sw_stop_signal : std_logic;
+	signal first_lw_sw_signal : std_logic;
+	signal right_shift_lm_sm_bit_signal : std_logic;
+	signal lm_sm_reg_write_signal : std_logic_vector(2 downto 0);
+	signal lm_sm_write_load_signal : std_logic;
+	
 
 	--LM signals 
 	signal first_later_check_in : std_logic;
@@ -141,7 +174,7 @@ begin
 	--00 - ADDITION 
 	--01 - SUBTRACTION 
 	--10 - NAND
-	alu1_op <= "00" when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0101" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" else 
+	alu1_op_signal <= "00" when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0101" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" else 
 		--BEQ instruction
 		"01" when instruction_int_out(15 downto 12) = "1100" else 
 		--NAND instruction
@@ -151,29 +184,29 @@ begin
 
 	--0 - Data1 
 	--1 - Data2
-	alu1_a_select <= '0' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" or instruction_int_out(15 downto 12) = "1100" else 
+	alu1_a_select_signal <= '0' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" or instruction_int_out(15 downto 12) = "1100" else 
 		'1';
 
 	--00 - Data2
 	--01 - SE6 out
 	--10 - constant 1
 	--11 - constant 0
-	alu2_b_select <= "00" when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0010"  or instruction_int_out(15 downto 12) = "1100" else 
+	alu1_b_select_signal <= "00" when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0010"  or instruction_int_out(15 downto 12) = "1100" else 
 		"01" when instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0101" else 
 		"10" when instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" else 
 		"11";
 
 
 	--Register file read and write, write to where, data from where 
-	rf_a1_read <= '1' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0101" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" or instruction_int_out(15 downto 12) = "1100" else 
+	rf_a1_read_signal <= '1' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0101" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" or instruction_int_out(15 downto 12) = "1100" else 
 		'0';
 
-	rf_a2_read <= '1' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0101" or instruction_int_out(15 downto 12) = "1100" or instruction_int_out(15 downto 12) = "1001" else 
+	rf_a2_read_signal <= '1' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0101" or instruction_int_out(15 downto 12) = "1100" or instruction_int_out(15 downto 12) = "1001" else 
 		'0';
 
 	--Tells where data has to be written 
 	--RC 
-	rf_a3 <= instruction_int_out(5 downto 3) when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0010" else 
+	rf_a3_signal <= instruction_int_out(5 downto 3) when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0010" else 
 		--RA
 		instruction_int_out(11 downto 9) when instruction_int_out(15 downto 12) = "0011" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "1000" or instruction_int_out(15 downto 12) = "1001" or  else 
 		--RB
@@ -187,58 +220,58 @@ begin
 	--001 - data_extender_out
 	--010 - memory_out
 	--011 - pc 
-	rf_data_select <= "000" when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" else
+	rf_data_select_signal <= "000" when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" else
 		"001" when instruction_int_out(15 downto 12) = "0011" else 
 		"010" when instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0110" else 
 		"011" when instruction_int_out(15 downto 12) = "1000" or instruction_int_out(15 downto 12) = "1001" else 
 		"100";
 
 	--rf_write
-	rf_write <= '1' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0011" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "1000" or instruction_int_out(15 downto 12) = "1001" else 
+	rf_write_signal <= '1' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" or instruction_int_out(15 downto 12) = "0011" or instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "1000" or instruction_int_out(15 downto 12) = "1001" else 
 		'0';
 
 	--Memory read and write signals 
-	mem_read <= '1' when instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0110" else 
+	mem_read_signal <= '1' when instruction_int_out(15 downto 12) = "0100" or instruction_int_out(15 downto 12) = "0110" else 
 		'0';
-	mem_write <= '1' when instruction_int_out(15 downto 12) = "0101" or instruction_int_out(15 downto 12) = "0111" else
+	mem_write_signal <= '1' when instruction_int_out(15 downto 12) = "0101" or instruction_int_out(15 downto 12) = "0111" else
 		'0';
 	--memory address and data select pins
 	--0 - ALU1_out
 	--1 - Not yet decided 
-	mem_address_sel <= '0';
+	mem_address_sel_signal <= '0';
 	--0 - Data1
 	--1 - not yet decided
-	mem_data_sel <= '0'; 
+	mem_data_sel_signal <= '0'; 
 
 	--Carry and zero enable 
-	carry_en <= '1' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" else 
+	carry_en_signal <= '1' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" else 
 		'0';
 
-	zero_en_alu <= '1' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" else 
+	zero_en_alu_signal <= '1' when instruction_int_out(15 downto 12) = "0000" or instruction_int_out(15 downto 12) = "0001" or instruction_int_out(15 downto 12) = "0010" else 
 		'0';
 
-	zero_en_mem <= '1' when instruction_int_out(15 downto 12) = "0100" else 
+	zero_en_mem_signal <= '1' when instruction_int_out(15 downto 12) = "0100" else 
 		'0';
 
 	--Instruction values 
-	ir_8_0 <= se9_out;
-	ir_5_0 <= se6_out;
-	--RA
-	ir_11_9 <= instruction_int_out(11 downto 9); 
-	--RB 
-	ir_8_6 <= instruction_int_out(8 downto 6);
-	--RC 
-	ir_5_3 <= instruction_int_out(5 downto 3);
+	--ir_8_0 <= se9_out;
+	--ir_5_0 <= se6_out;
+	----RA
+	--ir_11_9 <= instruction_int_out(11 downto 9); 
+	----RB 
+	--ir_8_6 <= instruction_int_out(8 downto 6);
+	----RC 
+	--ir_5_3 <= instruction_int_out(5 downto 3);
 
 	--Other stuff 
-	cz <= instruction_int_out(1 downto 0);
-	opcode <= instruction_int_out(15 downto 12);
+	cz_signal <= instruction_int_out(1 downto 0);
+	opcode_signal <= instruction_int_out(15 downto 12);
 
 	--LM signals 
-	lm_detect <= '1' when instruction_int_out(15 downto 12) = "0110" else 
+	lm_detect_signal <= '1' when instruction_int_out(15 downto 12) = "0110" else 
 		0;
 
-	lw_sw_stop <= '1' when xor_reg_out = "00000000" and first_later_check_out = '1' else 
+	lw_sw_stop_signal <= '1' when xor_reg_out = "00000000" and first_later_check_out = '1' else 
 		'0';
 
 	--Right shift signals 
@@ -308,7 +341,16 @@ begin
 			se6_in => instruction_int_out(5 downto 0),
 			se6_out => se6_out
 		);
-
+	------------------------------------------------------------------------Interfacing register for SE6_out---------------------------------------------------------
+	ir_5_0_reg_out : register_16 
+		port map (
+			reg_data_in => se6_out,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => ir_5_0
+		);
+	------------------------------------------------------------------------Interfacing register for SE6_out---------------------------------------------------------
+	
 	signextend_9 : se9 
 		port map (
 			se9_in => instruction_int_out(8 downto 0),
@@ -321,6 +363,15 @@ begin
 			alu2_b => alu2_b,
 			alu2_out => alu2_out_signal
 		);
+	------------------------------------------------------------------------Interfacing register for alu2_out---------------------------------------------------------
+	alu2_out_reg : register_16 
+		port map (
+			reg_data_in => alu2_out_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => alu2_out
+		);
+	------------------------------------------------------------------------Interfacing register for alu2_out---------------------------------------------------------
 
 	de : data_extender 
 		port map (
@@ -335,6 +386,158 @@ begin
 			clk => clk,
 			reg_data_out => first_later_check_out
 		);
+
+	------------------------------------------------------------------------Interfacing register for SE9_out---------------------------------------------------------
+	ir_8_0_reg_out : register_16 
+		port map (
+			reg_data_in => se9_out,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => ir_8_0
+		);
+	------------------------------------------------------------------------Interfacing register for SE9_out---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for RC---------------------------------------------------------
+	ir_5_3_reg_out : register_3
+		port map (
+			reg_data_in => instruction_int_out(5 downto 3),
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => ir_5_3
+		);
+	------------------------------------------------------------------------Interfacing register for RC---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for RA---------------------------------------------------------
+	ir_11_9_reg_out : register_3
+		port map (
+			reg_data_in => instruction_int_out(11 downto 9),
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => ir_11_9
+		);
+	------------------------------------------------------------------------Interfacing register for RA---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for RB---------------------------------------------------------
+	ir_8_6_reg_out : register_3
+		port map (
+			reg_data_in => instruction_int_out(8 downto 6),
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => ir_8_6
+		);
+	------------------------------------------------------------------------Interfacing register for RB---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for Data Extender -----------------------------------------------------
+	de_reg_out : register_16
+		port map (
+			reg_data_in => se9_out,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => ir_9_0
+		);
+	------------------------------------------------------------------------Interfacing register for Data Extender ------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for PC_interface ---------------------------------------------------------
+	pc : register_16
+		port map (
+			reg_data_in => pc_register_int_out,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => pc_out
+		);
+	------------------------------------------------------------------------Interfacing register for PC_interface---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for ALU1 operation ---------------------------------------------------------
+	alu1op : register_2
+		port map (
+			reg_data_in => alu1_op_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => alu1_op
+		);
+	------------------------------------------------------------------------Interfacing register for ALU1 operation---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for ALU1a select ---------------------------------------------------------
+	alu1aselect : register_1
+		port map (
+			reg_data_in => alu1_a_select_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => alu1_a_select
+		);
+	------------------------------------------------------------------------Interfacing register for ALU1a select---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for ALU1b select ---------------------------------------------------------
+	alu1bselect : register_2
+		port map (
+			reg_data_in => alu1_b_select_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => alu1_b_select
+		);
+	------------------------------------------------------------------------Interfacing register for ALU1b select---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for rf write ---------------------------------------------------------
+	rfwrite : register_1
+		port map (
+			reg_data_in => rf_write_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => rf_write
+		);
+	------------------------------------------------------------------------Interfacing register for rf write---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for rf_a1_read ---------------------------------------------------------
+	rfa1read : register_1
+		port map (
+			reg_data_in => rf_a1_read_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => rf_a1_read
+		);
+	------------------------------------------------------------------------Interfacing register for rf_a1_read ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for rf_a2_read ---------------------------------------------------------
+	rfa2read : register_1
+		port map (
+			reg_data_in => rf_a2_read_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => rf_a2_read
+		);
+	------------------------------------------------------------------------Interfacing register for rf_a2_read ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for rf_a3 ---------------------------------------------------------
+	rfa3 : register_3
+		port map (
+			reg_data_in => rf_a3_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => rf_a3
+		);
+	------------------------------------------------------------------------Interfacing register for rf_a3 ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for rf_data_select ---------------------------------------------------------
+	rfdataselect : register_1
+		port map (
+			reg_data_in => rf_data_select_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => rf_data_select
+		);
+	------------------------------------------------------------------------Interfacing register for rf_data_select ---------------------------------------------------------
+
+	------------------------------------------------------------------------Interfacing register for rf_a1_read ---------------------------------------------------------
+	rfa1read : register_1
+		port map (
+			reg_data_in => rf_a1_read_signal,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => rf_a1_read
+		);
+	------------------------------------------------------------------------Interfacing register for rf_a1_read ---------------------------------------------------------
+
+
 
 end architecture ; -- arch
 
