@@ -1,0 +1,248 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/home/karman/6-staged-pipelined-processor/simulation/modelsim
+Pcomponents_init
+Z1 DPx4 ieee 15 std_logic_arith 0 22 [G314=:2zXJ`VORJe1J@Z1
+Z2 DPx4 ieee 18 std_logic_unsigned 0 22 ;eZjO2D4ZDz<]0>8AL<ne1
+Z3 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+Z4 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z5 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+Z6 w1543561198
+R0
+8/home/karman/6-staged-pipelined-processor/components_init.vhd
+F/home/karman/6-staged-pipelined-processor/components_init.vhd
+l0
+L7
+VA9WB=dbPBOYU5HoQK67J]3
+!s100 IL:ST0_J_YKL<8`PNhKK41
+Z7 OV;C;10.4d;61
+31
+Z8 !s110 1543580269
+!i10b 1
+Z9 !s108 1543580269.000000
+!s90 -reportprogress|300|-93|-work|work|/home/karman/6-staged-pipelined-processor/components_init.vhd|
+!s107 /home/karman/6-staged-pipelined-processor/components_init.vhd|
+!i113 1
+Z10 o-93 -work work
+Z11 tExplicit 1
+Eincrementer_pc
+R6
+Z12 DPx4 work 15 components_init 0 22 A9WB=dbPBOYU5HoQK67J]3
+R1
+R2
+R3
+R4
+R5
+R0
+Z13 8/home/karman/6-staged-pipelined-processor/incrementer_pc.vhd
+Z14 F/home/karman/6-staged-pipelined-processor/incrementer_pc.vhd
+l0
+L9
+VS0;AOK<LgD1X6haABZQOK0
+!s100 6dc@f0VC67H<Lm_Y5@lHG2
+R7
+31
+Z15 !s110 1543580270
+!i10b 1
+Z16 !s108 1543580270.000000
+Z17 !s90 -reportprogress|300|-93|-work|work|/home/karman/6-staged-pipelined-processor/incrementer_pc.vhd|
+Z18 !s107 /home/karman/6-staged-pipelined-processor/incrementer_pc.vhd|
+!i113 1
+R10
+R11
+Aarch
+R12
+R1
+R2
+R3
+R4
+R5
+DEx4 work 14 incrementer_pc 0 22 S0;AOK<LgD1X6haABZQOK0
+l18
+L16
+V2OXBoIm<n]1H`5jO29kYj3
+!s100 >S?QID96Z>D]dJHn1RBWf0
+R7
+31
+R15
+!i10b 1
+R16
+R17
+R18
+!i113 1
+R10
+R11
+Einstruction_fetch
+Z19 w1543580220
+R1
+R2
+R12
+R3
+R4
+R5
+R0
+Z20 8/home/karman/6-staged-pipelined-processor/instruction_fetch.vhd
+Z21 F/home/karman/6-staged-pipelined-processor/instruction_fetch.vhd
+l0
+L8
+V6FU7]d5Yk;O_<EeiKokDj0
+!s100 `hUgC0dVFbP5Z1G[J=6@a0
+R7
+31
+R15
+!i10b 1
+R16
+Z22 !s90 -reportprogress|300|-93|-work|work|/home/karman/6-staged-pipelined-processor/instruction_fetch.vhd|
+Z23 !s107 /home/karman/6-staged-pipelined-processor/instruction_fetch.vhd|
+!i113 1
+R10
+R11
+Aarch
+R1
+R2
+R12
+R3
+R4
+R5
+DEx4 work 17 instruction_fetch 0 22 6FU7]d5Yk;O_<EeiKokDj0
+l59
+L45
+VT4F^ALz3]^<QQhFJ17UET2
+!s100 X5eH6T`?KI_4SJjEVg>hV0
+R7
+31
+R15
+!i10b 1
+R16
+R22
+R23
+!i113 1
+R10
+R11
+Einstruction_memory
+R6
+Z24 DPx4 work 6 memory 0 22 iG]2U=4kWMMETV^QC;Y8f0
+R12
+R1
+R2
+R3
+R4
+R5
+R0
+Z25 8/home/karman/6-staged-pipelined-processor/instruction_memory.vhd
+Z26 F/home/karman/6-staged-pipelined-processor/instruction_memory.vhd
+l0
+L10
+V;:7Z2MRBBihJ0I=Fa;=760
+!s100 fjFegU0cFji[lb;=33glF2
+R7
+31
+R15
+!i10b 1
+R16
+Z27 !s90 -reportprogress|300|-93|-work|work|/home/karman/6-staged-pipelined-processor/instruction_memory.vhd|
+Z28 !s107 /home/karman/6-staged-pipelined-processor/instruction_memory.vhd|
+!i113 1
+R10
+R11
+Aarch
+R24
+R12
+R1
+R2
+R3
+R4
+R5
+DEx4 work 18 instruction_memory 0 22 ;:7Z2MRBBihJ0I=Fa;=760
+l24
+L20
+VP]kOO3]_D47d0T=@[CITm1
+!s100 ;4do4mS3P1dd3ZVmCWLm12
+R7
+31
+R15
+!i10b 1
+R16
+R27
+R28
+!i113 1
+R10
+R11
+Pmemory
+R1
+R2
+R3
+R4
+R5
+w1543578492
+R0
+8/home/karman/6-staged-pipelined-processor/memory.vhd
+F/home/karman/6-staged-pipelined-processor/memory.vhd
+l0
+L8
+ViG]2U=4kWMMETV^QC;Y8f0
+!s100 e0gZfPJXeKk=YC;X[USgE3
+R7
+31
+R8
+!i10b 1
+R9
+!s90 -reportprogress|300|-93|-work|work|/home/karman/6-staged-pipelined-processor/memory.vhd|
+!s107 /home/karman/6-staged-pipelined-processor/memory.vhd|
+!i113 1
+R10
+R11
+Eregister_16
+R6
+R1
+R2
+R12
+R3
+R4
+R5
+R0
+Z29 8/home/karman/6-staged-pipelined-processor/register_16.vhd
+Z30 F/home/karman/6-staged-pipelined-processor/register_16.vhd
+l0
+L8
+VJO2O4nbGH1eY2e?P4MIgB3
+!s100 j`foUcB50g[4^IjldUmGU2
+R7
+31
+R15
+!i10b 1
+R9
+Z31 !s90 -reportprogress|300|-93|-work|work|/home/karman/6-staged-pipelined-processor/register_16.vhd|
+Z32 !s107 /home/karman/6-staged-pipelined-processor/register_16.vhd|
+!i113 1
+R10
+R11
+Aarch
+R1
+R2
+R12
+R3
+R4
+R5
+DEx4 work 11 register_16 0 22 JO2O4nbGH1eY2e?P4MIgB3
+l18
+L17
+Vdk655g=dW0a_NF7kE8G_W1
+!s100 a6FBk4<O5iImX6RE[a7O:0
+R7
+31
+R15
+!i10b 1
+R9
+R31
+R32
+!i113 1
+R10
+R11

@@ -1,0 +1,16 @@
+Fitter Status : Successful - Fri Nov 30 17:47:24 2018
+Quartus Prime Version : 16.0.0 Build 211 04/27/2016 SJ Lite Edition
+Revision Name : instruction_fetch
+Top-level Entity Name : instruction_fetch
+Family : Cyclone IV E
+Device : EP4CE6F17C6
+Timing Models : Final
+Total logic elements : 65 / 6,272 ( 1 % )
+    Total combinational functions : 49 / 6,272 ( < 1 % )
+    Dedicated logic registers : 48 / 6,272 ( < 1 % )
+Total registers : 48
+Total pins : 86 / 180 ( 48 % )
+Total virtual pins : 0
+Total memory bits : 2,048 / 276,480 ( < 1 % )
+Embedded Multiplier 9-bit elements : 0 / 30 ( 0 % )
+Total PLLs : 0 / 2 ( 0 % )

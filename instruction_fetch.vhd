@@ -50,7 +50,6 @@ architecture arch of instruction_fetch is
 
 	--instruction register in and out signals 
 	signal instruction_reg_in : std_logic_vector(15 downto 0);
-	signal instruction_reg_out : std_logic_vector(15 downto 0);
 
 	--incrementer pc out 
 	signal incrementer_pc_out : std_logic_vector(15 downto 0);
@@ -61,7 +60,7 @@ begin
 	PC : process(clk)
 	begin
 		if reset = '1' then
-			pc_register_out <= "0000000000000000";
+			pc_register_in <= "0000000000000000";
 
 		elsif (clk'event and clk = '1') then 
 			if pc_select = "00" then 
