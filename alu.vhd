@@ -6,7 +6,7 @@ use ieee.std_logic_unsigned.all;
 use ieee.numeric_std.all;
 use work.components_init.all;
 
-entity alu2 is
+entity alu1 is
   port (
 	
 	alu_a : in std_logic_vector(15 downto 0);
@@ -21,9 +21,9 @@ entity alu2 is
 	carry : out std_logic;
 	zero : out std_logic
   ) ;
-end entity ; -- ALU2
+end entity ; -- ALU1
 
-architecture alu of alu2 is
+architecture alu of alu1 is
 
 	signal negative_a : std_logic_vector(15 downto 0);
 	signal negative_b : std_logic_vector(15 downto 0);
