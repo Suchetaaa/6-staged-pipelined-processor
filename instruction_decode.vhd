@@ -10,7 +10,7 @@ entity instruction_decode is
 	clk : in std_logic;
 
 	--PC (address of the present instruction given by IF stage)
-	pc_register_int : in std_logic_vector(15 downto 0);
+	pc_register_int_out : in std_logic_vector(15 downto 0);
 
 	--instruction 
 	instruction_int_out : in std_logic_vector(15 downto 0);
@@ -227,7 +227,7 @@ begin
 			data_extender_out => data_extender_out
 		);
 
-	
+
 
 
 
