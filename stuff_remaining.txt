@@ -1,0 +1,2 @@
+Include a stall after every load 
+Hazards - Dependencies 

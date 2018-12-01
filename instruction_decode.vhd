@@ -163,6 +163,9 @@ begin
 
 	alu2_a <= pc_register_int_out;
 
+	alu2_b_select_signal <= '1' when instruction_int_out(15 downto 12) = "1000" else 
+		'0';
+
 	alu2_b <= se6_out when alu2_b_select_signal = '0' else 
 		se9_out when alu2_b_select_signal = '1';
 
