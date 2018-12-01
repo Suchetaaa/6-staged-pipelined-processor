@@ -4,16 +4,17 @@ library std;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.components_init.all;
+
 entity operand_read is
   port(
     -- clock and reset
     clk : in std_logic;
     reset : in std_logic;
     ---------------------- From ID Stage -----------------------------
+    pc_out : in std_logic_vector(15 downto 0);
     alu1_op : in std_logic_vector(1 downto 0);
     alu1_a_select : in std_logic;
     alu1_b_select : in std_logic_vector(1 downto 0);
-    alu2_b_select : in std_logic_vector(1 downto 0);
     rf_write : in std_logic;
     rf_a1_read : in std_logic;
     rf_a2_read : in std_logic;
@@ -36,24 +37,13 @@ entity operand_read is
     opcode : in std_logic_vector(3 downto 0); --
     lm_detect : in std_logic; --LM/SM signals 
     sm_detect : in std_logic;
-    lw_stop : in std_logic;
-    sw_stop : in std_logic;
+    lw_sw_stop : in std_logic;
     first_lw_sw : in std_logic;
     right_shift_lm_sm_bit : in std_logic;
     lm_sm_reg_write : in std_logic_vector(2 downto 0);
+    lm_sm_write_load : out std_logic;
     alu2_out : in std_logic_vector(15 downto 0); --alu2_out to IF stage
-    ------------------ From Execute Stage ----------------------------------
-    -- the address of the write back reg (and if write back)
-    rf_a3_ex_in : in std_logic_vector(2 downto 0);
-    rf_write_ex_in : in std_logic;
-    valid_bit_ex_in : in std_logic;
-    if_write_back_from_alu : in std_logic;
-    -- the carry and zero info, if editing them and the like 
-    ------------------ From Memory Access Stage ---------------------------------
-    -- the address of the write back reg (and if write back)
-    rf_a3_mem_in : in std_logic_vector(2 downto 0);
-    rf_write_mem_in : in std_logic;
-    valid_bit_mem_in : in std_logic;
+    
     ------------------ From Write Back Stage -----------------------------
     -- the address of the write back reg (and if write back)
     rf_a3_wb_in : in std_logic_vector(2 downto 0);
@@ -66,12 +56,12 @@ entity operand_read is
     data_carry : out std_logic;
     data_zero : out std_logic;
     -- signals to forward
-    rf_write_ex : out std_logic;
-    rf_a3_ex : out std_logic_vector(2 downto 0);
+    pc_out_ex : out std_logic_vector(15 downto 0);
     alu1_op_ex : out std_logic_vector(1 downto 0);
     alu1_a_select_ex : out std_logic;
     alu1_b_select_ex : out std_logic_vector(1 downto 0);
-    alu2_b_select_ex : out std_logic_vector(1 downto 0);
+    rf_write_ex : out std_logic;
+    rf_a3_ex : out std_logic_vector(2 downto 0);   
     rf_data_select_ex : out std_logic_vector(2 downto 0);
     mem_write_ex : out std_logic;
     mem_read_ex : out std_logic;
@@ -87,20 +77,23 @@ entity operand_read is
     opcode_ex : out std_logic_vector(3 downto 0); --
     lm_detect_ex : out std_logic; --LM/SM signals 
     sm_detect_ex : out std_logic;
-    lw_stop_ex : out std_logic;
-    sw_stop_ex : out std_logic;
+    lw_sw_stop_ex : out std_logic;
     first_lw_sw_ex : out std_logic;
     right_shift_lm_sm_bit_ex : out std_logic;
     lm_sm_reg_write_ex : out std_logic_vector(2 downto 0);
+    lm_sm_write_load_ex : out std_logic;
     alu2_out_ex : out std_logic_vector(15 downto 0) --alu2_out to IF stage
   );
+
 end entity;
 architecture op_read of operand_read is
   signal ra_read_temp : std_logic_vector(15 downto 0);
   signal rb_read_temp : std_logic_vector(15 downto 0);
   signal carry_temp : std_logic;
   signal zero_temp : std_logic;
+
 begin
+
   reg_access : reg_file 
     port map(
       --Clock 
@@ -158,19 +151,12 @@ begin
       reg_data_out => data_zero
     );
     ------------ Interfacing Register for ID/Ex stage ------------------------
-    rf_write_ex_reg_out : register_1
+    pc_out_ex_reg_out : register_16
       port map(
-        reg_data_in => rf_write,
+        reg_data_in => pc_out,
         reg_enable => ,
         clk => clk,
-        reg_data_out => rf_write_ex
-      );
-    rf_a3_ex_reg_out : register_3
-      port map(
-        reg_data_in => rf_a3,
-        reg_enable => ,
-        clk => clk,
-        reg_data_out => rf_a3_ex
+        reg_data_out => pc_out_ex
       );
     alu1_op_ex_reg_out : register_2
       port map(
@@ -193,12 +179,19 @@ begin
         clk => clk,
         reg_data_out => alu1_b_select_ex
       );
-    alu2_b_select_ex_reg_out : register_2
+    rf_write_ex_reg_out : register_1
       port map(
-        reg_data_in => alu2_b_select,
+        reg_data_in => rf_write,
         reg_enable => ,
         clk => clk,
-        reg_data_out => alu2_b_select_ex
+        reg_data_out => rf_write_ex
+      );
+    rf_a3_ex_reg_out : register_3
+      port map(
+        reg_data_in => rf_a3,
+        reg_enable => ,
+        clk => clk,
+        reg_data_out => rf_a3_ex
       );
     rf_data_select_ex_reg_out : register_3
       port map(
@@ -291,13 +284,62 @@ begin
         clk => clk,
         reg_data_out => opcode_ex
       );
-    lm_detect_ex_reg_out : out std_logic; --LM/SM signals 
-    sm_detect_ex_reg_out : out std_logic;
-    lw_stop_ex_reg_out : out std_logic;
-    sw_stop_ex_reg_out : out std_logic;
-    first_lw_sw_ex_reg_out : out std_logic;
-    right_shift_lm_sm_bit_ex_reg_out : out std_logic;
-    lm_sm_reg_write_ex_reg_out : out std_logic_vector(2 downto 0);
+    lm_detect_ex_reg_out : register_1
+      port map (
+        reg_data_in => lm_detect,
+        reg_enable => ,
+        clk => clk,
+        reg_data_out => lm_detect_ex
+      );
+
+    sm_detect_ex_reg_out : register_1
+      port map (
+        reg_data_in => sm_detect,
+        reg_enable => ,
+        clk => clk,
+        reg_data_out => sm_detect_ex
+      );
+
+    lw_sw_stop_ex_reg_out : register_1
+      port map (
+        reg_data_in => lw_sw_stop,
+        reg_enable => ,
+        clk => clk,
+        reg_data_out => lw_sw_stop_ex
+      );
+
+    first_lw_sw_ex_reg_out : register_1
+      port map (
+        reg_data_in => first_lw_sw,
+        reg_enable => ,
+        clk => clk,
+        reg_data_out => first_lw_sw_ex
+      );
+
+    right_shift_lm_sm_bit_ex_reg_out : register_1
+      port map (
+        reg_data_in => right_shift_lm_sm_bit,
+        reg_enable => ,
+        clk => clk,
+        reg_data_out => right_shift_lm_sm_bit_ex
+      );
+
+    lm_sm_reg_write_ex_reg_out : register_3
+      port map (
+        reg_data_in => lm_sm_reg_write,
+        reg_enable => ,
+        clk => clk,
+        reg_data_out => lm_sm_reg_write_ex
+      );
+
+    lm_sm_write_load_ex_reg_out : register_1
+      port map (
+        reg_data_in => lm_sm_write_load,
+        reg_enable => ,
+        clk => clk,
+        reg_data_out => lm_sm_write_load_ex
+      );
+
     alu2_out_ex_reg_out : register_16 --alu2_out to IF stage
       port map(
         reg_data_in => alu2_out,
