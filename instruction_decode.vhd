@@ -41,6 +41,10 @@ entity instruction_decode is
 	--address of the register to which writing is taking place
 	rf_a3 : out std_logic_vector(2 downto 0);
 	--selection signals for data which is to be written back to RF 
+	--000 - ALU_out 
+	--001 - PC 
+	--010 - data extender out 
+	--011 - memory out 
 	rf_data_select : out std_logic_vector(2 downto 0);
 
 	--Memory 
