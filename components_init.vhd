@@ -157,6 +157,17 @@ package components_init is
 			pc_register_int_out : out std_logic_vector(15 downto 0)
 		);
 	end component instruction_fetch;
+
+	component alu1 is
+		port (
+			alu_a : in std_logic_vector(15 downto 0);
+			alu_b : in std_logic_vector(15 downto 0);
+			alu_op : in std_logic_vector(1 downto 0);
+			alu_out : out std_logic_vector(15 downto 0);
+			carry : out std_logic;
+			zero : out std_logic
+  	) ;
+  end component alu1;
 	
 end components_init;
 	

@@ -56,6 +56,8 @@ architecture arch of execute is
   signal alu1_out_temp : std_logic_vector(15 downto 0);
   signal c_out : std_logic;
   signal z_out : std_logic;
+  signal cond_carry : std_logic;
+  signal cond_zero : std_logic;
 begin
   logic_unit : alu1
     port map (
@@ -85,11 +87,32 @@ begin
     end if;
   end process ; -- muxing
 
-  carry_zero : process(alu1_c_op, alu1_z_op, carry_en_ex, zero_en_alu_ex)
+  carry_zero : process(opcode_ex, cz_ex, alu1_c_op, alu1_z_op, carry_en_ex, zero_en_alu_ex)
   begin
     if carry_en_ex = '1' then
-      c_out <= 
+      c_out <= alu1_c_op;
+    else
+      c_out <= '0';
     end if;
+
+    if zero_en_alu_ex = '1' then
+      z_out <= alu1_z_op;
+    else 
+      z_out <= '0';
+    end if;
+
+    if ((opcode_ex = "0000" or opcode_ex = "0010") and (cz_ex = "10")) then
+      cond_carry = 1;
+    else
+      cond_carry = 0;
+    end if;
+
+    if ((opcode_ex = "0000" or opcode_ex = "0010") and (cz_ex = "01")) then
+      cond_zero = 1;
+    else
+      cond_zero = 0;
+    end if;
+
   end process ; -- carry_zero
 
   -- No hazard
