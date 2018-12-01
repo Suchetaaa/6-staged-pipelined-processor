@@ -51,8 +51,8 @@ entity operand_read is
     valid_bit_wb_in : in std_logic;
     --------------------- Outputs -----------------------------------------
     -- the register values read 
-    data_ra : out std_logic_vector(15 downto 0)
-    data_rb : out std_logic_vector(15 downto 0)
+    data_ra : out std_logic_vector(15 downto 0);
+    data_rb : out std_logic_vector(15 downto 0);
     data_carry : out std_logic;
     data_zero : out std_logic;
     -- signals to forward
