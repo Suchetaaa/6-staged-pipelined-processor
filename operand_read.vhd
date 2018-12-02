@@ -90,7 +90,9 @@ entity operand_read is
     right_shift_lm_sm_bit_ex : out std_logic;
     lm_sm_reg_write_ex : out std_logic_vector(2 downto 0);
     lm_sm_write_load_ex : out std_logic;
-    alu2_out_ex : out std_logic_vector(15 downto 0) --alu2_out to IF stage
+    alu2_out_ex : out std_logic_vector(15 downto 0); --alu2_out to IF stage
+    rf_carry_reg_out : out std_logic;
+    rf_zero_reg_out : out std_logic
   );
 
 end entity;
@@ -130,6 +132,10 @@ begin
       carry_out => carry_temp,
       zero_out => zero_temp
     ) ;
+
+  rf_carry_reg_out <= carry_temp;
+  rf_zero_reg_out <= zero_temp;
+
   rf_ra_reg_out : register_16 
      port map(
       reg_data_in => ra_read_temp,

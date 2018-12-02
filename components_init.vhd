@@ -303,7 +303,9 @@ package components_init is
 	    right_shift_lm_sm_bit_ex : out std_logic;
 	    lm_sm_reg_write_ex : out std_logic_vector(2 downto 0);
 	    lm_sm_write_load_ex : out std_logic;
-	    alu2_out_ex : out std_logic_vector(15 downto 0) --alu2_out to IF stage
+	    alu2_out_ex : out std_logic_vector(15 downto 0); --alu2_out to IF stage
+	    rf_carry_reg_out : out std_logic;
+  		rf_zero_reg_out : out std_logic
 	  );
 	end component;
 	
@@ -367,8 +369,8 @@ package components_init is
 	    carry_en_mem : out std_logic;
 	    zero_en_alu_mem : out std_logic;
 	    zero_en_mem_mem : out std_logic;
-	    --cz_mem : out std_logic_vector(1 downto 0);
-	    --opcode_mem : out std_logic_vector(3 downto 0);
+	    cz_mem : out std_logic_vector(1 downto 0);
+	    opcode_mem : out std_logic_vector(3 downto 0);
 	    lm_detect_mem : out std_logic; --LM/SM signals 
 	    sm_detect_mem : out std_logic;
 	    lw_sw_stop_mem : out std_logic;
@@ -388,8 +390,8 @@ package components_init is
 	    alu1_out_mem : in std_logic_vector(15 downto 0);
 	    alu1_carry_mem : in std_logic;
 	    alu1_zero_mem : in std_logic;	
-		 cond_carry_mem : in std_logic;
-		 cond_zero_mem : in std_logic;
+		  cond_carry_mem : in std_logic;
+		  cond_zero_mem : in std_logic;
 	    data_ra_mem : in std_logic_vector(15 downto 0);
 	    data_rb_mem : in std_logic_vector(15 downto 0);
 	    pc_out_mem : in std_logic_vector(15 downto 0);
@@ -406,6 +408,8 @@ package components_init is
 	    carry_en_mem : in std_logic;
 	    zero_en_alu_mem : in std_logic;
 	    zero_en_mem_mem : in std_logic;
+	    cz_mem : in std_logic_vector(1 downto 0);
+	    opcode_mem : in std_logic_vector(3 downto 0);
 	    lm_detect_mem : in std_logic;
 	    sm_detect_mem : in std_logic;
 	    lw_sw_stop_mem : in std_logic;
@@ -413,7 +417,7 @@ package components_init is
 	    right_shift_lm_sm_bit_mem : std_logic;
 	    lm_sm_reg_write_mem : in std_logic_vector(2 downto 0);
 	    lm_sm_write_load_mem : in std_logic;
-			-- alu2_out_mem : in std_logic_vector(15 downto 0);
+			alu2_out_mem : in std_logic_vector(15 downto 0);
 	    -----Outputs----
 	    --From memory access stage
 	    mem_data_out : out std_logic_vector(15 downto 0);
@@ -421,8 +425,8 @@ package components_init is
 	    alu1_out_wb : out std_logic_vector(15 downto 0);
 	    alu1_carry_wb : out std_logic;
 	    alu1_zero_wb : out std_logic;
-		 cond_carry_wb : out std_logic;
-		 cond_zero_wb : out std_logic;
+		  cond_carry_wb : out std_logic;
+		  cond_zero_wb : out std_logic;
 	    --Carry forward signals 
 	    data_ra_wb : out std_logic_vector(15 downto 0);
 	    data_rb_wb : out std_logic_vector(15 downto 0);
@@ -446,9 +450,66 @@ package components_init is
 	    first_lw_sw_wb : out std_logic;
 	    right_shift_lm_sm_bit_wb : out std_logic;
 	    lm_sm_reg_write_wb : out std_logic_vector(2 downto 0);
-	    lm_sm_write_load_wb : out std_logic
-			-- alu2_out_wb : out std_logic_vector(15 downto 0)
+	    lm_sm_write_load_wb : out std_logic;
+			alu2_out_wb : out std_logic_vector(15 downto 0)
 	  ) ;
+	end component;
+
+	component write_back is
+  	port (
+			clk : in std_logic;
+			reset: in std_logic;
+		    
+		  mem_data_out : in std_logic_vector(15 downto 0);
+		  --from alu-out
+		  alu1_out_wb : in std_logic_vector(15 downto 0);
+		  alu1_carry_wb : in std_logic;
+		  alu1_zero_wb : in std_logic;
+		  cond_carry_wb : in std_logic;
+		  cond_zero_wb : in std_logic;
+
+		  --Carry forward signals 
+		  data_ra_wb : in std_logic_vector(15 downto 0);
+		  data_rb_wb : in std_logic_vector(15 downto 0);
+		  pc_out_wb : in std_logic_vector(15 downto 0);
+		  rf_write_wb : std_logic;
+		  rf_a3_wb : in std_logic_vector(2 downto 0);
+		  rf_data_select_wb : in std_logic_vector(2 downto 0);
+		  --mem_write_wb : in std_logic;
+		  --mem_read_wb : in std_logic;
+		  --mem_data_sel_wb : in std_logic;
+		  --mem_address_sel_wb : in std_logic;
+		  --ir_5_0_wb : in std_logic_vector(15 downto 0);
+		  --ir_8_0_wb : in std_logic_vector(15 downto 0);
+		  data_extender_out_wb : in std_logic_vector(15 downto 0);
+		  carry_en_wb : in std_logic;
+		  zero_en_alu_wb : in std_logic;
+		  zero_en_mem_wb : in std_logic;
+		  cz_wb : in std_logic_vector(1 downto 0);
+		  opcode_wb : in std_logic_vector(3 downto 0);
+		  lm_detect_wb : in std_logic;
+		  sm_detect_wb : in std_logic;
+		  lw_sw_stop_wb : in std_logic;
+		  first_lw_sw_wb : in std_logic;
+		  right_shift_lm_sm_bit_wb : std_logic;
+		  lm_sm_reg_wb : in std_logic_vector(2 downto 0);
+		  lm_sm_write_load_wb : in std_logic;
+		  alu2_out_wb : in std_logic_vector(15 downto 0);
+		  --Input signals from RF 
+		  rf_carry_reg_out : in std_logic;
+		  rf_zero_reg_out : in std_logic;
+
+		  --Output signals 
+		  --Going to RF or RR block 
+		  --All these signals should NOT come out of register but as normal signals 
+		  rf_write_final : out std_logic;
+		  carry_en_final : out std_logic;
+		  zero_en_final : out std_logic;
+		  carry_val_final : out std_logic;
+		  zero_val_final : out std_logic;
+		  rf_data_final : out std_logic_vector(15 downto 0);
+		  rf_a3_final : out std_logic_vector(2 downto 0)
+		);
 	end component;
 	
 end components_init;

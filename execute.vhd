@@ -69,8 +69,8 @@ entity execute is
     carry_en_mem : out std_logic;
     zero_en_alu_mem : out std_logic;
     zero_en_mem_mem : out std_logic;
-    --cz_mem : out std_logic_vector(1 downto 0);
-    --opcode_mem : out std_logic_vector(3 downto 0);
+    cz_mem : out std_logic_vector(1 downto 0);
+    opcode_mem : out std_logic_vector(3 downto 0);
     lm_detect_mem : out std_logic; --LM/SM signals 
     sm_detect_mem : out std_logic;
     lw_sw_stop_mem : out std_logic;
@@ -323,6 +323,22 @@ begin
 			clk => clk,
 			reg_data_out => zero_en_mem_mem
 	);
+
+  cz_mem_reg_out : register_2
+    port map(
+      reg_data_in => cz_ex,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => cz_mem
+    );
+
+  opcode_mem_reg_out : register_4
+    port map(
+      reg_data_in => opcode_ex,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => opcode_mem
+    );
 
 	lm_detect_reg_out : register_1
 		port map (

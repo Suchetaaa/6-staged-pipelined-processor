@@ -6,6 +6,7 @@ use ieee.numeric_std.all;
 use ieee.std_logic_unsigned.all;
 use work.components_init.all;
 use work.memcomp.all;
+
 entity mem_access_stage is
   port (
     clk : in std_logic;
@@ -33,6 +34,8 @@ entity mem_access_stage is
     carry_en_mem : in std_logic;
     zero_en_alu_mem : in std_logic;
     zero_en_mem_mem : in std_logic;
+    cz_mem : in std_logic_vector(1 downto 0);
+    opcode_mem : in std_logic_vector(3 downto 0);
     lm_detect_mem : in std_logic;
     sm_detect_mem : in std_logic;
     lw_sw_stop_mem : in std_logic;
@@ -40,7 +43,7 @@ entity mem_access_stage is
     right_shift_lm_sm_bit_mem : std_logic;
     lm_sm_reg_write_mem : in std_logic_vector(2 downto 0);
     lm_sm_write_load_mem : in std_logic;
---    alu2_out_mem : in std_logic_vector(15 downto 0);
+    alu2_out_mem : in std_logic_vector(15 downto 0);
 
     -----Outputs----
     --From memory access stage
@@ -69,14 +72,16 @@ entity mem_access_stage is
     carry_en_wb : out std_logic;
     zero_en_alu_wb : out std_logic;
     zero_en_mem_wb : out std_logic;
+    cz_wb : out std_logic_vector(1 downto 0);
+    opcode_wb : out std_logic_vector(3 downto 0);
     lm_detect_wb : out std_logic;
     sm_detect_wb : out std_logic;
     lw_sw_stop_wb : out std_logic;
     first_lw_sw_wb : out std_logic;
     right_shift_lm_sm_bit_wb : out std_logic;
     lm_sm_reg_write_wb : out std_logic_vector(2 downto 0);
-    lm_sm_write_load_wb : out std_logic
---    alu2_out_wb : out std_logic_vector(15 downto 0)
+    lm_sm_write_load_wb : out std_logic;
+    alu2_out_wb : out std_logic_vector(15 downto 0)
 
   ) ;
 end entity ; -- instruction_memory
@@ -278,6 +283,22 @@ rf_data_select_reg_out : register_3
       reg_data_out => zero_en_mem_wb
   );
 
+  cz_mem_reg_out : register_2 
+    port map(
+      reg_data_in => cz_mem,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => cz_wb
+    );
+
+  opcode_mem_reg_out : register_4
+    port map(
+      reg_data_in => opcode_mem,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => opcode_wb
+    );
+
   lm_detect_reg_out : register_1
     port map (
       reg_data_in => lm_detect_mem,
@@ -334,13 +355,13 @@ rf_data_select_reg_out : register_3
       reg_data_out => lm_sm_write_load_wb
   );
 
---  alu2_out_reg_out : register_16
---    port map (
---      reg_data_in => alu2_out_mem,
---      reg_enable => '1',
---      clk => clk,
---      reg_data_out => alu2_out_wb
---  );
+  alu2_out_reg_out : register_16
+    port map (
+      reg_data_in => alu2_out_mem,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => alu2_out_wb
+  );
 
 
 

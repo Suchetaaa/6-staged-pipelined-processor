@@ -10,55 +10,55 @@ entity write_back is
 	clk : in std_logic;
 	reset: in std_logic;
     
-    mem_data_out : in std_logic_vector(15 downto 0);
-    --from alu-out
-    alu1_out_wb : in std_logic_vector(15 downto 0);
-    alu1_carry_wb : in std_logic;
-    alu1_zero_wb : in std_logic;
-    --cond_carry_wb : in std_logic;
-    --cond_zero_wb : in std_logic;
+  mem_data_out : in std_logic_vector(15 downto 0);
+  --from alu-out
+  alu1_out_wb : in std_logic_vector(15 downto 0);
+  alu1_carry_wb : in std_logic;
+  alu1_zero_wb : in std_logic;
+  cond_carry_wb : in std_logic;
+  cond_zero_wb : in std_logic;
 
-    --Carry forward signals 
-    data_ra_wb : in std_logic_vector(15 downto 0);
-    data_rb_wb : in std_logic_vector(15 downto 0);
-    pc_out_wb : in std_logic_vector(15 downto 0);
-    rf_write_wb : std_logic;
-    rf_a3_wb : in std_logic_vector(2 downto 0);
-    rf_data_select_wb : in std_logic_vector(2 downto 0);
-    --mem_write_wb : in std_logic;
-    --mem_read_wb : in std_logic;
-    --mem_data_sel_wb : in std_logic;
-    --mem_address_sel_wb : in std_logic;
-    --ir_5_0_wb : in std_logic_vector(15 downto 0);
-    --ir_8_0_wb : in std_logic_vector(15 downto 0);
-    data_extender_out_wb : in std_logic_vector(15 downto 0);
-    carry_en_wb : in std_logic;
-    zero_en_alu_wb : in std_logic;
-    zero_en_mem_wb : in std_logic;
-    cz_wb : in std_logic_vector(1 downto 0);
-    opcode_wb : in std_logic_vector(3 downto 0);
-    lm_detect_wb : in std_logic;
-    sm_detect_wb : in std_logic;
-    lw_sw_stop_wb : in std_logic;
-    first_lw_sw_wb : in std_logic;
-    right_shift_lm_sm_bit_wb : std_logic;
-    lm_sm_reg_wb : in std_logic_vector(2 downto 0);
-    lm_sm_write_load_wb : in std_logic;
-    alu2_out_wb : in std_logic_vector(15 downto 0);
-    --Input signals from RF 
-    rf_carry_reg_out : in std_logic;
-    rf_zero_reg_out : in std_logic;
+  --Carry forward signals 
+  data_ra_wb : in std_logic_vector(15 downto 0);
+  data_rb_wb : in std_logic_vector(15 downto 0);
+  pc_out_wb : in std_logic_vector(15 downto 0);
+  rf_write_wb : std_logic;
+  rf_a3_wb : in std_logic_vector(2 downto 0);
+  rf_data_select_wb : in std_logic_vector(2 downto 0);
+  --mem_write_wb : in std_logic;
+  --mem_read_wb : in std_logic;
+  --mem_data_sel_wb : in std_logic;
+  --mem_address_sel_wb : in std_logic;
+  --ir_5_0_wb : in std_logic_vector(15 downto 0);
+  --ir_8_0_wb : in std_logic_vector(15 downto 0);
+  data_extender_out_wb : in std_logic_vector(15 downto 0);
+  carry_en_wb : in std_logic;
+  zero_en_alu_wb : in std_logic;
+  zero_en_mem_wb : in std_logic;
+  cz_wb : in std_logic_vector(1 downto 0);
+  opcode_wb : in std_logic_vector(3 downto 0);
+  lm_detect_wb : in std_logic;
+  sm_detect_wb : in std_logic;
+  lw_sw_stop_wb : in std_logic;
+  first_lw_sw_wb : in std_logic;
+  right_shift_lm_sm_bit_wb : std_logic;
+  lm_sm_reg_wb : in std_logic_vector(2 downto 0);
+  lm_sm_write_load_wb : in std_logic;
+  alu2_out_wb : in std_logic_vector(15 downto 0);
+  --Input signals from RF 
+  rf_carry_reg_out : in std_logic;
+  rf_zero_reg_out : in std_logic;
 
-    --Output signals 
-    --Going to RF or RR block 
-    --All these signals should NOT come out of register but as normal signals 
-    rf_write_final : out std_logic;
-    carry_en_final : out std_logic;
-    zero_en_final : out std_logic;
-    carry_val_final : out std_logic;
-    zero_val_final : out std_logic;
-    rf_data_final : out std_logic_vector(15 downto 0);
-    rf_a3_final : out std_logic_vector(2 downto 0)
+  --Output signals 
+  --Going to RF or RR block 
+  --All these signals should NOT come out of register but as normal signals 
+  rf_write_final : out std_logic;
+  carry_en_final : out std_logic;
+  zero_en_final : out std_logic;
+  carry_val_final : out std_logic;
+  zero_val_final : out std_logic;
+  rf_data_final : out std_logic_vector(15 downto 0);
+  rf_a3_final : out std_logic_vector(2 downto 0)
 
   ) ;
 end entity ; -- instruction_fetch
