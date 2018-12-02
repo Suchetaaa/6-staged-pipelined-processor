@@ -218,6 +218,81 @@ package components_init is
 	  ) ;
 	 end component instruction_decode;
 	
+	component execute is 
+	  port(
+	    clk : in std_logic;
+	    reset : in std_logic;
+
+	    -- the register values read 
+	    data_ra : in std_logic_vector(15 downto 0);
+	    data_rb : in std_logic_vector(15 downto 0);
+	    data_carry : in std_logic;
+	    data_zero : in std_logic;
+	    --signals coming from earlier stages 
+	    pc_out_ex : in std_logic_vector(15 downto 0);
+	    alu1_op_ex : in std_logic_vector(1 downto 0);
+	    alu1_a_select_ex : in std_logic;
+	    alu1_b_select_ex : in std_logic_vector(1 downto 0);
+	    rf_write_ex : in std_logic;
+	    rf_a3_ex : in std_logic_vector(2 downto 0);
+	    rf_data_select_ex : in std_logic_vector(2 downto 0);
+	    mem_write_ex : in std_logic;
+	    mem_read_ex : in std_logic;
+	    mem_data_sel_ex : in std_logic;
+	    mem_address_sel_ex : in std_logic;
+	    ir_5_0_ex : in std_logic_vector(15 downto 0); -- Sign extended 
+	    ir_8_0_ex : in std_logic_vector(15 downto 0); -- Sign extended  
+	    data_extender_out_ex : in std_logic_vector(15 downto 0); --Data for LHI
+	    carry_en_ex : in std_logic;     --Carry and zero enables
+	    zero_en_alu_ex : in std_logic;
+	    zero_en_mem_ex : in std_logic;
+	    cz_ex : in std_logic_vector(1 downto 0); -- 
+	    opcode_ex : in std_logic_vector(3 downto 0); --
+	    lm_detect_ex : in std_logic; --LM/SM signals 
+	    sm_detect_ex : in std_logic;
+	    lw_sw_stop_ex : in std_logic;
+	    first_lw_sw_ex : in std_logic;
+	    right_shift_lm_sm_bit_ex : in std_logic;
+	    lm_sm_reg_write_ex : in std_logic_vector(2 downto 0);
+	    lm_sm_write_load_ex : in std_logic;
+	    alu2_out_ex : in std_logic_vector(15 downto 0); --alu2_in to IF stage
+
+	    --Output signals from this stage
+	    alu1_out_mem : out std_logic_vector(15 downto 0); -- output of ALU
+	    alu1_carry_mem : out std_logic;
+	    alu1_zero_mem : out std_logic;
+	    cond_carry_mem : out std_logic;
+	    cond_zero_mem : out std_logic;
+
+	    --Output signals rom older stages 
+	    data_ra_mem : out std_logic_vector(15 downto 0);
+	    data_rb_mem : out std_logic_vector(15 downto 0);
+	    pc_out_mem : out std_logic_vector(15 downto 0);
+	    rf_write_mem : out std_logic;
+	    rf_a3_mem : out std_logic_vector(2 downto 0);
+	    rf_data_select_mem : out std_logic_vector(2 downto 0);
+	    mem_write_mem : out std_logic;
+	    mem_read_mem : out std_logic;
+	    mem_data_sel_mem : out std_logic;
+	    mem_address_sel_mem : out std_logic;
+	    ir_5_0_mem : out std_logic_vector(15 downto 0);
+	    ir_8_0_mem : out std_logic_vector(15 downto 0);
+	    data_extender_out_mem : out std_logic_vector(15 downto 0);
+	    carry_en_mem : out std_logic;
+	    zero_en_alu_mem : out std_logic;
+	    zero_en_mem_mem : out std_logic;
+	    --cz_mem : out std_logic_vector(1 downto 0);
+	    --opcode_mem : out std_logic_vector(3 downto 0);
+	    lm_detect_mem : out std_logic; --LM/SM signals 
+	    sm_detect_mem : out std_logic;
+	    lw_sw_stop_mem : out std_logic;
+	    first_lw_sw_mem : out std_logic;
+	    right_shift_lm_sm_bit_mem : out std_logic;
+	    lm_sm_reg_write_mem : out std_logic_vector(2 downto 0);
+	    lm_sm_write_load_mem : out std_logic;
+	    alu2_out_mem : out std_logic_vector(15 downto 0) --alu2_in to IF stage
+	  );	
+	end component;
 end components_init;
 	
 	
