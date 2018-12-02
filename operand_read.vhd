@@ -46,9 +46,17 @@ entity operand_read is
     
     ------------------ From Write Back Stage -----------------------------
     -- the address of the write back reg (and if write back)
-    rf_a3_wb_in : in std_logic_vector(2 downto 0);
-    rf_write_wb_in : in std_logic;
-    valid_bit_wb_in : in std_logic;
+    rf_write_final : in std_logic;
+    carry_en_final : in std_logic;
+    zero_en_final : in std_logic;
+    carry_val_final : in std_logic;
+    zero_val_final : in std_logic;
+    rf_data_final : in std_logic_vector(15 downto 0);
+    rf_a3_final : in std_logic_vector(2 downto 0);
+
+    --rf_a3_wb_in : in std_logic_vector(2 downto 0);
+    --rf_write_wb_in : in std_logic;
+    --valid_bit_wb_in : in std_logic;
     --------------------- Outputs -----------------------------------------
     -- the register values read 
     data_ra : out std_logic_vector(15 downto 0);
@@ -105,18 +113,18 @@ begin
       reg_file_read_rb => rf_a2_read,
       carry_read => '1',
       zero_read => '1',
-      reg_file_write => , -- from WB stage
-      carry_write => , -- from WB stage
-      zero_write => , -- from WB stage
+      reg_file_write => rf_write_final, -- from WB stage
+      carry_write => carry_en_final, -- from WB stage
+      zero_write => zero_en_final, -- from WB stage
       address_1 => ir_11_9,
       --Address - 2 signal value 
       address_2 => ir_8_6,
       --Address - 3 signal value for writing to A3
-      address_3 => , -- from WB stage
+      address_3 => rf_a3_final, -- from WB stage
       --Data in and out signal values 
-      data_in : in std_logic_vector(15 downto 0);  -- from WB stage
-      carry_in : in std_logic;  -- from WB stage
-      zero_in : in std_logic;  -- from WB stage
+      data_in => rf_data_final,  -- from WB stage
+      carry_in => carry_val_final,  -- from WB stage
+      zero_in => zero_val_final,  -- from WB stage
       data_out_ra => ra_read_temp,
       data_out_rb => rb_read_temp,
       carry_out => carry_temp,
@@ -125,28 +133,28 @@ begin
   rf_ra_reg_out : register_16 
      port map(
       reg_data_in => ra_read_temp,
-      reg_enable => ,
+      reg_enable => '1',
       clk => clk,
       reg_data_out => data_ra
     );
   rf_rb_reg_out : register_16 
     port map(
       reg_data_in => rb_read_temp,
-      reg_enable => ,
+      reg_enable => '1',
       clk => clk,
       reg_data_out => data_rb
     );
   rf_c_reg_out : register_1 
     port map(
       reg_data_in => carry_temp,
-      reg_enable => ,
+      reg_enable => '1',
       clk => clk,
       reg_data_out => data_carry
     );
   rf_z_reg_out : register_1 
     port map(
       reg_data_in => zero_temp,
-      reg_enable => ,
+      reg_enable => '1',
       clk => clk,
       reg_data_out => data_zero
     );
@@ -154,140 +162,140 @@ begin
     pc_out_ex_reg_out : register_16
       port map(
         reg_data_in => pc_out,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => pc_out_ex
       );
     alu1_op_ex_reg_out : register_2
       port map(
         reg_data_in => alu1_op,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => alu1_op_ex
       );
     alu1_a_select_ex_reg_out : register_1
       port map(
         reg_data_in => alu1_a_select,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => alu1_a_select_ex
       );
     alu1_b_select_ex_reg_out : register_2
       port map(
         reg_data_in => alu1_b_select,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => alu1_b_select_ex
       );
     rf_write_ex_reg_out : register_1
       port map(
         reg_data_in => rf_write,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => rf_write_ex
       );
     rf_a3_ex_reg_out : register_3
       port map(
         reg_data_in => rf_a3,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => rf_a3_ex
       );
     rf_data_select_ex_reg_out : register_3
       port map(
         reg_data_in => rf_data_select,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => rf_data_select_ex
       );
     mem_write_ex_reg_out : register_1
       port map(
         reg_data_in => mem_write,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => mem_write_ex
       );
     mem_read_ex_reg_out : register_1
       port map(
         reg_data_in => mem_read,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => mem_read_ex
       );
     mem_data_sel_ex_reg_out : register_1
       port map(
         reg_data_in => mem_data_sel,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => mem_data_sel_ex
       );
     mem_address_sel_ex_reg_out : register_1
       port map(
         reg_data_in => mem_address_sel,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => mem_address_sel_ex
       );
     ir_5_0_ex_reg_out : register_16 -- Sign extended
       port map(
         reg_data_in => ir_5_0,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => ir_5_0_ex
       );
     ir_8_0_ex_reg_out : register_16 -- Sign extended 
       port map(
         reg_data_in => ir_8_0,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => ir_8_0_ex
       );
     data_extender_out_ex_reg_out : register_16 --Data for LHI
       port map(
         reg_data_in => data_extender_out,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => data_extender_out_ex
       );
     carry_en_ex_reg_out : register_1     --Carry and zero enables
       port map(
         reg_data_in => carry_en,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => carry_en_ex
       );
     zero_en_alu_ex_reg_out : register_1
       port map(
         reg_data_in => zero_en_alu,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => zero_en_alu_ex
       );
     zero_en_mem_ex_reg_out : register_1
       port map(
         reg_data_in => zero_en_mem,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => zero_en_mem_ex
       );
     cz_ex_reg_out : register_2
       port map(
         reg_data_in => cz,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => cz_ex
       );
     opcode_ex_reg_out : out std_logic_vector(3 downto 0); --
       port map(
         reg_data_in => opcode,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => opcode_ex
       );
     lm_detect_ex_reg_out : register_1
       port map (
         reg_data_in => lm_detect,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => lm_detect_ex
       );
@@ -295,7 +303,7 @@ begin
     sm_detect_ex_reg_out : register_1
       port map (
         reg_data_in => sm_detect,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => sm_detect_ex
       );
@@ -303,7 +311,7 @@ begin
     lw_sw_stop_ex_reg_out : register_1
       port map (
         reg_data_in => lw_sw_stop,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => lw_sw_stop_ex
       );
@@ -311,7 +319,7 @@ begin
     first_lw_sw_ex_reg_out : register_1
       port map (
         reg_data_in => first_lw_sw,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => first_lw_sw_ex
       );
@@ -319,7 +327,7 @@ begin
     right_shift_lm_sm_bit_ex_reg_out : register_1
       port map (
         reg_data_in => right_shift_lm_sm_bit,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => right_shift_lm_sm_bit_ex
       );
@@ -327,7 +335,7 @@ begin
     lm_sm_reg_write_ex_reg_out : register_3
       port map (
         reg_data_in => lm_sm_reg_write,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => lm_sm_reg_write_ex
       );
@@ -335,7 +343,7 @@ begin
     lm_sm_write_load_ex_reg_out : register_1
       port map (
         reg_data_in => lm_sm_write_load,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => lm_sm_write_load_ex
       );
@@ -343,7 +351,7 @@ begin
     alu2_out_ex_reg_out : register_16 --alu2_out to IF stage
       port map(
         reg_data_in => alu2_out,
-        reg_enable => ,
+        reg_enable => '1',
         clk => clk,
         reg_data_out => alu2_out_ex
       );

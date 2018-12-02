@@ -15,8 +15,8 @@ entity write_back is
     alu1_out_wb : in std_logic_vector(15 downto 0);
     alu1_carry_wb : in std_logic;
     alu1_zero_wb : in std_logic;
-    cond_carry_wb : in std_logic;
-    cond_zero_wb : in std_logic;
+    --cond_carry_wb : in std_logic;
+    --cond_zero_wb : in std_logic;
 
     --Carry forward signals 
     data_ra_wb : in std_logic_vector(15 downto 0);
@@ -25,12 +25,12 @@ entity write_back is
     rf_write_wb : std_logic;
     rf_a3_wb : in std_logic_vector(2 downto 0);
     rf_data_select_wb : in std_logic_vector(2 downto 0);
-    mem_write_wb : in std_logic;
-    mem_read_wb : in std_logic;
-    mem_data_sel_wb : in std_logic;
-    mem_address_sel_wb : in std_logic;
-    ir_5_0_wb : in std_logic_vector(15 downto 0);
-    ir_8_0_wb : in std_logic_vector(15 downto 0);
+    --mem_write_wb : in std_logic;
+    --mem_read_wb : in std_logic;
+    --mem_data_sel_wb : in std_logic;
+    --mem_address_sel_wb : in std_logic;
+    --ir_5_0_wb : in std_logic_vector(15 downto 0);
+    --ir_8_0_wb : in std_logic_vector(15 downto 0);
     data_extender_out_wb : in std_logic_vector(15 downto 0);
     carry_en_wb : in std_logic;
     zero_en_alu_wb : in std_logic;
@@ -55,6 +55,8 @@ entity write_back is
     rf_write_final : out std_logic;
     carry_en_final : out std_logic;
     zero_en_final : out std_logic;
+    carry_val_final : out std_logic;
+    zero_val_final : out std_logic;
     rf_data_final : out std_logic_vector(15 downto 0);
     rf_a3_final : out std_logic_vector(2 downto 0)
 
@@ -72,24 +74,48 @@ begin
 				rf_write_final <=  rf_carry_reg_out;
 				carry_en_final <= rf_carry_reg_out;
 				zero_en_final <= rf_carry_reg_out;
+				carry_val_final <= alu1_carry_wb;
+				zero_val_final <= alu1_zero_wb;
 			--ADZ
 			elsif opcode_wb = "0000" and cz_wb = "01" then 
 				rf_write_final <= rf_zero_reg_out;
 				carry_en_final <= rf_zero_reg_out;
 				zero_en_final <= rf_zero_reg_out;
+				carry_val_final <= alu1_carry_wb;
+				zero_val_final <= alu1_zero_wb;
 			--NDC
 			elsif opcode_wb = "0010" and cz_wb = "10" then
 				rf_write_final <= rf_carry_reg_out;
 				zero_en_final <= rf_carry_reg_out;
+				carry_en_final <= '0';
+				zero_val_final <= alu1_zero_wb;
+				carry_val_final <= '0';
 			--NDZ
 			elsif opcode_wb = "0010" and cz_wb = "01" then
 				rf_write_final <= rf_zero_reg_out;
 				zero_en_final <= rf_zero_reg_out;
+				carry_en_final <= '0';
+				zero_val_final <= alu1_zero_wb;
+				carry_val_final <= '0';
 			--LM SM done 
 			elsif (opcode_wb = "0110" or opcode_wb = "0111") then 
 				rf_write_final <= right_shift_lm_sm_bit_wb;
+				zero_en_final <= '0';
+				carry_en_final <= '0';
+				carry_val_final <= '0';
+				zero_val_final <= '0';
+			elsif (opcode_wb = "0100" and mem_data_out = "0000000000000000") then
+				rf_write_final <= '1';
+				carry_en_final <= '0';
+				zero_en_final <= '1';
+				carry_val_final <= '0';
+				zero_val_final <= '1';
 			else 
 				rf_write_final <= rf_write_wb;
+				carry_en_final <= carry_en_wb;
+				zero_en_final <= zero_en_mem_wb or zero_en_alu_wb;
+				zero_val_final <= alu1_zero_wb;
+				carry_val_final <= alu1_carry_wb;
 			end if;
 		end if;
 
