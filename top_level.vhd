@@ -57,10 +57,10 @@ begin
       clk => clk,
       reset => reset,
       pc_select => "11",
-      pc_register_enable =>  "1",
-      ir_enable => "1",
+      pc_register_enable =>  '1',
+      ir_enable => '1',
       mem_data_out => "0000000000000000",
-      alu1_out => "000000000000000",
+      alu1_out => "0000000000000000",
       alu2_out => alu2_out,
       instruction_int_out => ir_if_id,
       pc_register_int_out => pc_if_id
@@ -89,7 +89,7 @@ begin
       ir_8_6 => ir_8_6,
       ir_5_3 => ir_5_3,
       ir_5_0 => ir_5_0,
-      ir_8_0 => ir_8_0
+      ir_8_0 => ir_8_0,
       data_extender_out => data_extender_out,
       carry_en => carry_en,
       zero_en_alu => zero_en_alu,
