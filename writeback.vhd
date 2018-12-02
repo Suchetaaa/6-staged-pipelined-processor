@@ -48,6 +48,7 @@ entity write_back is
   --Input signals from RF 
   rf_carry_reg_out : in std_logic;
   rf_zero_reg_out : in std_logic;
+  valid_bit_mem_wb : in std_logic;
 
   --Output signals 
   --Going to RF or RR block 

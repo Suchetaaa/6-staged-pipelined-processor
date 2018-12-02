@@ -44,6 +44,7 @@ entity execute is
     lm_sm_reg_write_ex : in std_logic_vector(2 downto 0);
     lm_sm_write_load_ex : in std_logic;
     alu2_out_ex : in std_logic_vector(15 downto 0); --alu2_in to IF stage
+    valid_bit_or_ex : in std_logic;
 
     --Output signals from this stage
     alu1_out_mem : out std_logic_vector(15 downto 0); -- output of ALU
@@ -78,7 +79,8 @@ entity execute is
     right_shift_lm_sm_bit_mem : out std_logic;
     lm_sm_reg_write_mem : out std_logic_vector(2 downto 0);
     lm_sm_write_load_mem : out std_logic;
-    alu2_out_mem : out std_logic_vector(15 downto 0) --alu2_in to IF stage
+    alu2_out_mem : out std_logic_vector(15 downto 0); --alu2_in to IF stage
+    valid_bit_ex_mem : out std_logic
 
   );
 end entity;
@@ -137,19 +139,16 @@ begin
       z_out <= '0';
     end if;
 
-    if ((opcode_ex = "0000" or opcode_ex = "0010") and (cz_ex = "10")) then
-      cond_carry <= '1';
+    if (opcode_ex = "0000" or opcode_ex = "0010") then
+      cond_carry <= cz_ex(1);
+      cond_zero <= cz_ex(0);
     else
       cond_carry <= '0';
-    end if;
-
-    if ((opcode_ex = "0000" or opcode_ex = "0010") and (cz_ex = "01")) then
-      cond_zero <= '1';
-    else
       cond_zero <= '0';
     end if;
 
   end process ; -- carry_zero
+
 
   -- No hazard
   ra_temp <= data_ra;
@@ -407,15 +406,13 @@ begin
 			reg_data_out => alu2_out_mem
 	);
 
-
-
-
-
-
-
-
-
-
+  valid_bit_ex_mem_reg : register_1
+    port map(
+      reg_data_in => valid_bit_or_ex,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => valid_bit_ex_mem
+    );
 
 
 end architecture ; -- arch

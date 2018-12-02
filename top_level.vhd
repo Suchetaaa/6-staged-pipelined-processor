@@ -124,6 +124,7 @@ architecture at of top_level is
   signal lm_sm_reg_write_mem : std_logic_vector(2 downto 0);
   signal lm_sm_write_load_mem : std_logic;
   signal alu2_out_mem : std_logic_vector(15 downto 0);   
+  signal valid_bit_ex_mem : std_logic;
   --Stage 5 to 6
   signal mem_data_out : std_logic_vector(15 downto 0);
   signal alu1_out_wb : std_logic_vector(15 downto 0);
@@ -157,6 +158,7 @@ architecture at of top_level is
   signal lm_sm_reg_write_wb : std_logic_vector(2 downto 0);
   signal lm_sm_write_load_wb : std_logic;
   signal alu2_out_wb : std_logic_vector(15 downto 0);
+  signal valid_bit_mem_wb : std_logic;
   signal lm_sm_reg_wb : std_logic_vector(2 downto 0);
   signal rf_write_final : std_logic;
   signal carry_en_final : std_logic;
@@ -347,6 +349,7 @@ begin
       lm_sm_reg_write_ex => lm_sm_reg_write_ex,
       lm_sm_write_load_ex => lm_sm_write_load_ex,
       alu2_out_ex => alu2_out_ex,
+      valid_bit_or_ex => valid_bit_or_ex,
       --Output signals from this stage
       alu1_out_mem => alu1_out_mem,
       alu1_carry_mem => alu1_carry_mem,
@@ -379,7 +382,8 @@ begin
       right_shift_lm_sm_bit_mem => right_shift_lm_sm_bit_mem,
       lm_sm_reg_write_mem => lm_sm_reg_write_mem,
       lm_sm_write_load_mem => lm_sm_write_load_mem,
-      alu2_out_mem => alu2_out_mem --alu2_in to IF stage
+      alu2_out_mem => alu2_out_mem, --alu2_in to IF stage
+      valid_bit_ex_mem => valid_bit_ex_mem
     );
 
   memstage : mem_access_stage 
@@ -419,7 +423,7 @@ begin
       lm_sm_reg_write_mem => lm_sm_reg_write_mem,
       lm_sm_write_load_mem => lm_sm_write_load_ex,
       alu2_out_mem => alu2_out_mem,
-
+      valid_bit_ex_mem => valid_bit_ex_mem,
       -----Outputs----
       mem_data_out => mem_data_out,
       alu1_out_wb => alu1_out_wb,
@@ -452,7 +456,8 @@ begin
       right_shift_lm_sm_bit_wb => right_shift_lm_sm_bit_wb,
       lm_sm_reg_write_wb => lm_sm_reg_write_wb,
       lm_sm_write_load_wb => lm_sm_write_load_wb,
-      alu2_out_wb => alu2_out_wb
+      alu2_out_wb => alu2_out_wb,
+      valid_bit_mem_wb => valid_bit_mem_wb
     );
 
   writeback : write_back 
@@ -498,7 +503,7 @@ begin
       --Input signals from RF 
       rf_carry_reg_out => rf_carry_reg_out,
       rf_zero_reg_out => rf_zero_reg_out,
-
+      valid_bit_mem_wb => valid_bit_mem_wb,
       --Output signals 
       --Going to RF or RR block 
       --All these signals should NOT come out of register but as normal signals 
