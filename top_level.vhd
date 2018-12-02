@@ -17,7 +17,7 @@ entity top_level is
     pc_out_ex : out std_logic_vector(15 downto 0);
     alu1_op_ex : out std_logic_vector(1 downto 0);
     alu1_a_select_ex : out std_logic;
-    alu1_b_select_ex : out std_logic;
+    alu1_b_select_ex : out std_logic_vector(1 downto 0);
     rf_write_ex : out std_logic;
     rf_a3_ex : out std_logic_vector(2 downto 0);
     rf_data_select_ex : out std_logic_vector(2 downto 0);
@@ -78,7 +78,7 @@ architecture at of top_level is
   signal first_lw_sw : std_logic;
   signal right_shift_lm_sm_bit : std_logic;
   signal lm_sm_reg_write : std_logic_vector(2 downto 0);
-  signal lm_sm_write_load : std_logic
+  signal lm_sm_write_load : std_logic;
 
 
 begin
@@ -172,7 +172,7 @@ begin
       right_shift_lm_sm_bit => right_shift_lm_sm_bit,
       lm_sm_reg_write => lm_sm_reg_write,
       lm_sm_write_load => lm_sm_write_load,
-      alu2_out => alu2_out --alu2_out to IF stage
+      alu2_out => alu2_out, --alu2_out to IF stage
       ------------------ From Write Back Stage -----------------------------
       rf_write_final => rf_write, -- should actually come from wb stage
       carry_en_final => carry_en,
@@ -183,9 +183,9 @@ begin
       rf_a3_final => "000",
       --------------------- Outputs -----------------------------------------
       -- the register values read 
-      data_ra => data_ra;
+      data_ra => data_ra,
       data_rb => data_rb,
-      data_carry => data_carry;
+      data_carry => data_carry,
       data_zero => data_zero,
       pc_out_ex => pc_out_ex,
       alu1_op_ex => alu1_op_ex,
@@ -212,8 +212,8 @@ begin
       first_lw_sw_ex => first_lw_sw_ex,
       right_shift_lm_sm_bit_ex => right_shift_lm_sm_bit_ex,
       lm_sm_reg_write_ex => lm_sm_reg_write_ex,
-      lm_sm_write_load_ex => lm_sm_reg_write_ex,
+      lm_sm_write_load_ex => lm_sm_write_load_ex,
       alu2_out_ex => alu2_out_ex
-    )
+    );
 
 end architecture ; -- at
