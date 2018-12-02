@@ -43,7 +43,7 @@ entity execute is
     right_shift_lm_sm_bit_ex : in std_logic;
     lm_sm_reg_write_ex : in std_logic_vector(2 downto 0);
     lm_sm_write_load_ex : in std_logic;
-    alu2_out_ex : in std_logic_vector(15 downto 0) --alu2_in to IF stage
+    alu2_out_ex : in std_logic_vector(15 downto 0); --alu2_in to IF stage
 
     --Output signals from this stage
     alu1_out_mem : out std_logic_vector(15 downto 0); -- output of ALU
@@ -138,15 +138,15 @@ begin
     end if;
 
     if ((opcode_ex = "0000" or opcode_ex = "0010") and (cz_ex = "10")) then
-      cond_carry <= 1;
+      cond_carry <= '1';
     else
-      cond_carry <= 0;
+      cond_carry <= '0';
     end if;
 
     if ((opcode_ex = "0000" or opcode_ex = "0010") and (cz_ex = "01")) then
-      cond_zero <= 1;
+      cond_zero <= '1';
     else
-      cond_zero <= 0;
+      cond_zero <= '0';
     end if;
 
   end process ; -- carry_zero
@@ -158,249 +158,236 @@ begin
 -----------------Interfacing registers----------------------------------------
 	alu1_out_reg_out : register_16 
 		port map (
-			reg_data_in => alu1_out_temp;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => alu1_out_temp,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => alu1_out_mem
 	);
 
 	alu1_carry_reg_out : register_1 
 		port map (
-			reg_data_in => c_out;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => c_out,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => alu1_carry_mem
 	);
 
 	alu1_zero_reg_out : register_1
 		port map (
-			reg_data_in => z_out;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => z_out,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => alu1_zero_mem
 	);
 
 	cond_carry_reg_out : register_1
 		port map (
-			reg_data_in => cond_carry;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => cond_carry,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => cond_carry_mem
 	);
 
 	cond_zero_reg_out : register_1 
 		port map (
-			reg_data_in => cond_zero;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => cond_zero,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => cond_zero_mem
 	);
 
 	data_ra_reg_out : register_16
 		port map (
-			reg_data_in => data_ra;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => data_ra,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => data_ra_mem
 	);
 
 	dat_rb_reg_out : register_16 
 		port map (
-			reg_data_in => data_rb;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => data_rb,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => data_rb_mem
 	);
 
 	pc_out_reg_out : register_16 
 		port map (
-			reg_data_in => pc_out_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => pc_out_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => pc_out_mem
 	);
 
 	rf_write_reg_out : register_1
 		port map (
-			reg_data_in => rf_write_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => rf_write_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => rf_write_mem
 	);
 
 	rf_a3_reg_out : register_3 
 		port map (
-			reg_data_in => rf_a3_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => rf_a3_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => rf_a3_mem
 	);
 
 	rf_data_select_reg_out : register_3
 		port map (
-			reg_data_in => rf_data_select_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => rf_data_select_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => rf_data_select_mem
 	);
 
 	mem_write_reg_out : register_1
 		port map (
-			reg_data_in => mem_write_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => mem_write_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => mem_write_mem
 	);
 
 	mem_read_reg_out : register_1
 		port map (
-			reg_data_in => mem_read_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => mem_read_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => mem_read_mem
 	);
 
 	mem_data_sel_reg_out : register_1
 		port map (
-			reg_data_in => mem_data_sel_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => mem_data_sel_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => mem_data_sel_mem
 	);
 
 	mem_address_sel_reg_out : register_1
 		port map (
-			reg_data_in => mem_address_sel_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => mem_address_sel_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => mem_address_sel_mem
 	);
 
 	ir_5_0_reg_out : register_16
 		port map (
-			reg_data_in => ir_5_0_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => ir_5_0_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => ir_5_0_mem
 	);
 
 	ir_8_0_reg_out : register_16
 		port map (
-			reg_data_in => ir_8_0_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => ir_8_0_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => ir_8_0_mem
 	);
 
 	data_extender_reg_out : register_16
 		port map (
-			reg_data_in => data_extender_out_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => data_extender_out_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => data_extender_out_mem
 	);
 
 	carry_en_reg_out : register_1
 		port map (
-			reg_data_in => carry_en_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => carry_en_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => carry_en_mem
 	);
 
 	zero_en_alu_reg_out : register_1
 		port map (
-			reg_data_in => zero_en_alu_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => zero_en_alu_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => zero_en_alu_mem
 	);
 
 	zero_en_mem_reg_out : register_1
 		port map (
-			reg_data_in => zero_en_mem_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => zero_en_mem_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => zero_en_mem_mem
 	);
 
 	lm_detect_reg_out : register_1
 		port map (
-			reg_data_in => lm_detect_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => lm_detect_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => lm_detect_mem
 	);
 
-	sm_detect_reg_out : register_1
-		port map (
-			reg_data_in => sm_detect_ex;
-			reg_enable => '1';
-			clk => clk;
-			reg_data_out => sm_detect_mem
-	);
 
 	sm_detect_reg_out : register_1
 		port map (
-			reg_data_in => sm_detect_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => sm_detect_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => sm_detect_mem
 	);
 
-	sm_detect_reg_out : register_1
-		port map (
-			reg_data_in => sm_detect_ex;
-			reg_enable => '1';
-			clk => clk;
-			reg_data_out => sm_detect_mem
-	);
+
 
 	lw_sw_reg_out : register_1
 		port map (
-			reg_data_in => lw_sw_stop_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => lw_sw_stop_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => lw_sw_stop_mem
 	);
 
 	first_lw_sw_reg_out : register_1
 		port map (
-			reg_data_in => first_lw_sw_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => first_lw_sw_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => first_lw_sw_mem
 	);
 
 	right_shift_lm_sm_bit_reg_out : register_1
 		port map (
-			reg_data_in => right_shift_lm_sm_bit_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => right_shift_lm_sm_bit_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => right_shift_lm_sm_bit_mem
 	);
 
 	lm_sm_reg_write_reg_out : register_3
 		port map (
-			reg_data_in => lm_sm_reg_write_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => lm_sm_reg_write_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => lm_sm_reg_write_mem
 	);
 
 	lm_sm_write_load_reg_out : register_1
 		port map (
-			reg_data_in => lm_sm_write_load_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => lm_sm_write_load_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => lm_sm_write_load_mem
 	);
 
-	alu2_out_reg_out : register_1
+	alu2_out_reg_out : register_16
 		port map (
-			reg_data_in => alu2_out_ex;
-			reg_enable => '1';
-			clk => clk;
+			reg_data_in => alu2_out_ex,
+			reg_enable => '1',
+			clk => clk,
 			reg_data_out => alu2_out_mem
 	);
 
