@@ -84,16 +84,16 @@ architecture at of top_level is
   signal first_lw_sw : std_logic;
   signal right_shift_lm_sm_bit : std_logic;
   signal lm_sm_reg_write : std_logic_vector(2 downto 0);
-  signal lm_sm_write_load : std_logic
+  signal lm_sm_write_load : std_logic;
   --Stage 3 to 4
   signal data_ra : std_logic_vector(15 downto 0);
   signal data_rb : std_logic_vector(15 downto 0);
   signal data_carry : std_logic;
   signal data_zero : std_logic;
   signal pc_out_ex : std_logic_vector(15 downto 0);
-  signal alu1_op_ex :t std_logic_vector(1 downto 0);
+  signal alu1_op_ex : std_logic_vector(1 downto 0);
   signal alu1_a_select_ex : std_logic;
-  signal alu1_b_select_ex : std_logic;
+  signal alu1_b_select_ex : std_logic_vector(1 downto 0);
   signal rf_write_ex : std_logic;
   signal rf_a3_ex : std_logic_vector(2 downto 0);
   signal rf_data_select_ex : std_logic_vector(2 downto 0);
