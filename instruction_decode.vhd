@@ -159,6 +159,7 @@ architecture arch of instruction_decode is
 	--Priotity encoder signals 
 	signal priority_enc_in : std_logic_vector(7 downto 0);
 	signal priority_enc_out : std_logic_vector(7 downto 0);
+	signal priority_enc_out_tp : std_logic_vector(7 downto 0);
 	signal priority_enable : std_logic;
 	
 	signal decoder_out_signal : std_logic_vector(2 downto 0);
@@ -284,11 +285,20 @@ begin
 	right_shift_lm_sm_bit_signal <= right_shift_out(0);
 
 	--First later check tells if it is the first stage LM or SM is encountered
-	first_later_check_in <= '1' when instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" else
-		'0';
+	process(clk) 
+	begin 
+		if reset = '1' then 
+			first_later_check_in <= '0';
+		elsif instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" then 
+			first_later_check_in <= '1';
+		else 
+			first_later_check_in <= '0';
+		end if;
+	end process;
 
 	--xor_reg_out <= "00000000" when reset = '1';
-	--priority_enc_out <= "00000000" when reset = '1'; 
+	priority_enc_out <= "00000000" when reset = '1' else 
+		priority_enc_out_tp; 
 	--first_later_check_in <= '0' when reset = '1';
 
 
@@ -332,7 +342,7 @@ begin
 		port map (
 			priority_in => priority_enc_in,
 			priority_enable => priority_enable,
-			priority_out => priority_enc_out
+			priority_out => priority_enc_out_tp
 		);
 
 	xor_register : register_8 
