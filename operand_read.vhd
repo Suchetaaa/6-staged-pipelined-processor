@@ -41,7 +41,7 @@ entity operand_read is
     first_lw_sw : in std_logic;
     right_shift_lm_sm_bit : in std_logic;
     lm_sm_reg_write : in std_logic_vector(2 downto 0);
-    lm_sm_write_load : out std_logic;
+    lm_sm_write_load : in std_logic;
     alu2_out : in std_logic_vector(15 downto 0); --alu2_out to IF stage
     
     ------------------ From Write Back Stage -----------------------------
@@ -102,7 +102,7 @@ architecture op_read of operand_read is
 
 begin
 
-  reg_access : reg_file 
+  reg_access_port : reg_file 
     port map(
       --Clock 
       clk => clk,
@@ -285,8 +285,8 @@ begin
         clk => clk,
         reg_data_out => cz_ex
       );
-    opcode_ex_reg_out : out std_logic_vector(3 downto 0); --
-      port map(
+    opcode_ex_reg_out : register_4 --
+      port map (
         reg_data_in => opcode,
         reg_enable => '1',
         clk => clk,

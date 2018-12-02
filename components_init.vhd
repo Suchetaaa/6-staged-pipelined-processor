@@ -131,17 +131,25 @@ package components_init is
 		port(
 			clk : in std_logic;
 			reset : in std_logic;
+			carry_read : in std_logic;
+			zero_read : in std_logic;
 			reg_file_read_ra : in std_logic;
 			reg_file_read_rb : in std_logic;
 			reg_file_write : in std_logic;
+			carry_write : in std_logic;
+			zero_write : in std_logic;
 			address_1 : in std_logic_vector(2 downto 0);
 			address_2 : in std_logic_vector(2 downto 0);
 			address_3 : in std_logic_vector(2 downto 0);
 			data_in : in std_logic_vector(15 downto 0);
+			carry_in : in std_logic;
+			zero_in : in std_logic;
 			data_out_ra : out std_logic_vector(15 downto 0);
-			data_out_rb : out std_logic_vector(15 downto 0)
+			data_out_rb : out std_logic_vector(15 downto 0);
+			carry_out : out std_logic;
+			zero_out : out std_logic
 		);
-	end component  reg_file;
+	end component reg_file;
 
 	component instruction_fetch is
 		port(
