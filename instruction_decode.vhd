@@ -221,7 +221,7 @@ begin
 		--RB
 		instruction_int_out(8 downto 6) when instruction_int_out(15 downto 12) = "0001" else 
 		--Decoder output which gives the register to which data is written for LM/SM
-		decoder_out_signal when instruction_int_out(15 downto 12) = "0110" else 
+		decoder_out_signal when instruction_int_out(15 downto 12) = "0110" or instruction_int_out = "0111" else 
 		"111"; -- for rf_write = 0
 
 	--Tells what data has to be written 
@@ -270,18 +270,26 @@ begin
 	lm_detect_signal <= '1' when instruction_int_out(15 downto 12) = "0110" else 
 		'0';
 
+	sm_detect_signal <= '1' when instruction_int_out(15 downto 12) = "0111" else 
+		'0';
+
 	lw_sw_stop_signal <= '1' when xor_reg_out = "00000000" and first_later_check_out = '1' else 
 		'0';
 
-	--Right shift signals 
+	--Right shift signals
+	--right shift out is output of right shift block 
+	--right shift reg out is output of register  
 	right_shift_in <= instruction_int_out(7 downto 0) when first_later_check_out = '0' else 
 		right_shift_reg_out;
+	right_shift_lm_sm_bit_signal <= right_shift_out(0);
 
-	--First later check tells if it is the first stage LM is encountered
-	first_later_check_in <= '1' when instruction_int_out(15 downto 12) = "0110";
+	--First later check tells if it is the first stage LM or SM is encountered
+	first_later_check_in <= '1' when instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" else
+		'0';
 
 	--xor_reg_out <= "00000000" when reset = '1';
-	--priority_enc_out <= "00000000" when reset = '1'; 
+	priority_enc_out <= "00000000" when reset = '1'; 
+	first_later_check_in <= '0' when reset = '1';
 
 
 	--XOR in signals 
@@ -296,10 +304,17 @@ begin
 	priority_enable <= instruction_int_out(0) when first_later_check_out = '0' else 
 		right_shift_reg_out(0);
 
-	right_shift_lm_sm_bit_signal <= right_shift_out(0);
 	--lm_sm_reg_write <= decoder_out_signal;
 
 	--Port mapping 
+
+	first_later_check_reg : register_1 
+		port map (
+			reg_data_in => first_later_check_in,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => first_later_check_out
+		);
 
 	decoder_wb : decoder 
 		port map (
