@@ -19,6 +19,8 @@ architecture at of top_level is
   -- stage 1 to 2
   signal pc_if_id : std_logic_vector(15 downto 0);
   signal ir_if_id : std_logic_vector(15 downto 0);
+  signal stall_if : std_logic;
+  signal valid_bit : std_logic;
   -- stage 2 to 3
   signal alu2_out : std_logic_vector(15 downto 0);
   signal pc_out : std_logic_vector(15 downto 0);
@@ -52,6 +54,7 @@ architecture at of top_level is
   signal right_shift_lm_sm_bit : std_logic;
   signal lm_sm_reg_write : std_logic_vector(2 downto 0);
   signal lm_sm_write_load : std_logic;
+  signal valid_bit_id_or : std_logic;
   --Stage 3 to 4
   signal data_ra : std_logic_vector(15 downto 0);
   signal data_rb : std_logic_vector(15 downto 0);
@@ -86,6 +89,7 @@ architecture at of top_level is
   signal alu2_out_ex : std_logic_vector(15 downto 0);
   signal rf_carry_reg_out : std_logic;
   signal rf_zero_reg_out : std_logic;
+  signal valid_bit_or_ex : std_logic;
   --Stage 4 to 5
   signal alu1_out_mem : std_logic_vector(15 downto 0); -- output of ALU
   signal alu1_carry_mem : std_logic;
@@ -169,13 +173,14 @@ begin
       clk => clk,
       reset => reset,
       pc_select => "11",
-      pc_register_enable =>  '1',
+      stall_if =>  stall_if,
       ir_enable => '1',
       mem_data_out => "0000000000000000",
       alu1_out => "0000000000000000",
       alu2_out => alu2_out,
       instruction_int_out => ir_if_id,
-      pc_register_int_out => pc_if_id
+      pc_register_int_out => pc_if_id,
+      valid_bit => valid_bit
     ) ;
 
   id_stage : instruction_decode 
@@ -184,6 +189,7 @@ begin
       reset => reset,
       pc_register_int_out => pc_if_id,
       instruction_int_out => ir_if_id,
+      valid_bit => valid_bit,
       pc_out => pc_out,
       alu1_op => alu1_op,
       alu1_a_select => alu1_a_select,
@@ -215,7 +221,9 @@ begin
       right_shift_lm_sm_bit => right_shift_lm_sm_bit,
       lm_sm_reg_write => lm_sm_reg_write,
       lm_sm_write_load => lm_sm_write_load,
-      alu2_out => alu2_out
+      alu2_out => alu2_out,
+      stall_if => stall_if,
+      valid_bit_id_or => valid_bit_id_or
     ) ;
 
   operandread : operand_read 
@@ -255,6 +263,7 @@ begin
       lm_sm_reg_write => lm_sm_reg_write,
       lm_sm_write_load => lm_sm_write_load,
       alu2_out => alu2_out, --alu2_out to IF stage
+      valid_bit_id_or => valid_bit_id_or,
       ------------------ From Write Back Stage -----------------------------
       rf_write_final => rf_write_final, -- should actually come from wb stage
       carry_en_final => carry_en_final,
@@ -297,7 +306,8 @@ begin
       lm_sm_write_load_ex => lm_sm_write_load_ex,
       alu2_out_ex => alu2_out_ex,
       rf_carry_reg_out => rf_carry_reg_out,
-      rf_zero_reg_out => rf_zero_reg_out
+      rf_zero_reg_out => rf_zero_reg_out,
+      valid_bit_or_ex => valid_bit_or_ex
     );
 
   executestage : execute 

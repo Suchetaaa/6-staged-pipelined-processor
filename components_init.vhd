@@ -156,13 +156,14 @@ package components_init is
 			clk : in std_logic;
 			reset: in std_logic;
 			pc_select : in std_logic_vector(1 downto 0);
-			pc_register_enable : in std_logic;
+			stall_if : in std_logic;
 			ir_enable : in std_logic;
 			mem_data_out : in std_logic_vector(15 downto 0);
 			alu1_out : in std_logic_vector(15 downto 0);
 			alu2_out : in std_logic_vector(15 downto 0);
 			instruction_int_out : out std_logic_vector(15 downto 0);
-			pc_register_int_out : out std_logic_vector(15 downto 0)
+			pc_register_int_out : out std_logic_vector(15 downto 0);
+			valid_bit : out std_logic
 		);
 	end component instruction_fetch;
 
@@ -183,6 +184,7 @@ package components_init is
 			reset : in std_logic;
 			pc_register_int_out : in std_logic_vector(15 downto 0);
 			instruction_int_out : in std_logic_vector(15 downto 0);
+			valid_bit : in std_logic;
 			pc_out : out std_logic_vector(15 downto 0);
 			alu1_op : out std_logic_vector(1 downto 0);
 			alu1_a_select : out std_logic;
@@ -214,7 +216,9 @@ package components_init is
 			right_shift_lm_sm_bit : out std_logic;
 			lm_sm_reg_write : out std_logic_vector(2 downto 0);
 			lm_sm_write_load : out std_logic;
-			alu2_out : out std_logic_vector(15 downto 0)
+			alu2_out : out std_logic_vector(15 downto 0);
+			stall_if :out std_logic;
+			valid_bit_id_or : out std_logic
 	  ) ;
 	 end component instruction_decode;
 
@@ -256,7 +260,7 @@ package components_init is
 	    lm_sm_reg_write : in std_logic_vector(2 downto 0);
 	    lm_sm_write_load : in std_logic;
 	    alu2_out : in std_logic_vector(15 downto 0); --alu2_out to IF stage
-	    
+	    valid_bit_id_or : in std_logic;
 	    ------------------ From Write Back Stage -----------------------------
 	    -- the address of the write back reg (and if write back)
 	    rf_write_final : in std_logic;
@@ -305,7 +309,8 @@ package components_init is
 	    lm_sm_write_load_ex : out std_logic;
 	    alu2_out_ex : out std_logic_vector(15 downto 0); --alu2_out to IF stage
 	    rf_carry_reg_out : out std_logic;
-  		rf_zero_reg_out : out std_logic
+  		rf_zero_reg_out : out std_logic;
+  		valid_bit_or_ex : out std_logic
 	  );
 	end component;
 	

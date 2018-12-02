@@ -19,7 +19,8 @@ entity instruction_fetch is
 	--11 - PC+1
 	pc_select : in std_logic_vector(1 downto 0);
 	--Enable pin for PC register 
-	pc_register_enable : in std_logic;
+
+	stall_if : in std_logic;
 
 	--enable pin for IR
 	ir_enable : in std_logic;
@@ -37,7 +38,10 @@ entity instruction_fetch is
 	instruction_int_out : out std_logic_vector(15 downto 0);
 
 	--PC value going out (address of present instruction)
-	pc_register_int_out : out std_logic_vector(15 downto 0)
+	pc_register_int_out : out std_logic_vector(15 downto 0);
+
+	valid_bit : out std_logic
+
 
   ) ;
 end entity ; -- instruction_fetch
@@ -54,6 +58,9 @@ architecture arch of instruction_fetch is
 	--incrementer pc out 
 	signal incrementer_pc_out : std_logic_vector(15 downto 0);
 
+	signal enables_the_reg_if_one : std_logic;
+	signal valid_bit_signal :std_logic;
+
 
 begin
 
@@ -61,16 +68,20 @@ begin
 	begin
 		if reset = '1' then
 			pc_register_in <= "0000000000000000";
-
-		--elsif (clk'event and clk = '1') then 
+			valid_bit_signal <= '0';
+		-- reset = 0 
 		elsif pc_select = "00" then 
 			pc_register_in <= alu1_out;
+			valid_bit_signal <= '1';
 		elsif pc_select = "01" then 
 			pc_register_in <= alu2_out;
+			valid_bit_signal <= '1';
 		elsif pc_select = "10" then 
 			pc_register_in <= mem_data_out;
-		elsif pc_select = "11" then
+			valid_bit_signal <= '1';
+		else -- pc_select = 11 and reset = 0
 			pc_register_in <= incrementer_pc_out;
+			valid_bit_signal <= '1';
 		end if;
 
 	end process ; -- PC
@@ -82,6 +93,8 @@ begin
 	--		clk => clk,
 	--		reg_data_out => pc_register_out
 	--	);
+
+	enables_the_reg_if_one <= (ir_enable and (not stall_if));
 
 	incrementer : incrementer_pc 
 		port map (
@@ -98,7 +111,7 @@ begin
 	InstructionRegister : register_16 
 		port map (
 			reg_data_in => instruction_reg_in,
-			reg_enable => ir_enable,
+			reg_enable => enables_the_reg_if_one,
 			clk => clk,
 			reg_data_out => instruction_int_out
 		);
@@ -106,9 +119,17 @@ begin
 	PC_int_Register : register_16 
 		port map (
 			reg_data_in => pc_register_in,
-			reg_enable => ir_enable,
+			reg_enable => enables_the_reg_if_one,
 			clk => clk,
 			reg_data_out => pc_register_out
+		);
+
+	valid_bit_reg : register_1
+		port map(
+			reg_data_in => valid_bit_signal,
+			reg_enable => enables_the_reg_if_one,
+			clk => clk,
+			reg_data_out => valid_bit
 		);
 	
 		pc_register_int_out <= pc_register_out;

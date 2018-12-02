@@ -15,6 +15,7 @@ entity instruction_decode is
 
 	--instruction 
 	instruction_int_out : in std_logic_vector(15 downto 0);
+	valid_bit : in std_logic;
 
 	--pc_out 
 	pc_out : out std_logic_vector(15 downto 0);
@@ -90,7 +91,11 @@ entity instruction_decode is
 	lm_sm_write_load : out std_logic;
 
 	--alu2_out to IF stage
-	alu2_out : out std_logic_vector(15 downto 0)
+	alu2_out : out std_logic_vector(15 downto 0);
+	-- signal to stall the IF stage
+	stall_if : out std_logic;
+
+	valid_bit_id_or : out std_logic
 
   ) ;
 end entity ; -- instruction_decode
@@ -163,6 +168,9 @@ architecture arch of instruction_decode is
 	signal priority_enable : std_logic;
 	
 	signal decoder_out_signal : std_logic_vector(2 downto 0);
+
+	signal valid_bit_signal_id_ex : std_logic;
+
 
 begin
 
@@ -276,6 +284,8 @@ begin
 
 	lw_sw_stop_signal <= '1' when xor_reg_out = "00000000" and first_later_check_out = '1' else 
 		'0';
+
+	stall_if <= ((lm_detect_signal or sm_detect_signal) and valid_bit);
 
 	--Right shift signals
 	--right shift out is output of right shift block 
@@ -712,6 +722,14 @@ begin
 			reg_data_out => lm_sm_write_load
 		);
 	------------------------------------------------------------------------Interfacing register for lmsmwriteload ---------------------------------------------------
+
+	valid_bit_reg_int : register_1
+		port map(
+			reg_data_in => valid_bit,
+			reg_enable => '1',
+			clk => clk,
+			reg_data_out => valid_bit_id_or
+		);
 
 
 end architecture ; -- arch
