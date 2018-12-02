@@ -35,8 +35,8 @@ entity write_back is
     carry_en_wb : in std_logic;
     zero_en_alu_wb : in std_logic;
     zero_en_mem_wb : in std_logic;
-    cz_wb : out std_logic_vector(1 downto 0);
-    opcode_wb : out std_logic_vector(3 downto 0);
+    cz_wb : in std_logic_vector(1 downto 0);
+    opcode_wb : in std_logic_vector(3 downto 0);
     lm_detect_wb : in std_logic;
     sm_detect_wb : in std_logic;
     lw_sw_stop_wb : in std_logic;
@@ -61,7 +61,7 @@ entity write_back is
   ) ;
 end entity ; -- instruction_fetch
 
-architecture arch of instruction_fetch is
+architecture arch of write_back is
 
 begin
 	final_write_signal : process(clk)
@@ -107,22 +107,6 @@ begin
 
 		rf_a3_final <= rf_a3_wb; 
 
-	end process ; -- final_write_signal
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	end process ; 
 
 end architecture ; -- arch
