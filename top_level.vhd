@@ -10,41 +10,35 @@ entity top_level is
   port(
     clk : in std_logic;
     reset: in std_logic;
-    
-    --Output signals from this stage    
-    alu1_out_mem : out std_logic_vector(15 downto 0); -- output of ALU
-    alu1_carry_mem : out std_logic;
-    alu1_zero_mem : out std_logic;
-    cond_carry_mem : out std_logic;
-    cond_zero_mem : out std_logic;
-
-    --Output signals rom older stages 
-    data_ra_mem : out std_logic_vector(15 downto 0);
-    data_rb_mem : out std_logic_vector(15 downto 0);
-    pc_out_mem : out std_logic_vector(15 downto 0);
-    rf_write_mem : out std_logic;
-    rf_a3_mem : out std_logic_vector(2 downto 0);
-    rf_data_select_mem : out std_logic_vector(2 downto 0);
-    mem_write_mem : out std_logic;
-    mem_read_mem : out std_logic;
-    mem_data_sel_mem : out std_logic;
-    mem_address_sel_mem : out std_logic;
-    ir_5_0_mem : out std_logic_vector(15 downto 0);
-    ir_8_0_mem : out std_logic_vector(15 downto 0);
-    data_extender_out_mem : out std_logic_vector(15 downto 0);
-    carry_en_mem : out std_logic;
-    zero_en_alu_mem : out std_logic;
-    zero_en_mem_mem : out std_logic;
-    --cz_mem : out std_logic_vector(1 downto 0);
-    --opcode_mem : out std_logic_vector(3 downto 0);
-    lm_detect_mem : out std_logic; --LM/SM signals 
-    sm_detect_mem : out std_logic;
-    lw_sw_stop_mem : out std_logic;
-    first_lw_sw_mem : out std_logic;
-    right_shift_lm_sm_bit_mem : out std_logic;
-    lm_sm_reg_write_mem : out std_logic_vector(2 downto 0);
-    lm_sm_write_load_mem : out std_logic;
-    alu2_out_mem : out std_logic_vector(15 downto 0)     
+    mem_data_out : out std_logic_vector(15 downto 0);
+    alu1_out_wb : out std_logic_vector(15 downto 0);
+    alu1_carry_wb : out std_logic;
+    alu1_zero_wb : out std_logic;
+--    cond_carry_wb : out std_logic;
+--    cond_zero_wb : out std_logic; 
+    data_ra_wb : out std_logic_vector(15 downto 0);
+    data_rb_wb : out std_logic_vector(15 downto 0);
+    pc_out_wb : out std_logic_vector(15 downto 0);
+    rf_write_wb : out std_logic;
+    rf_a3_wb : out std_logic_vector(2 downto 0);
+    rf_data_select_wb : out std_logic_vector(2 downto 0);
+    --mem_write_wb : out std_logic;
+    --mem_read_wb : out std_logic;
+    --mem_data_sel_wb : out std_logic;
+    --mem_address_sel_wb : out std_logic;
+    --ir_5_0_wb : out std_logic_vector(15 downto 0);
+    --ir_8_0_wb : out std_logic_vector(15 downto 0);
+    data_extender_out_wb : out std_logic_vector(15 downto 0);
+    carry_en_wb : out std_logic;
+    zero_en_alu_wb : out std_logic;
+    zero_en_mem_wb : std_logic;
+    lm_detect_wb : out std_logic;
+    sm_detect_wb : out std_logic;
+    lw_sw_stop_wb : out std_logic;
+    first_lw_sw_wb : out std_logic;
+    right_shift_lm_sm_bit_wb : out std_logic;
+    lm_sm_reg_write_wb : out std_logic_vector(2 downto 0);
+    lm_sm_write_load_wb : out std_logic  
   );
 end entity;
 architecture at of top_level is
@@ -117,6 +111,40 @@ architecture at of top_level is
   signal lm_sm_reg_write_ex : std_logic_vector(2 downto 0);
   signal lm_sm_write_load_ex : std_logic;
   signal alu2_out_ex : std_logic_vector(15 downto 0);
+  --Stage 4 to 5
+  signal alu1_out_mem : std_logic_vector(15 downto 0); -- output of ALU
+  signal alu1_carry_mem : std_logic;
+  signal alu1_zero_mem : std_logic;
+  signal cond_carry_mem : std_logic;
+  signal cond_zero_mem : std_logic;
+
+  --Output signals rom older stages 
+  signal data_ra_mem : std_logic_vector(15 downto 0);
+  signal data_rb_mem : std_logic_vector(15 downto 0);
+  signal pc_out_mem : std_logic_vector(15 downto 0);
+  signal rf_write_mem : std_logic;
+  signal rf_a3_mem : std_logic_vector(2 downto 0);
+  signal rf_data_select_mem : std_logic_vector(2 downto 0);
+  signal mem_write_mem : std_logic;
+  signal mem_read_mem : std_logic;
+  signal mem_data_sel_mem : std_logic;
+  signal mem_address_sel_mem : std_logic;
+  signal ir_5_0_mem : std_logic_vector(15 downto 0);
+  signal ir_8_0_mem : std_logic_vector(15 downto 0);
+  signal data_extender_out_mem : std_logic_vector(15 downto 0);
+  signal carry_en_mem : std_logic;
+  signal zero_en_alu_mem : std_logic;
+  signal zero_en_mem_mem : std_logic;
+  --signal cz_mem : std_logic_vector(1 downto 0);
+  --signal opcode_mem : std_logic_vector(3 downto 0);
+  signal lm_detect_mem : std_logic; --LM/SM signals 
+  signal sm_detect_mem : std_logic;
+  signal lw_sw_stop_mem : std_logic;
+  signal first_lw_sw_mem : std_logic;
+  signal right_shift_lm_sm_bit_mem : std_logic;
+  signal lm_sm_reg_write_mem : std_logic_vector(2 downto 0);
+  signal lm_sm_write_load_mem : std_logic;
+  signal alu2_out_mem : std_logic_vector(15 downto 0)     
 
 
 begin
@@ -325,5 +353,74 @@ begin
       lm_sm_write_load_mem => lm_sm_write_load_mem,
       alu2_out_mem => alu2_out_mem --alu2_in to IF stage
     );
+
+    memstage : mem_access_stage 
+      port map (
+      clk => clk,
+      reset => reset,
+      --signals from previous stages 
+      alu1_out_mem => alu1_out_mem, 
+      alu1_carry_mem => alu1_carry_mem,
+      alu1_zero_mem => alu1_zero_mem,
+      cond_carry_mem => cond_carry_mem,
+      cond_zero_mem => cond_zero_mem,
+
+      data_ra_mem => data_ra_mem,
+      data_rb_mem => data_rb_mem,
+      pc_out_mem => pc_out_mem,
+      rf_write_mem => rf_write_mem,
+      rf_a3_mem => rf_a3_mem,
+      rf_data_select_mem => rf_data_select_mem,
+      mem_write_mem => mem_write_mem,
+      mem_read_mem => mem_read_mem,
+      mem_data_sel_mem => mem_data_sel_mem,
+      mem_address_sel_mem => mem_address_sel_mem,
+  --    ir_5_0_mem : in std_logic_vector(15 downto 0);
+  --    ir_8_0_mem : in std_logic_vector(15 downto 0);
+      data_extender_out_mem => data_extender_out_mem,
+      carry_en_mem => carry_en_mem,
+      zero_en_alu_mem => zero_en_alu_mem,
+      zero_en_mem_mem => zero_en_mem_mem,
+      lm_detect_mem => lm_detect_mem,
+      sm_detect_mem => sm_detect_mem,
+      lw_sw_stop_mem => lw_sw_stop_mem,
+      first_lw_sw_mem => first_lw_sw_mem,
+      right_shift_lm_sm_bit_mem => right_shift_lm_sm_bit_mem,
+      lm_sm_reg_write_mem => lm_sm_reg_write_mem,
+      lm_sm_write_load_mem => lm_sm_write_load_ex,
+  --    alu2_out_mem : in std_logic_vector(15 downto 0);
+
+      -----Outputs----
+      mem_data_out => mem_data_out,
+      alu1_out_wb => alu1_out_wb,
+      alu1_carry_wb => alu1_carry_wb,
+      alu1_zero_wb => alu1_zero_wb,
+  --    cond_carry_wb : out std_logic;
+  --    cond_zero_wb : out std_logic; 
+      data_ra_wb => data_ra_wb,
+      data_rb_wb => data_rb_wb,
+      pc_out_wb => pc_out_wb,
+      rf_write_wb => rf_write_wb,
+      rf_a3_wb => rf_a3_wb,
+      rf_data_select_wb => rf_data_select_wb,
+      --mem_write_wb : out std_logic;
+      --mem_read_wb : out std_logic;
+      --mem_data_sel_wb : out std_logic;
+      --mem_address_sel_wb : out std_logic;
+      --ir_5_0_wb : out std_logic_vector(15 downto 0);
+      --ir_8_0_wb : out std_logic_vector(15 downto 0);
+      data_extender_out_wb => data_extender_out_wb,
+      carry_en_wb => carry_en_wb,
+      zero_en_alu_wb => zero_en_alu_wb,
+      zero_en_mem_wb => zero_en_mem_wb,
+      lm_detect_wb => lm_detect_wb,
+      sm_detect_wb => sm_detect_wb,
+      lw_sw_stop_wb => lw_sw_stop_wb,
+      first_lw_sw_wb => first_lw_sw_wb,
+      right_shift_lm_sm_bit_wb => right_shift_lm_sm_bit_wb,
+      lm_sm_reg_write_wb => lm_sm_reg_write_wb,
+      lm_sm_write_load_wb => lm_sm_write_load_wb
+
+
 
 end architecture ; -- at
