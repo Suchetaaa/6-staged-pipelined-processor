@@ -11,13 +11,7 @@ entity top_level is
     clk : in std_logic;
     reset: in std_logic;
 
-    rf_write_final : out std_logic;
-    carry_en_final : out std_logic;
-    zero_en_final : out std_logic;
-    carry_val_final : out std_logic;
-    zero_val_final : out std_logic;
-    rf_data_final : out std_logic_vector(15 downto 0);
-    rf_a3_final : out std_logic_vector(2 downto 0)  
+     
   );
 end entity;
 architecture at of top_level is
@@ -160,6 +154,13 @@ architecture at of top_level is
   signal lm_sm_write_load_wb : std_logic;
   signal alu2_out_wb : std_logic_vector(15 downto 0);
   signal lm_sm_reg_wb : std_logic_vector(2 downto 0);
+  signal rf_write_final : std_logic;
+  signal carry_en_final : std_logic;
+  signal zero_en_final : std_logic;
+  signal carry_val_final : std_logic;
+  signal zero_val_final : std_logic;
+  signal rf_data_final : std_logic_vector(15 downto 0);
+  signal rf_a3_final : std_logic_vector(2 downto 0) 
 
 
 begin
@@ -255,13 +256,13 @@ begin
       lm_sm_write_load => lm_sm_write_load,
       alu2_out => alu2_out, --alu2_out to IF stage
       ------------------ From Write Back Stage -----------------------------
-      rf_write_final => rf_write, -- should actually come from wb stage
-      carry_en_final => carry_en,
-      zero_en_final => '1',
-      carry_val_final => '1', 
-      zero_val_final => '1',
-      rf_data_final => "0000000000000000",
-      rf_a3_final => "000",
+      rf_write_final => rf_write_final, -- should actually come from wb stage
+      carry_en_final => carry_en_final,
+      zero_en_final => zero_en_final,
+      carry_val_final => carry_val_final, 
+      zero_val_final => zero_val_final,
+      rf_data_final => rf_data_final,
+      rf_a3_final => rf_a3_final,
       --------------------- Outputs -----------------------------------------
       -- the register values read 
       data_ra => data_ra,
@@ -432,6 +433,8 @@ begin
       carry_en_wb => carry_en_wb,
       zero_en_alu_wb => zero_en_alu_wb,
       zero_en_mem_wb => zero_en_mem_wb,
+      cz_wb => cz_wb,
+      opcode_wb => opcode_wb,
       lm_detect_wb => lm_detect_wb,
       sm_detect_wb => sm_detect_wb,
       lw_sw_stop_wb => lw_sw_stop_wb,

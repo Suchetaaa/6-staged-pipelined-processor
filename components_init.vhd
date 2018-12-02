@@ -444,6 +444,8 @@ package components_init is
 	    carry_en_wb : out std_logic;
 	    zero_en_alu_wb : out std_logic;
 	    zero_en_mem_wb : out std_logic;
+	    cz_wb : out std_logic_vector(1 downto 0);
+    	opcode_wb : out std_logic_vector(3 downto 0);
 	    lm_detect_wb : out std_logic;
 	    sm_detect_wb : out std_logic;
 	    lw_sw_stop_wb : out std_logic;

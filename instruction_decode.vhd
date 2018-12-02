@@ -288,8 +288,8 @@ begin
 		'0';
 
 	--xor_reg_out <= "00000000" when reset = '1';
-	priority_enc_out <= "00000000" when reset = '1'; 
-	first_later_check_in <= '0' when reset = '1';
+	--priority_enc_out <= "00000000" when reset = '1'; 
+	--first_later_check_in <= '0' when reset = '1';
 
 
 	--XOR in signals 
@@ -395,13 +395,13 @@ begin
 			data_extender_out => data_extender_out_signal
 		);
 
-	first_later : register_1 
-		port map (
-			reg_data_in => first_later_check_in,
-			reg_enable => first_later_check_enable,
-			clk => clk,
-			reg_data_out => first_later_check_out
-		);
+--	first_later : register_1 
+--		port map (
+--			reg_data_in => first_later_check_in,
+--			reg_enable => first_later_check_enable,
+--			clk => clk,
+--			reg_data_out => first_later_check_out
+--		);
 
 	------------------------------------------------------------------------Interfacing register for SE9_out---------------------------------------------------------
 	ir_8_0_reg_out : register_16 

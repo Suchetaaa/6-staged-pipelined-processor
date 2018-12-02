@@ -125,6 +125,8 @@ begin
 		else -- only case for addr = 111
 			data_out_1_var := reg_7;
 		end if;
+	else 
+		data_out_1_var := "0000000000000000";
 	end if;
 	if reg_file_read_rb = '1' then
 		--Address 2 
@@ -145,12 +147,18 @@ begin
 		else -- only case for addr = 111
 			data_out_2_var := reg_7;
 		end if;
+	else 
+		data_out_2_var := "0000000000000000";
 	end if;
 	if carry_read = '1' then
 		carry_out <= carry_flag;
+	else 
+		carry_out <= '0';
 	end if;
 	if zero_read = '1' then
 		zero_out <= zero_flag;
+	else 
+		zero_out <= '0';
 	end if;
 	data_out_ra <= data_out_1_var;
 	data_out_rb <= data_out_2_var;
