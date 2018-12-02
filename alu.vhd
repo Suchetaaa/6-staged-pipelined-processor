@@ -28,6 +28,7 @@ architecture alu of alu1 is
 	signal negative_a : std_logic_vector(15 downto 0);
 	signal negative_b : std_logic_vector(15 downto 0);
 	signal alu_out_sig : std_logic_vector(15 downto 0);
+	signal tmp : std_logic_vector(16 downto 0);
 	signal carry_when_pos : std_logic;
 	signal carry_when_neg : std_logic;
 	signal neg_addition : std_logic_vector(15 downto 0);
@@ -49,16 +50,20 @@ begin
 			alu_out_sig <= std_logic_vector(unsigned(alu_a) + unsigned(alu_b));
 			neg_addition <= std_logic_vector(unsigned(negative_a) + unsigned(negative_b));
 		end if;
+	
 	end process;
 
-	alu_out <= alu_out_sig;
+		alu_out <= alu_out_sig;
 
 	zero <= '1' when alu_out_sig = "0000000000000000" else '0';
 
-	carry_when_pos <= '1' when alu_a(15) = '0' and alu_b(15) = '0' and alu_a(14 downto 0) > alu_out_sig(14 downto 0) else
-		'0';
-	carry_when_neg <= '1' when alu_a(15) = '1' and alu_b(15) = '1' and negative_a(14 downto 0) > neg_addition(14 downto 0) else
-		'0';
-	carry <= carry_when_neg or carry_when_pos;
+	--carry_when_pos <= '1' when alu_a(15) = '0' and alu_b(15) = '0' and (alu_a(14 downto 0) > alu_out_sig(14 downto 0)) else
+		--'0';
+	--carry_when_neg <= '1' when alu_a(15) = '1' and alu_b(15) = '1' and (alu_a(15 downto 0) > alu_out_sig(15 downto 0)) else
+		--'0';
+		
+		--carry <= '1' when carry_when_neg = '1' or carry_when_pos = '1' else '0';
+		tmp <= ('0' & alu_a) + ('0' & alu_b);
+		carry <= tmp(16);
 
 end architecture ; -- alu

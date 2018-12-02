@@ -19,7 +19,7 @@ end entity ; -- instruction_memory
 
 architecture arch of instruction_memory is
 
-	signal memory_database : memory_database_type := memory;
+	signal memory_database : memory_database_type := memory_1;
 
 begin
 

@@ -57,32 +57,31 @@ architecture arch of instruction_fetch is
 
 begin
 
-	PC : process(clk)
+	PC : process(clk, incrementer_pc_out, mem_data_out, pc_select, alu1_out, alu2_out)
 	begin
 		if reset = '1' then
 			pc_register_in <= "0000000000000000";
 
-		elsif (clk'event and clk = '1') then 
-			if pc_select = "00" then 
-				pc_register_in <= alu1_out;
-			elsif pc_select = "01" then 
-				pc_register_in <= alu2_out;
-			elsif pc_select = "10" then 
-				pc_register_in <= mem_data_out;
-			elsif pc_select = "11" then
-				pc_register_in <= incrementer_pc_out;
-			end if;
+		--elsif (clk'event and clk = '1') then 
+		elsif pc_select = "00" then 
+			pc_register_in <= alu1_out;
+		elsif pc_select = "01" then 
+			pc_register_in <= alu2_out;
+		elsif pc_select = "10" then 
+			pc_register_in <= mem_data_out;
+		elsif pc_select = "11" then
+			pc_register_in <= incrementer_pc_out;
 		end if;
 
 	end process ; -- PC
 
-	pc_reg : register_16
-		port map (
-			reg_data_in => pc_register_in,
-			reg_enable => pc_register_enable,
-			clk => clk,
-			reg_data_out => pc_register_out
-		);
+	--pc_reg : register_16
+	--	port map (
+	--		reg_data_in => pc_register_in,
+	--		reg_enable => pc_register_enable,
+	--		clk => clk,
+	--		reg_data_out => pc_register_out
+	--	);
 
 	incrementer : incrementer_pc 
 		port map (
@@ -92,7 +91,7 @@ begin
 
 	InstructionMemory : instruction_memory
 		port map (
-			address_in => pc_register_out,
+			address_in => pc_register_in,
 			instruction_out => instruction_reg_in
 		);
 
@@ -106,11 +105,11 @@ begin
 
 	PC_int_Register : register_16 
 		port map (
-			reg_data_in => pc_register_out,
+			reg_data_in => pc_register_in,
 			reg_enable => ir_enable,
 			clk => clk,
-			reg_data_out => pc_register_int_out
+			reg_data_out => pc_register_out
 		);
 	
-
+		pc_register_int_out <= pc_register_out;
 end architecture ; -- arch
