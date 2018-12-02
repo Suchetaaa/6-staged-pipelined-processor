@@ -9,7 +9,7 @@ use work.components_init.all;
 entity top_level is
   port(
     clk : in std_logic;
-    reset: in std_logic;
+    reset: in std_logic
 
      
   );
@@ -160,7 +160,7 @@ architecture at of top_level is
   signal carry_val_final : std_logic;
   signal zero_val_final : std_logic;
   signal rf_data_final : std_logic_vector(15 downto 0);
-  signal rf_a3_final : std_logic_vector(2 downto 0) 
+  signal rf_a3_final : std_logic_vector(2 downto 0);
 
 
 begin
