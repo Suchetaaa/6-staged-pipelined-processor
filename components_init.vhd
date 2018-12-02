@@ -176,6 +176,47 @@ package components_init is
 			zero : out std_logic
   	) ;
   end component alu1;
+
+  component instruction_decode is
+	  port (
+			clk : in std_logic;
+			reset : in std_logic;
+			pc_register_int_out : in std_logic_vector(15 downto 0);
+			instruction_int_out : in std_logic_vector(15 downto 0);
+			pc_out : out std_logic_vector(15 downto 0);
+			alu1_op : out std_logic_vector(1 downto 0);
+			alu1_a_select : out std_logic;
+			alu1_b_select : out std_logic_vector(1 downto 0);
+			rf_write : out std_logic;
+			rf_a1_read : out std_logic;
+			rf_a2_read : out std_logic;
+			rf_a3 : out std_logic_vector(2 downto 0);
+			rf_data_select : out std_logic_vector(2 downto 0);
+			mem_write : out std_logic;
+			mem_read : out std_logic;
+			mem_data_sel : out std_logic;
+			mem_address_sel : out std_logic;
+			ir_11_9 : out std_logic_vector(2 downto 0);
+			ir_8_6 : out std_logic_vector(2 downto 0);
+			ir_5_3 : out std_logic_vector(2 downto 0);
+			ir_5_0 : out std_logic_vector(15 downto 0);
+			ir_8_0 : out std_logic_vector(15 downto 0);
+			data_extender_out : out std_logic_vector(15 downto 0);
+			carry_en : out std_logic;
+			zero_en_alu : out std_logic;
+			zero_en_mem : out std_logic;
+			cz : out std_logic_vector(1 downto 0);
+			opcode : out std_logic_vector(3 downto 0);
+			lm_detect : out std_logic;
+			sm_detect : out std_logic;
+			lw_sw_stop : out std_logic;
+			first_lw_sw : out std_logic;
+			right_shift_lm_sm_bit : out std_logic;
+			lm_sm_reg_write : out std_logic_vector(2 downto 0);
+			lm_sm_write_load : out std_logic;
+			alu2_out : out std_logic_vector(15 downto 0)
+	  ) ;
+	 end component instruction_decode;
 	
 end components_init;
 	
