@@ -14,8 +14,8 @@ entity top_level is
     alu1_out_wb : out std_logic_vector(15 downto 0);
     alu1_carry_wb : out std_logic;
     alu1_zero_wb : out std_logic;
---    cond_carry_wb : out std_logic;
---    cond_zero_wb : out std_logic; 
+    cond_carry_wb : out std_logic;
+    cond_zero_wb : out std_logic; 
     data_ra_wb : out std_logic_vector(15 downto 0);
     data_rb_wb : out std_logic_vector(15 downto 0);
     pc_out_wb : out std_logic_vector(15 downto 0);
@@ -31,7 +31,7 @@ entity top_level is
     data_extender_out_wb : out std_logic_vector(15 downto 0);
     carry_en_wb : out std_logic;
     zero_en_alu_wb : out std_logic;
-    zero_en_mem_wb : std_logic;
+    zero_en_mem_wb : out std_logic;
     lm_detect_wb : out std_logic;
     sm_detect_wb : out std_logic;
     lw_sw_stop_wb : out std_logic;
@@ -144,7 +144,7 @@ architecture at of top_level is
   signal right_shift_lm_sm_bit_mem : std_logic;
   signal lm_sm_reg_write_mem : std_logic_vector(2 downto 0);
   signal lm_sm_write_load_mem : std_logic;
-  signal alu2_out_mem : std_logic_vector(15 downto 0)     
+  signal alu2_out_mem : std_logic_vector(15 downto 0);     
 
 
 begin
@@ -202,8 +202,8 @@ begin
       alu2_out => alu2_out
     ) ;
 
-    operandread : operand_read 
-      port map (
+  operandread : operand_read 
+    port map (
       clk => clk,
       reset => reset, 
       ---------------------- From ID Stage -----------------------------
@@ -282,8 +282,8 @@ begin
       alu2_out_ex => alu2_out_ex
     );
 
-    executestage : execute 
-      port map (
+  executestage : execute 
+    port map (
       clk => clk,
       reset => reset,
       -- the register values read 
@@ -354,8 +354,8 @@ begin
       alu2_out_mem => alu2_out_mem --alu2_in to IF stage
     );
 
-    memstage : mem_access_stage 
-      port map (
+  memstage : mem_access_stage 
+    port map (
       clk => clk,
       reset => reset,
       --signals from previous stages 
@@ -395,8 +395,8 @@ begin
       alu1_out_wb => alu1_out_wb,
       alu1_carry_wb => alu1_carry_wb,
       alu1_zero_wb => alu1_zero_wb,
-  --    cond_carry_wb : out std_logic;
-  --    cond_zero_wb : out std_logic; 
+		cond_carry_wb => cond_carry_wb,
+      cond_zero_wb => cond_zero_wb,
       data_ra_wb => data_ra_wb,
       data_rb_wb => data_rb_wb,
       pc_out_wb => pc_out_wb,
@@ -420,6 +420,7 @@ begin
       right_shift_lm_sm_bit_wb => right_shift_lm_sm_bit_wb,
       lm_sm_reg_write_wb => lm_sm_reg_write_wb,
       lm_sm_write_load_wb => lm_sm_write_load_wb
+    );
 
 
 

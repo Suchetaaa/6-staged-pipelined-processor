@@ -11,7 +11,7 @@ type data_memory_database_type is array(0 to 63) of std_logic_vector(15 downto 0
 
 constant memcomp : data_memory_database_type := 
 (
-	0 => "0000000000000000",
+	0 => "0000000000010010",
 	1 => "0000000000000000",
 	2 => "0000000000000000",
 	3 => "0000000000000000",

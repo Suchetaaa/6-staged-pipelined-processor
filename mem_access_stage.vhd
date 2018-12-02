@@ -14,8 +14,8 @@ entity mem_access_stage is
     alu1_out_mem : in std_logic_vector(15 downto 0);
     alu1_carry_mem : in std_logic;
     alu1_zero_mem : in std_logic;
---    cond_carry_mem : in std_logic;
---    cond_zero_mem : in std_logic;
+    cond_carry_mem : in std_logic;
+    cond_zero_mem : in std_logic;
 
     data_ra_mem : in std_logic_vector(15 downto 0);
     data_rb_mem : in std_logic_vector(15 downto 0);
@@ -49,8 +49,8 @@ entity mem_access_stage is
     alu1_out_wb : out std_logic_vector(15 downto 0);
     alu1_carry_wb : out std_logic;
     alu1_zero_wb : out std_logic;
---    cond_carry_wb : out std_logic;
---    cond_zero_wb : out std_logic;
+    cond_carry_wb : out std_logic;
+    cond_zero_wb : out std_logic;
 
     --Carry forward signals 
     data_ra_wb : out std_logic_vector(15 downto 0);
@@ -134,21 +134,21 @@ alu1_zero_reg_out : register_1
     reg_data_out => alu1_zero_wb
 );
 
---cond_carry_reg_out : register_1
---  port map (
---    reg_data_in => cond_carry_mem,
---    reg_enable => '1',
---    clk => clk,
---    reg_data_out => cond_carry_wb
---);
+cond_carry_reg_out : register_1
+  port map (
+    reg_data_in => cond_carry_mem,
+    reg_enable => '1',
+    clk => clk,
+    reg_data_out => cond_carry_wb
+);
 
---cond_zero_reg_out : register_1 
---  port map (
---    reg_data_in => cond_zero_mem,
---    reg_enable => '1',
---    clk => clk,
---    reg_data_out => cond_zero_wb
---);
+cond_zero_reg_out : register_1 
+  port map (
+    reg_data_in => cond_zero_mem,
+    reg_enable => '1',
+    clk => clk,
+    reg_data_out => cond_zero_wb
+);
 
 data_ra_reg_out : register_16
   port map (
