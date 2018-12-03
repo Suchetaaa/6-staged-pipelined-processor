@@ -83,7 +83,9 @@ entity mem_access_stage is
     lm_sm_reg_write_wb : out std_logic_vector(2 downto 0);
     lm_sm_write_load_wb : out std_logic;
     alu2_out_wb : out std_logic_vector(15 downto 0);
-    valid_bit_mem_wb : out std_logic
+    valid_bit_mem_wb : out std_logic;
+	 lw_lhi_dep_reg_mem : in std_logic;
+	 lw_lhi_dep_reg_wb : out std_logic
 
   ) ;
 end entity ; -- instruction_memory

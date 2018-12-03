@@ -15,6 +15,9 @@ entity top_level is
   );
 end entity;
 architecture at of top_level is
+
+	---stall signals----
+	signal stall_from_rr : std_logic;
   
   -- stage 1 to 2
   signal pc_if_id : std_logic_vector(15 downto 0);
@@ -169,7 +172,7 @@ architecture at of top_level is
   signal rf_data_final : std_logic_vector(15 downto 0);
   signal rf_a3_final : std_logic_vector(2 downto 0);
   signal lw_lhi_dep_reg_wb : std_logic;
-  signal lw_lhi_dep_reg_mem : std_logic
+  signal lw_lhi_dep_reg_mem : std_logic;
   signal lw_lhi_dep_reg_out : std_logic;
   signal instruction_to_rr : std_logic_vector(15 downto 0);
 
@@ -182,7 +185,8 @@ begin
       reset => reset,
       pc_select => "11",
       stall_if =>  stall_if,
-      ir_enable => '1',
+		stall_from_rr => stall_from_rr,
+      ir_enable => stall_from_rr,
       mem_data_out => "0000000000000000",
       alu1_out => "0000000000000000",
       alu2_out => alu2_out,
@@ -231,6 +235,7 @@ begin
       lm_sm_write_load => lm_sm_write_load,
       alu2_out => alu2_out,
       stall_if => stall_if,
+		stall_from_rr => stall_from_rr,
       valid_bit_id_or => valid_bit_id_or,
 		instruction_to_rr => instruction_to_rr
     ) ;
@@ -318,7 +323,8 @@ begin
       rf_carry_reg_out => rf_carry_reg_out,
       rf_zero_reg_out => rf_zero_reg_out,
       valid_bit_or_ex => valid_bit_or_ex,
-		lw_lhi_dep_reg_out => lw_lhi_dep_reg_out
+		lw_lhi_dep_reg_out => lw_lhi_dep_reg_out,
+		stall_from_rr => stall_from_rr
     );
 
   executestage : execute 
@@ -399,7 +405,7 @@ begin
 
     );
 
-  memstage : mem_access_stage 
+  memstageportmap : mem_access_stage 
     port map (
       clk => clk,
       reset => reset,
