@@ -168,6 +168,11 @@ architecture at of top_level is
   signal zero_val_final : std_logic;
   signal rf_data_final : std_logic_vector(15 downto 0);
   signal rf_a3_final : std_logic_vector(2 downto 0);
+  signal lw_lhi_dep_reg_wb : std_logic;
+  signal lw_lhi_dep_reg_mem : std_logic
+  signal lw_lhi_dep_reg_out : std_logic;
+  signal instruction_to_rr : std_logic_vector(15 downto 0);
+
 
 
 begin
@@ -226,7 +231,8 @@ begin
       lm_sm_write_load => lm_sm_write_load,
       alu2_out => alu2_out,
       stall_if => stall_if,
-      valid_bit_id_or => valid_bit_id_or
+      valid_bit_id_or => valid_bit_id_or,
+		instruction_to_rr => instruction_to_rr
     ) ;
 
   operandread : operand_read 
@@ -234,6 +240,7 @@ begin
       clk => clk,
       reset => reset, 
       ---------------------- From ID Stage -----------------------------
+		instruction_to_rr => instruction_to_rr,
       pc_out => pc_out,
       alu1_op => alu1_op,
       alu1_a_select => alu1_a_select,
@@ -310,7 +317,8 @@ begin
       alu2_out_ex => alu2_out_ex,
       rf_carry_reg_out => rf_carry_reg_out,
       rf_zero_reg_out => rf_zero_reg_out,
-      valid_bit_or_ex => valid_bit_or_ex
+      valid_bit_or_ex => valid_bit_or_ex,
+		lw_lhi_dep_reg_out => lw_lhi_dep_reg_out
     );
 
   executestage : execute 
@@ -323,6 +331,7 @@ begin
       data_carry => data_carry,
       data_zero => data_zero,
 		lm_sm_adder_out => lm_sm_adder_out,
+		lw_lhi_dep_reg_out => lw_lhi_dep_reg_out,
       --signals coming from earlier stages 
       pc_out_ex => pc_out_ex,
       alu1_op_ex => alu1_op_ex,
@@ -385,7 +394,9 @@ begin
       lm_sm_reg_write_mem => lm_sm_reg_write_mem,
       lm_sm_write_load_mem => lm_sm_write_load_mem,
       alu2_out_mem => alu2_out_mem, --alu2_in to IF stage
-      valid_bit_ex_mem => valid_bit_ex_mem
+      valid_bit_ex_mem => valid_bit_ex_mem,
+		lw_lhi_dep_reg_mem => lw_lhi_dep_reg_mem
+
     );
 
   memstage : mem_access_stage 
@@ -399,6 +410,8 @@ begin
       cond_carry_mem => cond_carry_mem,
       cond_zero_mem => cond_zero_mem,
 		lm_sm_adder_out => lm_sm_adder_out,
+		lw_lhi_dep_reg_mem => lw_lhi_dep_reg_mem,
+
 
       data_ra_mem => data_ra_mem,
       data_rb_mem => data_rb_mem,
@@ -460,7 +473,8 @@ begin
       lm_sm_reg_write_wb => lm_sm_reg_write_wb,
       lm_sm_write_load_wb => lm_sm_write_load_wb,
       alu2_out_wb => alu2_out_wb,
-      valid_bit_mem_wb => valid_bit_mem_wb
+      valid_bit_mem_wb => valid_bit_mem_wb,
+		lw_lhi_dep_reg_wb => lw_lhi_dep_reg_wb
     );
 
   writeback : write_back 
@@ -503,6 +517,7 @@ begin
       lm_sm_reg_wb => lm_sm_reg_wb,
       lm_sm_write_load_wb => lm_sm_write_load_wb,
       alu2_out_wb => alu2_out_wb,
+		lw_lhi_dep_reg_wb => lw_lhi_dep_reg_wb,
       --Input signals from RF 
       rf_carry_reg_out => rf_carry_reg_out,
       rf_zero_reg_out => rf_zero_reg_out,

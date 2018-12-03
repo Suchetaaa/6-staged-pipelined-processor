@@ -95,12 +95,12 @@ entity instruction_decode is
 	-- signal to stall the IF stage
 	stall_if : out std_logic;
 
-	valid_bit_id_or : out std_logic
+	valid_bit_id_or : out std_logic;
 
 	--------------------------Special ports for stalling for LW and LM instructions--------------------------------
 
 	--instruction going out as a signal and not as register output
-	instruction_to_rr : out std_logic_vector(15 downto 0)
+	instruction_to_rr : out std_logic_vector(15 downto 0);
 
 	--Input coming from OR stage 
 	--lw_lhi_dep : in std_logic

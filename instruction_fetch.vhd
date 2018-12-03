@@ -40,7 +40,7 @@ entity instruction_fetch is
 	--PC value going out (address of present instruction)
 	pc_register_int_out : out std_logic_vector(15 downto 0);
 
-	valid_bit : out std_logic
+	valid_bit : out std_logic;
 
 	------------------------------------------------------------------input pins for flushing------------------------------------------------------------------
 	stall_from_rr : in std_logic;
@@ -112,7 +112,7 @@ begin
 			enables_the_reg_if_one <= '1';
 		end if;
 	end process ; -- enableregister
-	enables_the_reg_if_one <= (ir_enable and (not stall_if) and (not stall_from_rr));
+	--enables_the_reg_if_one <= (ir_enable and (not stall_if) and (not stall_from_rr));
 
 	incrementer : incrementer_pc 
 		port map (

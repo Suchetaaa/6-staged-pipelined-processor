@@ -110,6 +110,7 @@ architecture op_read of operand_read is
   signal rb_read_temp : std_logic_vector(15 downto 0);
   signal carry_temp : std_logic;
   signal zero_temp : std_logic;
+  signal lw_lhi_dep : std_logic;
 
 begin
 

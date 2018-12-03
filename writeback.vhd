@@ -65,7 +65,7 @@ entity write_back is
   carry_val_final : out std_logic;
   zero_val_final : out std_logic;
   rf_data_final : out std_logic_vector(15 downto 0);
-  rf_a3_final : out std_logic_vector(2 downto 0)
+  rf_a3_final : out std_logic_vector(2 downto 0);
 
   --------------------------------------------stalling--------------------------------------------
   --going as a signal
