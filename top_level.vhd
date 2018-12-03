@@ -539,7 +539,7 @@ begin
       carry_val_final => carry_val_final,
       zero_val_final => zero_val_final,
       rf_data_final => rf_data_final,
-      rf_a3_final => rf_a3_final
+      rf_a3_final => rf_a3_final,
       -----------stalling-------------
       lw_lhi_dep_reg_wb => lw_lhi_dep_reg_wb,
       lw_lhi_dep_done => lw_lhi_dep_done
