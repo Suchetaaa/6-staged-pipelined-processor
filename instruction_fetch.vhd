@@ -23,7 +23,7 @@ entity instruction_fetch is
 	stall_if : in std_logic;
 
 	--enable pin for IR
-	ir_enable : in std_logic;
+	--ir_enable : in std_logic;
 
 	--16 bits coming from memory
 	mem_data_out : in std_logic_vector(15 downto 0);
@@ -65,6 +65,8 @@ architecture arch of instruction_fetch is
 	signal enables_the_reg_if_one : std_logic;
 	signal valid_bit_signal : std_logic;
 
+	signal ir_enable : std_logic;
+
 
 begin
 
@@ -89,6 +91,8 @@ begin
 		end if;
 
 	end process ; -- PC
+
+	ir_enable <= enables_the_reg_if_one;
 
 
 	--pc_reg : register_16

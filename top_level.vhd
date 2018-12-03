@@ -10,14 +10,9 @@ entity top_level is
   port(
     clk : in std_logic;
     reset: in std_logic
-
-     
   );
 end entity;
-architecture at of top_level is
-
-	---stall signals----
-	signal stall_from_rr : std_logic;
+architecture at of top_level is	
   
   -- stage 1 to 2
   signal pc_if_id : std_logic_vector(15 downto 0);
@@ -171,10 +166,13 @@ architecture at of top_level is
   signal zero_val_final : std_logic;
   signal rf_data_final : std_logic_vector(15 downto 0);
   signal rf_a3_final : std_logic_vector(2 downto 0);
-  signal lw_lhi_dep_reg_wb : std_logic;
-  signal lw_lhi_dep_reg_mem : std_logic;
+  -------------------stalling--------------------------
   signal lw_lhi_dep_reg_out : std_logic;
+  signal lw_lhi_dep_reg_mem : std_logic;
+  signal lw_lhi_dep_reg_wb : std_logic;
+  signal stall_from_rr : std_logic;
   signal instruction_to_rr : std_logic_vector(15 downto 0);
+  signal lw_lhi_dep_done : std_logic;
 
 
 
@@ -185,8 +183,9 @@ begin
       reset => reset,
       pc_select => "11",
       stall_if =>  stall_if,
-		stall_from_rr => stall_from_rr,
-      ir_enable => stall_from_rr,
+		  stall_from_rr => stall_from_rr,
+      lw_lhi_dep_done => lw_lhi_dep_done,
+      --ir_enable => stall_from_rr,
       mem_data_out => "0000000000000000",
       alu1_out => "0000000000000000",
       alu2_out => alu2_out,
@@ -235,9 +234,10 @@ begin
       lm_sm_write_load => lm_sm_write_load,
       alu2_out => alu2_out,
       stall_if => stall_if,
-		stall_from_rr => stall_from_rr,
+		  stall_from_rr => stall_from_rr,
       valid_bit_id_or => valid_bit_id_or,
-		instruction_to_rr => instruction_to_rr
+		  instruction_to_rr => instruction_to_rr,
+      lw_lhi_dep_done => lw_lhi_dep_done
     ) ;
 
   operandread : operand_read 
@@ -245,7 +245,6 @@ begin
       clk => clk,
       reset => reset, 
       ---------------------- From ID Stage -----------------------------
-		instruction_to_rr => instruction_to_rr,
       pc_out => pc_out,
       alu1_op => alu1_op,
       alu1_a_select => alu1_a_select,
@@ -323,8 +322,11 @@ begin
       rf_carry_reg_out => rf_carry_reg_out,
       rf_zero_reg_out => rf_zero_reg_out,
       valid_bit_or_ex => valid_bit_or_ex,
-		lw_lhi_dep_reg_out => lw_lhi_dep_reg_out,
-		stall_from_rr => stall_from_rr
+
+      --------------stalling--------------
+      instruction_to_rr => instruction_to_rr,
+		  lw_lhi_dep_reg_out => lw_lhi_dep_reg_out,
+		  stall_from_rr => stall_from_rr
     );
 
   executestage : execute 
@@ -336,8 +338,7 @@ begin
       data_rb => data_rb,
       data_carry => data_carry,
       data_zero => data_zero,
-		lm_sm_adder_out => lm_sm_adder_out,
-		lw_lhi_dep_reg_out => lw_lhi_dep_reg_out,
+		  lm_sm_adder_out => lm_sm_adder_out,
       --signals coming from earlier stages 
       pc_out_ex => pc_out_ex,
       alu1_op_ex => alu1_op_ex,
@@ -401,7 +402,9 @@ begin
       lm_sm_write_load_mem => lm_sm_write_load_mem,
       alu2_out_mem => alu2_out_mem, --alu2_in to IF stage
       valid_bit_ex_mem => valid_bit_ex_mem,
-		lw_lhi_dep_reg_mem => lw_lhi_dep_reg_mem
+      -------------stalling------------
+      lw_lhi_dep_reg_out => lw_lhi_dep_reg_out,
+		  lw_lhi_dep_reg_mem => lw_lhi_dep_reg_mem
 
     );
 
@@ -415,10 +418,7 @@ begin
       alu1_zero_mem => alu1_zero_mem,
       cond_carry_mem => cond_carry_mem,
       cond_zero_mem => cond_zero_mem,
-		lm_sm_adder_out => lm_sm_adder_out,
-		lw_lhi_dep_reg_mem => lw_lhi_dep_reg_mem,
-
-
+		  lm_sm_adder_out => lm_sm_adder_out,
       data_ra_mem => data_ra_mem,
       data_rb_mem => data_rb_mem,
       pc_out_mem => pc_out_mem,
@@ -480,7 +480,10 @@ begin
       lm_sm_write_load_wb => lm_sm_write_load_wb,
       alu2_out_wb => alu2_out_wb,
       valid_bit_mem_wb => valid_bit_mem_wb,
-		lw_lhi_dep_reg_wb => lw_lhi_dep_reg_wb
+
+      --------------stalling-----------------
+      lw_lhi_dep_reg_mem => lw_lhi_dep_reg_mem,
+		  lw_lhi_dep_reg_wb => lw_lhi_dep_reg_wb
     );
 
   writeback : write_back 
@@ -523,7 +526,6 @@ begin
       lm_sm_reg_wb => lm_sm_reg_wb,
       lm_sm_write_load_wb => lm_sm_write_load_wb,
       alu2_out_wb => alu2_out_wb,
-		lw_lhi_dep_reg_wb => lw_lhi_dep_reg_wb,
       --Input signals from RF 
       rf_carry_reg_out => rf_carry_reg_out,
       rf_zero_reg_out => rf_zero_reg_out,
@@ -538,6 +540,9 @@ begin
       zero_val_final => zero_val_final,
       rf_data_final => rf_data_final,
       rf_a3_final => rf_a3_final
+      -----------stalling-------------
+      lw_lhi_dep_reg_wb => lw_lhi_dep_reg_wb,
+      lw_lhi_dep_done => lw_lhi_dep_done
 
       );
 

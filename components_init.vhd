@@ -169,7 +169,8 @@ package components_init is
 			pc_select : in std_logic_vector(1 downto 0);
 			stall_if : in std_logic;
 			stall_from_rr : in std_logic;
-			ir_enable : in std_logic;
+			lw_lhi_dep_done : in std_logic;
+			--ir_enable : in std_logic;
 			mem_data_out : in std_logic_vector(15 downto 0);
 			alu1_out : in std_logic_vector(15 downto 0);
 			alu2_out : in std_logic_vector(15 downto 0);
@@ -197,7 +198,6 @@ package components_init is
 			pc_register_int_out : in std_logic_vector(15 downto 0);
 			instruction_int_out : in std_logic_vector(15 downto 0);
 			valid_bit : in std_logic;
-			stall_from_rr : in std_logic;
 			pc_out : out std_logic_vector(15 downto 0);
 			alu1_op : out std_logic_vector(1 downto 0);
 			alu1_a_select : out std_logic;
@@ -232,7 +232,10 @@ package components_init is
 			alu2_out : out std_logic_vector(15 downto 0);
 			stall_if :out std_logic;
 			valid_bit_id_or : out std_logic;
-			instruction_to_rr: out std_logic_vector(15 downto 0)
+			-----stalling------
+			stall_from_rr : in std_logic;
+			instruction_to_rr: out std_logic_vector(15 downto 0);
+			lw_lhi_dep_done : in std_logic
 	  ) ;
 	 end component instruction_decode;
 
@@ -241,7 +244,6 @@ package components_init is
 	    -- clock and reset
 	    clk : in std_logic;
 	    reset : in std_logic;
-		 instruction_to_rr: in std_logic_vector(15 downto 0);
 	    ---------------------- From ID Stage -----------------------------
 	    pc_out : in std_logic_vector(15 downto 0);
 	    alu1_op : in std_logic_vector(1 downto 0);
@@ -285,17 +287,12 @@ package components_init is
 	    zero_val_final : in std_logic;
 	    rf_data_final : in std_logic_vector(15 downto 0);
 	    rf_a3_final : in std_logic_vector(2 downto 0);
-
-	    --rf_a3_wb_in : in std_logic_vector(2 downto 0);
-	    --rf_write_wb_in : in std_logic;
-	    --valid_bit_wb_in : in std_logic;
 	    --------------------- Outputs -----------------------------------------
 	    -- the register values read 
 	    data_ra : out std_logic_vector(15 downto 0);
 	    data_rb : out std_logic_vector(15 downto 0);
 	    data_carry : out std_logic;
 	    data_zero : out std_logic;
-		 stall_from_rr : out std_logic;
 	    -- signals to forward
 	    pc_out_ex : out std_logic_vector(15 downto 0);
 	    alu1_op_ex : out std_logic_vector(1 downto 0);
@@ -327,7 +324,10 @@ package components_init is
 	    rf_carry_reg_out : out std_logic;
 			rf_zero_reg_out : out std_logic;
 			valid_bit_or_ex : out std_logic;
-			lw_lhi_dep_reg_out : out std_logic
+			--------------stalling-------------
+			instruction_to_rr: in std_logic_vector(15 downto 0);
+			lw_lhi_dep_reg_out : out std_logic;
+			stall_from_rr : out std_logic
 	  );
 	end component;
 	
@@ -335,7 +335,6 @@ package components_init is
 	  port(
 	    clk : in std_logic;
 	    reset : in std_logic;
-		 lw_lhi_dep_reg_out : in std_logic;
 	    -- the register values read 
 	    data_ra : in std_logic_vector(15 downto 0);
 	    data_rb : in std_logic_vector(15 downto 0);
@@ -376,7 +375,7 @@ package components_init is
 	    alu1_zero_mem : out std_logic;
 	    cond_carry_mem : out std_logic;
 	    cond_zero_mem : out std_logic;
-		 lm_sm_adder_out : out std_logic_vector(15 downto 0);
+		 	lm_sm_adder_out : out std_logic_vector(15 downto 0);
 	    --Output signals rom older stages 
 	    data_ra_mem : out std_logic_vector(15 downto 0);
 	    data_rb_mem : out std_logic_vector(15 downto 0);
@@ -405,7 +404,9 @@ package components_init is
 	    lm_sm_write_load_mem : out std_logic;
 	    alu2_out_mem : out std_logic_vector(15 downto 0); --alu2_in to IF stage
 	    valid_bit_ex_mem : out std_logic;
-		 lw_lhi_dep_reg_mem : out std_logic
+	    ----------stalling-------
+	    lw_lhi_dep_reg_out : in std_logic;
+		 	lw_lhi_dep_reg_mem : out std_logic
 	  );	
 	end component;
 
@@ -413,7 +414,6 @@ package components_init is
   	port (
 	    clk : in std_logic;
 	    reset : in std_logic;
-		 lw_lhi_dep_reg_mem : in std_logic;
 	    --signals from previous stages 
 	    alu1_out_mem : in std_logic_vector(15 downto 0);
 	    alu1_carry_mem : in std_logic;
@@ -483,9 +483,11 @@ package components_init is
 	    right_shift_lm_sm_bit_wb : out std_logic;
 	    lm_sm_reg_write_wb : out std_logic_vector(2 downto 0);
 	    lm_sm_write_load_wb : out std_logic;
-		alu2_out_wb : out std_logic_vector(15 downto 0);
-		valid_bit_mem_wb : out std_logic;
-		lw_lhi_dep_reg_wb : out std_logic
+			alu2_out_wb : out std_logic_vector(15 downto 0);
+			valid_bit_mem_wb : out std_logic;
+			-----------stalling------------
+			lw_lhi_dep_reg_mem : in std_logic;
+			lw_lhi_dep_reg_wb : out std_logic
 	  ) ;
 	end component;
 
@@ -493,7 +495,6 @@ package components_init is
   	port (
 			clk : in std_logic;
 			reset: in std_logic;
-		  lw_lhi_dep_reg_wb : in std_logic;
 		  mem_data_out : in std_logic_vector(15 downto 0);
 		  --from alu-out
 		  alu1_out_wb : in std_logic_vector(15 downto 0);
@@ -542,7 +543,12 @@ package components_init is
 		  carry_val_final : out std_logic;
 		  zero_val_final : out std_logic;
 		  rf_data_final : out std_logic_vector(15 downto 0);
-		  rf_a3_final : out std_logic_vector(2 downto 0)
+		  rf_a3_final : out std_logic_vector(2 downto 0);
+
+		  --------stalling--------
+		  lw_lhi_dep_reg_wb : in std_logic;
+		  lw_lhi_dep_done : out std_logic
+
 		);
 	end component;
 	
