@@ -84,6 +84,8 @@ entity mem_access_stage is
     lm_sm_write_load_wb : out std_logic;
     alu2_out_wb : out std_logic_vector(15 downto 0);
     valid_bit_mem_wb : out std_logic;
+
+    ------------------------stalling----------------------------
 	 lw_lhi_dep_reg_mem : in std_logic;
 	 lw_lhi_dep_reg_wb : out std_logic
 
@@ -111,6 +113,14 @@ end process;
 
 mem_data_out_signal(15 downto 0) <= mem_array(to_integer(unsigned(alu1_out_mem(15 downto 0)))) when mem_address_sel_mem = '0' else 
 	mem_array(to_integer(unsigned(lm_sm_adder_out)));
+
+lwlhidepreg : register_1 
+  port map (
+    reg_data_in => lw_lhi_dep_reg_mem,
+    reg_enable => '1',
+    clk => clk,
+    reg_data_out => lw_lhi_dep_reg_wb
+);
 
 mem_data_out_reg : register_16 
   port map (

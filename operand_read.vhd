@@ -100,7 +100,7 @@ entity operand_read is
     ------------------------------------output signals for stalling detection----------------------------
     --lw_lhi_dep : out std_logic;
     lw_lhi_dep_reg_out : out std_logic;
-    stall_from_rr : out std_logic
+    stall_from_rr : out std_logic -- going to IF and ID
     ------------------------------------output signals for stalling detection----------------------------
   );
 
@@ -139,6 +139,9 @@ begin
           lw_lhi_dep <= '1';
           stall_from_rr <= '1';
         end if;
+      else 
+        lw_lhi_dep <= '0';
+        stall_from_rr <= '0';
       end if;
     end if;
 
