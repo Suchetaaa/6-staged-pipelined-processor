@@ -102,7 +102,7 @@ entity operand_read is
     ------------------------------------output signals for stalling detection----------------------------
     --lw_lhi_dep : out std_logic;
     lw_lhi_dep_reg_out : out std_logic;
-    stall_from_rr : out std_logic -- going to IF and ID
+    stall_from_rr : out std_logic; -- going to IF and ID
     ------------------------------------output signals for stalling detection----------------------------
 
     external_r0 : out std_logic_vector(15 downto 0);
@@ -127,7 +127,9 @@ entity operand_read is
     data_b_from_wb_ex : out std_logic_vector(15 downto 0);
 
     alu1_a_select_final : out std_logic_vector(2 downto 0);
-    alu1_b_select_final : out std_logic_vector(2 downto 0)
+    alu1_b_select_final : out std_logic_vector(2 downto 0);
+	 
+	 alu1_out_from_wb : in std_logic_vector(15 downto 0)
 
   );
 
@@ -141,6 +143,9 @@ architecture op_read of operand_read is
   signal lw_lhi_dep : std_logic;
   signal alu1_a_select_signal : std_logic_vector(2 downto 0);
   signal alu1_b_select_signal : std_logic_vector(2 downto 0);
+  signal data_a_from_wb : std_logic_vector(15 downto 0);
+  signal data_b_from_wb : std_logic_vector(15 downto 0);
+  
 
 
 begin
@@ -153,19 +158,19 @@ begin
       --Execute given more pref
       if (opcode_from_ex = "0000" or opcode_from_ex = "0010" or opcode_from_ex = "0001") then 
         if rf_a3_from_ex = ir_11_9 then  
-          alu1_a_select_signal = "000"; -- ALU1 OUT FROM EX
+          alu1_a_select_signal <= "000"; -- ALU1 OUT FROM EX
           data_a_from_wb <= "0000000000000000";
         end if;
       --Memory
       elsif (opcode_from_mem = "0000" or opcode_from_mem = "0010" or opcode_from_mem = "0001") then 
         if rf_a3_from_mem = ir_11_9 then 
-          alu1_a_select_signal = "001"; --ALU1 OUT FROM MEMORY
+          alu1_a_select_signal <= "001"; --ALU1 OUT FROM MEMORY
           data_a_from_wb <= "0000000000000000";
         end if; 
       --Write back 
       elsif (opcode_from_wb = "0000" or opcode_from_wb = "0010" or opcode_from_wb = "0001") then
         if rf_a3_from_wb = ir_11_9 then 
-          alu1_a_select_signal = "010"; --ALU1 OUT FROM WB 
+          alu1_a_select_signal <= "010"; --ALU1 OUT FROM WB 
           data_a_from_wb <= alu1_out_from_wb;
         end if;
       else 
@@ -230,19 +235,19 @@ begin
       --Execute given more pref
       if (opcode_from_ex = "0000" or opcode_from_ex = "0010" or opcode_from_ex = "0001") then 
         if rf_a3_from_ex = ir_8_6 then  
-          alu1_b_select_signal = "000"; -- ALU1 OUT FROM EX
+          alu1_b_select_signal <= "000"; -- ALU1 OUT FROM EX
           data_b_from_wb <= "0000000000000000";
         end if;
       --Memory
       elsif (opcode_from_mem = "0000" or opcode_from_mem = "0010" or opcode_from_mem = "0001") then 
         if rf_a3_from_mem = ir_8_6 then 
-          alu1_b_select_signal = "001"; --ALU1 OUT FROM MEMORY
+          alu1_b_select_signal <= "001"; --ALU1 OUT FROM MEMORY
           data_b_from_wb <= "0000000000000000";
         end if; 
       --Write back 
       elsif (opcode_from_wb = "0000" or opcode_from_wb = "0010" or opcode_from_wb = "0001") then
         if rf_a3_from_wb = ir_8_6 then 
-          alu1_b_select_signal = "010"; --ALU1 OUT FROM WB 
+          alu1_b_select_signal <= "010"; --ALU1 OUT FROM WB 
           data_b_from_wb <= alu1_out_from_wb;
         end if;
       else 
@@ -361,7 +366,7 @@ begin
       reg_data_out => data_b_from_wb_ex
     );
 
-  alu1aselect : register_16 
+  alu1aselect : register_3 
      port map(
       reg_data_in => alu1_a_select_signal,
       reg_enable => '1',
@@ -369,7 +374,7 @@ begin
       reg_data_out => alu1_a_select_final
     );
 
-  alu1bselect : register_16 
+  alu1bselect : register_3 
      port map(
       reg_data_in => alu1_b_select_signal,
       reg_enable => '1',

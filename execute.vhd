@@ -95,7 +95,9 @@ entity execute is
     data_a_from_wb_ex : in std_logic_vector(15 downto 0);
 		data_b_from_wb_ex : in std_logic_vector(15 downto 0);
 		alu1_out_from_mem : in std_logic_vector(15 downto 0);
-		alu1_out_from_wb : in std_logic_vector(15 downto 0)
+		alu1_out_from_wb : in std_logic_vector(15 downto 0);
+		opcode_from_ex : out std_logic_vector(3 downto 0);
+		rf_a3_from_ex : out std_logic_vector(2 downto 0)
   );
 end entity;
 architecture arch of execute is

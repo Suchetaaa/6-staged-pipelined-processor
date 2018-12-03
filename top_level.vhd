@@ -364,7 +364,7 @@ begin
       --------------stalling--------------
       instruction_to_rr => instruction_to_rr,
 		  lw_lhi_dep_reg_out => lw_lhi_dep_reg_out,
-		  stall_from_rr => stall_from_rr
+		  stall_from_rr => stall_from_rr,
       -------------data hazards ----------------
       rf_a3_from_mem => rf_a3_from_mem,
       rf_a3_from_wb => rf_a3_from_wb,
@@ -375,7 +375,8 @@ begin
       data_a_from_wb_ex => data_a_from_wb_ex,
       data_b_from_wb_ex => data_b_from_wb_ex,
       alu1_a_select_final => alu1_a_select_final,
-      alu1_b_select_final => alu1_b_select_final
+      alu1_b_select_final => alu1_b_select_final,
+		alu1_out_from_wb => alu1_out_from_wb
     );
 
   executestage : execute 
@@ -455,14 +456,16 @@ begin
       valid_bit_ex_mem => valid_bit_ex_mem,
       -------------stalling------------
       lw_lhi_dep_reg_out => lw_lhi_dep_reg_out,
-		  lw_lhi_dep_reg_mem => lw_lhi_dep_reg_mem
+		  lw_lhi_dep_reg_mem => lw_lhi_dep_reg_mem,
       -----------data hazards---------------------
       alu1_a_select_final => alu1_a_select_final,
       alu1_b_select_final => alu1_b_select_final,
       data_a_from_wb_ex => data_a_from_wb_ex,
       data_b_from_wb_ex => data_b_from_wb_ex,
       alu1_out_from_mem => alu1_out_from_mem,
-      alu1_out_from_wb => alu1_out_from_wb
+      alu1_out_from_wb => alu1_out_from_wb,
+		opcode_from_ex => opcode_from_ex,
+		rf_a3_from_ex => rf_a3_from_ex
     );
 
   memstageportmap : mem_access_stage 
@@ -540,7 +543,7 @@ begin
 
       --------------stalling-----------------
       lw_lhi_dep_reg_mem => lw_lhi_dep_reg_mem,
-		  lw_lhi_dep_reg_wb => lw_lhi_dep_reg_wb
+		  lw_lhi_dep_reg_wb => lw_lhi_dep_reg_wb,
 
       -----------------data hazards----------------
       rf_a3_from_mem => rf_a3_from_mem,

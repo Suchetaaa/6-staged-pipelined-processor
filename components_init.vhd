@@ -332,32 +332,33 @@ package components_init is
 	    lm_sm_write_load_ex : out std_logic;
 	    alu2_out_ex : out std_logic_vector(15 downto 0); --alu2_out to IF stage
 	    rf_carry_reg_out : out std_logic;
-			rf_zero_reg_out : out std_logic;
-			valid_bit_or_ex : out std_logic;
+		rf_zero_reg_out : out std_logic;
+		valid_bit_or_ex : out std_logic;
 
-			external_r0 : out std_logic_vector(15 downto 0);
-	    external_r1 : out std_logic_vector(15 downto 0);
-	    external_r2 : out std_logic_vector(15 downto 0);
-	    external_r3 : out std_logic_vector(15 downto 0);
-	    external_r4 : out std_logic_vector(15 downto 0);
-	    external_r5 : out std_logic_vector(15 downto 0);
-	    external_r6 : out std_logic_vector(15 downto 0);
-	    external_r7 : out std_logic_vector(15 downto 0);
+		external_r0 : out std_logic_vector(15 downto 0);
+	   external_r1 : out std_logic_vector(15 downto 0);
+	   external_r2 : out std_logic_vector(15 downto 0);
+	   external_r3 : out std_logic_vector(15 downto 0);
+	   external_r4 : out std_logic_vector(15 downto 0);
+	   external_r5 : out std_logic_vector(15 downto 0);
+	   external_r6 : out std_logic_vector(15 downto 0);
+	   external_r7 : out std_logic_vector(15 downto 0);
 			--------------stalling-------------
-			instruction_to_rr: in std_logic_vector(15 downto 0);
-			lw_lhi_dep_reg_out : out std_logic;
-			stall_from_rr : out std_logic;
+		instruction_to_rr: in std_logic_vector(15 downto 0);
+		lw_lhi_dep_reg_out : out std_logic;
+		stall_from_rr : out std_logic;
 			------------------data hazards--------------
-			rf_a3_from_mem : out std_logic_vector(2 downto 0);
-      rf_a3_from_wb : out std_logic_vector(2 downto 0);
-      rf_a3_from_ex : out std_logic_vector(2 downto 0);
-      opcode_from_mem : out std_logic_vector(3 downto 0); 
-      opcode_from_wb : out std_logic_vector(3 downto 0);
-      opcode_from_ex : out std_logic_vector(3 downto 0)
+		rf_a3_from_mem : in std_logic_vector(2 downto 0);
+      rf_a3_from_wb : in std_logic_vector(2 downto 0);
+      rf_a3_from_ex : in std_logic_vector(2 downto 0);
+      opcode_from_mem : in std_logic_vector(3 downto 0); 
+      opcode_from_wb : in std_logic_vector(3 downto 0);
+      opcode_from_ex : in std_logic_vector(3 downto 0);
       data_a_from_wb_ex : out std_logic_vector(15 downto 0);
     	data_b_from_wb_ex : out std_logic_vector(15 downto 0);
     	alu1_a_select_final : out std_logic_vector(2 downto 0);
-    	alu1_b_select_final : out std_logic_vector(2 downto 0)
+    	alu1_b_select_final : out std_logic_vector(2 downto 0);
+		alu1_out_from_wb : in std_logic_vector(15 downto 0)
 	  );
 	end component;
 	
@@ -446,7 +447,9 @@ package components_init is
 	    data_a_from_wb_ex : in std_logic_vector(15 downto 0);
 			data_b_from_wb_ex : in std_logic_vector(15 downto 0);
 			alu1_out_from_mem : in std_logic_vector(15 downto 0);
-			alu1_out_from_wb : in std_logic_vector(15 downto 0)
+			alu1_out_from_wb : in std_logic_vector(15 downto 0);
+			opcode_from_ex : out std_logic_vector(3 downto 0);
+			rf_a3_from_ex : out std_logic_vector(2 downto 0)
 	  );	
 	end component;
 
