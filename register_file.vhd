@@ -36,7 +36,16 @@ entity reg_file is
 	data_out_ra : out std_logic_vector(15 downto 0);
 	data_out_rb : out std_logic_vector(15 downto 0);
 	carry_out : out std_logic;
-	zero_out : out std_logic
+	zero_out : out std_logic;
+
+	external_r0_sig : out std_logic_vector(15 downto 0);
+	external_r1_sig : out std_logic_vector(15 downto 0);
+	external_r2_sig : out std_logic_vector(15 downto 0);
+	external_r3_sig : out std_logic_vector(15 downto 0);
+	external_r4_sig : out std_logic_vector(15 downto 0);
+	external_r5_sig : out std_logic_vector(15 downto 0);
+	external_r6_sig : out std_logic_vector(15 downto 0);
+	external_r7_sig : out std_logic_vector(15 downto 0)
 
   ) ;
 end entity ; -- reg_file
@@ -163,5 +172,14 @@ begin
 	data_out_ra <= data_out_1_var;
 	data_out_rb <= data_out_2_var;
 	end process;
+
+	external_r0_sig <= reg_0; 
+	external_r1_sig <= reg_1; 
+	external_r2_sig <= reg_2; 
+	external_r3_sig <= reg_3; 
+	external_r4_sig <= reg_4; 
+	external_r5_sig <= reg_5; 
+	external_r6_sig <= reg_6; 
+	external_r7_sig <= reg_7; 
 
 end architecture; -- rf

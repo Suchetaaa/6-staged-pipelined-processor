@@ -77,6 +77,8 @@ entity operand_read is
     mem_read_ex : out std_logic;
     mem_data_sel_ex : out std_logic;
     mem_address_sel_ex : out std_logic;
+    ir_11_9_ex : out std_logic_vector(2 downto 0);
+    ir_8_6_ex : out std_logic_vector(2 downto 0);
     ir_5_0_ex : out std_logic_vector(15 downto 0); -- Sign extended
     ir_8_0_ex : out std_logic_vector(15 downto 0); -- Sign extended 
     data_extender_out_ex : out std_logic_vector(15 downto 0); --Data for LHI
@@ -102,7 +104,33 @@ entity operand_read is
     lw_lhi_dep_reg_out : out std_logic;
     stall_from_rr : out std_logic -- going to IF and ID
     ------------------------------------output signals for stalling detection----------------------------
+
+    external_r0 : out std_logic_vector(15 downto 0);
+    external_r1 : out std_logic_vector(15 downto 0);
+    external_r2 : out std_logic_vector(15 downto 0);
+    external_r3 : out std_logic_vector(15 downto 0);
+    external_r4 : out std_logic_vector(15 downto 0);
+    external_r5 : out std_logic_vector(15 downto 0);
+    external_r6 : out std_logic_vector(15 downto 0);
+    external_r7 : out std_logic_vector(15 downto 0);
+
+    -----------------data hazards----------------
+    rf_a3_from_ex : in std_logic_vector(2 downto 0);
+    rf_a3_from_mem : in std_logic_vector(2 downto 0);
+    rf_a3_from_wb : in std_logic_vector(2 downto 0);
+
+    opcode_from_ex : in std_logic_vector(3 downto 0);
+    opcode_from_mem : in std_logic_vector(3 downto 0);
+    opcode_from_wb : in std_logic_vector(3 downto 0);
+
+    data_a_from_wb_ex : out std_logic_vector(15 downto 0);
+    data_b_from_wb_ex : out std_logic_vector(15 downto 0);
+
+    alu1_a_select_final : out std_logic_vector(2 downto 0);
+    alu1_b_select_final : out std_logic_vector(2 downto 0)
+
   );
+
 
 end entity;
 architecture op_read of operand_read is
@@ -111,9 +139,135 @@ architecture op_read of operand_read is
   signal carry_temp : std_logic;
   signal zero_temp : std_logic;
   signal lw_lhi_dep : std_logic;
+  signal alu1_a_select_signal : std_logic_vector(2 downto 0);
+  signal alu1_b_select_signal : std_logic_vector(2 downto 0);
+
 
 begin
+  ---------------------------data hazards-----------------------------------
+  process (clk, rf_a3_from_ex, rf_a3_from_mem, rf_a3_from_wb, opcode_from_ex, opcode_from_mem, opcode_from_wb, opcode)
+  begin 
+    --dependency in memory access 
+    --AND instructions and NAND instructions
+    if (opcode = "0000" or opcode = "0010" or opcode = "1100") then 
+      --Execute given more pref
+      if (opcode_from_ex = "0000" or opcode_from_ex = "0010" or opcode_from_ex = "0001") then 
+        if rf_a3_from_ex = ir_11_9 then  
+          alu1_a_select_signal = "000"; -- ALU1 OUT FROM EX
+          data_a_from_wb <= "0000000000000000";
+        end if;
+      --Memory
+      elsif (opcode_from_mem = "0000" or opcode_from_mem = "0010" or opcode_from_mem = "0001") then 
+        if rf_a3_from_mem = ir_11_9 then 
+          alu1_a_select_signal = "001"; --ALU1 OUT FROM MEMORY
+          data_a_from_wb <= "0000000000000000";
+        end if; 
+      --Write back 
+      elsif (opcode_from_wb = "0000" or opcode_from_wb = "0010" or opcode_from_wb = "0001") then
+        if rf_a3_from_wb = ir_11_9 then 
+          alu1_a_select_signal = "010"; --ALU1 OUT FROM WB 
+          data_a_from_wb <= alu1_out_from_wb;
+        end if;
+      else 
+        alu1_a_select_signal <= "011"; -- from data_ra 
+        data_a_from_wb <= "0000000000000000";
+    end if;
 
+    if (opcode = "0001") then 
+      if (opcode_from_ex = "0000" or opcode_from_ex = "0001" or opcode_from_ex = "0010") then 
+        if rf_a3_from_ex = ir_11_9 then 
+          alu1_a_select_signal <= "000";
+          data_a_from_wb <= "0000000000000000";
+        end if; 
+      elsif (opcode_from_mem = "0000" or opcode_from_mem = "0001" or opcode_from_mem = "0010") then
+        if rf_a3_from_mem = ir_11_9 then 
+          alu1_a_select_signal <= "001";
+          data_a_from_wb <= "0000000000000000";
+        end if;
+      elsif (opcode_from_wb = "0000" or opcode_from_wb = "0001" or opcode_from_wb = "0010") then
+        if rf_a3_from_wb = ir_11_9 then 
+          alu1_a_select_signal <= "010"; 
+          data_a_from_wb <= alu1_out_from_wb;
+        end if;
+      else 
+        alu1_a_select_signal <= "011"; --from ra
+        data_a_from_wb <= "0000000000000000";
+      end if;
+    end if;
+
+    --LW and SW and 
+    if (opcode = "0100" or opcode = "0101") then 
+      if (opcode_from_ex = "0000" or opcode_from_ex = "0001" or opcode_from_ex = "0010") then 
+        if rf_a3_from_ex = ir_8_6 then 
+          alu1_a_select_signal <= "000";
+          data_a_from_wb <= "0000000000000000";
+        end if;
+      elsif (opcode_from_mem = "0000" or opcode_from_mem = "0001" or opcode_from_mem = "0010") then 
+        if rf_a3_from_mem = ir_8_6 then 
+          alu1_a_select_signal <= "001";
+          data_a_from_wb <= "0000000000000000";
+        end if;
+      elsif (opcode_from_wb = "0000" or opcode_from_wb = "0001" or opcode_from_wb = "0010") then 
+        if rf_a3_from_wb = ir_8_6 then 
+          alu1_a_select_signal <= "010";
+          data_a_from_wb <= alu1_out_from_wb;
+        end if;
+      else 
+        alu1_a_select_signal <= "100"; -- from data rb
+        data_a_from_wb <= "0000000000000000";
+      end if;
+    end if; 
+
+  end if;
+
+  end process;
+
+  process (clk, rf_a3_from_ex, rf_a3_from_mem, rf_a3_from_wb, opcode_from_ex, opcode_from_mem, opcode_from_wb, opcode)
+  begin 
+    --dependency in memory access 
+    --AND instructions and NAND instructions
+    if (opcode = "0000" or opcode = "0010" or opcode = "1100") then 
+      --Execute given more pref
+      if (opcode_from_ex = "0000" or opcode_from_ex = "0010" or opcode_from_ex = "0001") then 
+        if rf_a3_from_ex = ir_8_6 then  
+          alu1_b_select_signal = "000"; -- ALU1 OUT FROM EX
+          data_b_from_wb <= "0000000000000000";
+        end if;
+      --Memory
+      elsif (opcode_from_mem = "0000" or opcode_from_mem = "0010" or opcode_from_mem = "0001") then 
+        if rf_a3_from_mem = ir_8_6 then 
+          alu1_b_select_signal = "001"; --ALU1 OUT FROM MEMORY
+          data_b_from_wb <= "0000000000000000";
+        end if; 
+      --Write back 
+      elsif (opcode_from_wb = "0000" or opcode_from_wb = "0010" or opcode_from_wb = "0001") then
+        if rf_a3_from_wb = ir_8_6 then 
+          alu1_b_select_signal = "010"; --ALU1 OUT FROM WB 
+          data_b_from_wb <= alu1_out_from_wb;
+        end if;
+      else 
+        alu1_b_select_signal <= "011"; -- from data_rb 
+        data_b_from_wb <= "0000000000000000";
+    end if;
+
+    if (opcode = "0001") then 
+      alu1_b_select_signal <= "100"; --SE6 out
+      data_b_from_wb <= "0000000000000000"; 
+    end if;
+
+    --LW and SW and 
+    if (opcode = "0100" or opcode = "0101") then 
+      alu1_b_select_signal <= "100"; --se6 out 
+      data_b_from_wb <= "0000000000000000";
+    end if; 
+
+  end if;
+
+  end process;
+
+  ----------------------data hazards----------------------------------
+
+    --JLR 
   ---------------------------------------------for stalling for lw and lhi------------------------------------------------
   --ir_11_9 is tha RA to which writing is taking place in case of LHI and LW
   process(clk, instruction_to_rr, opcode, ir_11_9)
@@ -189,6 +343,41 @@ begin
 
   rf_carry_reg_out <= carry_temp;
   rf_zero_reg_out <= zero_temp;
+
+  ------------interfacing regs for data forwarding-----------
+  dataafromwb : register_16 
+     port map(
+      reg_data_in => data_a_from_wb,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => data_a_from_wb_ex
+    );
+
+  databfromwb : register_16 
+     port map(
+      reg_data_in => data_b_from_wb,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => data_b_from_wb_ex
+    );
+
+  alu1aselect : register_16 
+     port map(
+      reg_data_in => alu1_a_select_signal,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => alu1_a_select_final
+    );
+
+  alu1bselect : register_16 
+     port map(
+      reg_data_in => alu1_b_select_signal,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => alu1_b_select_final
+    );
+
+  ---------------------------------------------------------------
 
   rf_ra_reg_out : register_16 
      port map(

@@ -158,7 +158,15 @@ package components_init is
 			data_out_ra : out std_logic_vector(15 downto 0);
 			data_out_rb : out std_logic_vector(15 downto 0);
 			carry_out : out std_logic;
-			zero_out : out std_logic
+			zero_out : out std_logic;
+			external_r0_sig : out std_logic_vector(15 downto 0);
+			external_r1_sig : out std_logic_vector(15 downto 0);
+			external_r2_sig : out std_logic_vector(15 downto 0);
+			external_r3_sig : out std_logic_vector(15 downto 0);
+			external_r4_sig : out std_logic_vector(15 downto 0);
+			external_r5_sig : out std_logic_vector(15 downto 0);
+			external_r6_sig : out std_logic_vector(15 downto 0);
+			external_r7_sig : out std_logic_vector(15 downto 0)
 		);
 	end component reg_file;
 
@@ -305,6 +313,8 @@ package components_init is
 	    mem_read_ex : out std_logic;
 	    mem_data_sel_ex : out std_logic;
 	    mem_address_sel_ex : out std_logic;
+	    ir_11_9_ex : out std_logic_vector(2 downto 0);
+    	ir_8_6_ex : out std_logic_vector(2 downto 0);
 	    ir_5_0_ex : out std_logic_vector(15 downto 0); -- Sign extended
 	    ir_8_0_ex : out std_logic_vector(15 downto 0); -- Sign extended 
 	    data_extender_out_ex : out std_logic_vector(15 downto 0); --Data for LHI
@@ -324,10 +334,30 @@ package components_init is
 	    rf_carry_reg_out : out std_logic;
 			rf_zero_reg_out : out std_logic;
 			valid_bit_or_ex : out std_logic;
+
+			external_r0 : out std_logic_vector(15 downto 0);
+	    external_r1 : out std_logic_vector(15 downto 0);
+	    external_r2 : out std_logic_vector(15 downto 0);
+	    external_r3 : out std_logic_vector(15 downto 0);
+	    external_r4 : out std_logic_vector(15 downto 0);
+	    external_r5 : out std_logic_vector(15 downto 0);
+	    external_r6 : out std_logic_vector(15 downto 0);
+	    external_r7 : out std_logic_vector(15 downto 0);
 			--------------stalling-------------
 			instruction_to_rr: in std_logic_vector(15 downto 0);
 			lw_lhi_dep_reg_out : out std_logic;
-			stall_from_rr : out std_logic
+			stall_from_rr : out std_logic;
+			------------------data hazards--------------
+			rf_a3_from_mem : out std_logic_vector(2 downto 0);
+      rf_a3_from_wb : out std_logic_vector(2 downto 0);
+      rf_a3_from_ex : out std_logic_vector(2 downto 0);
+      opcode_from_mem : out std_logic_vector(3 downto 0); 
+      opcode_from_wb : out std_logic_vector(3 downto 0);
+      opcode_from_ex : out std_logic_vector(3 downto 0)
+      data_a_from_wb_ex : out std_logic_vector(15 downto 0);
+    	data_b_from_wb_ex : out std_logic_vector(15 downto 0);
+    	alu1_a_select_final : out std_logic_vector(2 downto 0);
+    	alu1_b_select_final : out std_logic_vector(2 downto 0)
 	  );
 	end component;
 	
@@ -352,6 +382,8 @@ package components_init is
 	    mem_read_ex : in std_logic;
 	    mem_data_sel_ex : in std_logic;
 	    mem_address_sel_ex : in std_logic;
+	    ir_11_9_ex : in std_logic_vector(2 downto 0);
+    	ir_8_6_ex : in std_logic_vector(2 downto 0);
 	    ir_5_0_ex : in std_logic_vector(15 downto 0); -- Sign extended 
 	    ir_8_0_ex : in std_logic_vector(15 downto 0); -- Sign extended  
 	    data_extender_out_ex : in std_logic_vector(15 downto 0); --Data for LHI
@@ -406,7 +438,15 @@ package components_init is
 	    valid_bit_ex_mem : out std_logic;
 	    ----------stalling-------
 	    lw_lhi_dep_reg_out : in std_logic;
-		 	lw_lhi_dep_reg_mem : out std_logic
+		 	lw_lhi_dep_reg_mem : out std_logic;
+
+		 	----------data hazards----------
+		 	alu1_a_select_final : in std_logic_vector(2 downto 0);
+	    alu1_b_select_final : in std_logic_vector(2 downto 0);
+	    data_a_from_wb_ex : in std_logic_vector(15 downto 0);
+			data_b_from_wb_ex : in std_logic_vector(15 downto 0);
+			alu1_out_from_mem : in std_logic_vector(15 downto 0);
+			alu1_out_from_wb : in std_logic_vector(15 downto 0)
 	  );	
 	end component;
 
@@ -487,7 +527,12 @@ package components_init is
 			valid_bit_mem_wb : out std_logic;
 			-----------stalling------------
 			lw_lhi_dep_reg_mem : in std_logic;
-			lw_lhi_dep_reg_wb : out std_logic
+			lw_lhi_dep_reg_wb : out std_logic;
+			------------data hazards---------
+			rf_a3_from_mem : out std_logic_vector(2 downto 0);
+			opcode_from_mem : out std_logic_vector(3 downto 0);
+			alu1_out_from_mem : out std_logic_vector(15 downto 0)
+
 	  ) ;
 	end component;
 
@@ -547,7 +592,12 @@ package components_init is
 
 		  --------stalling--------
 		  lw_lhi_dep_reg_wb : in std_logic;
-		  lw_lhi_dep_done : out std_logic
+		  lw_lhi_dep_done : out std_logic;
+
+		  -----------data hazards-----------
+		  rf_a3_from_wb : out std_logic_vector(2 downto 0);
+		  opcode_from_wb : out std_logic_vector(3 downto 0);
+		  alu1_out_from_wb : out std_logic_vector(15 downto 0)
 
 		);
 	end component;

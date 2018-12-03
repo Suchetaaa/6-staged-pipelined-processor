@@ -69,6 +69,8 @@ architecture at of top_level is
   signal mem_read_ex : std_logic;
   signal mem_data_sel_ex : std_logic;
   signal mem_address_sel_ex : std_logic;
+  signal ir_11_9_ex : std_logic_vector(2 downto 0);
+  signal ir_8_6_ex : std_logic_vector(2 downto 0);
   signal ir_5_0_ex : std_logic_vector(15 downto 0);
   signal ir_8_0_ex : std_logic_vector(15 downto 0);
   signal data_extender_out_ex : std_logic_vector(15 downto 0);
@@ -166,6 +168,17 @@ architecture at of top_level is
   signal zero_val_final : std_logic;
   signal rf_data_final : std_logic_vector(15 downto 0);
   signal rf_a3_final : std_logic_vector(2 downto 0);
+
+  signal external_r0 : std_logic_vector(15 downto 0);
+  signal external_r1 : std_logic_vector(15 downto 0);
+  signal external_r2 : std_logic_vector(15 downto 0);
+  signal external_r3 : std_logic_vector(15 downto 0);
+  signal external_r4 : std_logic_vector(15 downto 0);
+  signal external_r5 : std_logic_vector(15 downto 0);
+  signal external_r6 : std_logic_vector(15 downto 0);
+  signal external_r7 : std_logic_vector(15 downto 0);
+
+
   -------------------stalling--------------------------
   signal lw_lhi_dep_reg_out : std_logic;
   signal lw_lhi_dep_reg_mem : std_logic;
@@ -173,6 +186,20 @@ architecture at of top_level is
   signal stall_from_rr : std_logic;
   signal instruction_to_rr : std_logic_vector(15 downto 0);
   signal lw_lhi_dep_done : std_logic;
+
+  --------------data hazards---------------------
+  signal rf_a3_from_mem : std_logic_vector(2 downto 0);
+  signal rf_a3_from_wb : std_logic_vector(2 downto 0);
+  signal rf_a3_from_ex : std_logic_vector(2 downto 0);
+  signal opcode_from_mem : std_logic_vector(3 downto 0);
+  signal opcode_from_wb : std_logic_vector(3 downto 0);
+  signal opcode_from_ex : std_logic_vector(3 downto 0);
+  signal data_a_from_wb_ex : std_logic_vector(15 downto 0);
+  signal data_b_from_wb_ex : std_logic_vector(15 downto 0);
+  signal alu1_a_select_final : std_logic_vector(2 downto 0);
+  signal alu1_b_select_final : std_logic_vector(2 downto 0);
+  signal alu1_out_from_mem : std_logic_vector(15 downto 0);
+  signal alu1_out_from_wb : std_logic_vector(15 downto 0);
 
 
 
@@ -303,6 +330,8 @@ begin
       mem_read_ex => mem_read_ex,
       mem_data_sel_ex => mem_data_sel_ex,
       mem_address_sel_ex => mem_address_sel_ex,
+      ir_11_9_ex => ir_11_9_ex, 
+      ir_8_6_ex => ir_8_6_ex, 
       ir_5_0_ex => ir_5_0_ex,
       ir_8_0_ex => ir_8_0_ex,
       data_extender_out_ex => data_extender_out_ex,
@@ -323,10 +352,30 @@ begin
       rf_zero_reg_out => rf_zero_reg_out,
       valid_bit_or_ex => valid_bit_or_ex,
 
+      external_r0 => external_r0, 
+      external_r1 => external_r1, 
+      external_r2 => external_r2, 
+      external_r3 => external_r3, 
+      external_r4 => external_r4, 
+      external_r5 => external_r5, 
+      external_r6 => external_r6, 
+      external_r7 => external_r7, 
+
       --------------stalling--------------
       instruction_to_rr => instruction_to_rr,
 		  lw_lhi_dep_reg_out => lw_lhi_dep_reg_out,
 		  stall_from_rr => stall_from_rr
+      -------------data hazards ----------------
+      rf_a3_from_mem => rf_a3_from_mem,
+      rf_a3_from_wb => rf_a3_from_wb,
+      rf_a3_from_ex => rf_a3_from_ex,
+      opcode_from_mem => opcode_from_mem, 
+      opcode_from_wb => opcode_from_wb,
+      opcode_from_ex => opcode_from_ex,
+      data_a_from_wb_ex => data_a_from_wb_ex,
+      data_b_from_wb_ex => data_b_from_wb_ex,
+      alu1_a_select_final => alu1_a_select_final,
+      alu1_b_select_final => alu1_b_select_final
     );
 
   executestage : execute 
@@ -351,6 +400,8 @@ begin
       mem_read_ex => mem_read_ex,
       mem_data_sel_ex => mem_data_sel_ex,
       mem_address_sel_ex => mem_address_sel_ex,
+      ir_11_9_ex => ir_11_9_ex, 
+      ir_8_6_ex => ir_8_6_ex, 
       ir_5_0_ex => ir_5_0_ex, 
       ir_8_0_ex => ir_8_0_ex,  
       data_extender_out_ex => data_extender_out_ex,
@@ -405,7 +456,13 @@ begin
       -------------stalling------------
       lw_lhi_dep_reg_out => lw_lhi_dep_reg_out,
 		  lw_lhi_dep_reg_mem => lw_lhi_dep_reg_mem
-
+      -----------data hazards---------------------
+      alu1_a_select_final => alu1_a_select_final,
+      alu1_b_select_final => alu1_b_select_final,
+      data_a_from_wb_ex => data_a_from_wb_ex,
+      data_b_from_wb_ex => data_b_from_wb_ex,
+      alu1_out_from_mem => alu1_out_from_mem,
+      alu1_out_from_wb => alu1_out_from_wb
     );
 
   memstageportmap : mem_access_stage 
@@ -484,6 +541,11 @@ begin
       --------------stalling-----------------
       lw_lhi_dep_reg_mem => lw_lhi_dep_reg_mem,
 		  lw_lhi_dep_reg_wb => lw_lhi_dep_reg_wb
+
+      -----------------data hazards----------------
+      rf_a3_from_mem => rf_a3_from_mem,
+      opcode_from_mem => opcode_from_mem,
+      alu1_out_from_mem => alu1_out_from_mem
     );
 
   writeback : write_back 
@@ -542,7 +604,12 @@ begin
       rf_a3_final => rf_a3_final,
       -----------stalling-------------
       lw_lhi_dep_reg_wb => lw_lhi_dep_reg_wb,
-      lw_lhi_dep_done => lw_lhi_dep_done
+      lw_lhi_dep_done => lw_lhi_dep_done,
+
+      --------------data hazards---------------
+      rf_a3_from_wb => rf_a3_from_wb,
+      opcode_from_wb => opcode_from_wb,
+      alu1_out_from_wb => alu1_out_from_wb
 
       );
 

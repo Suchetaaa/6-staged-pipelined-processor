@@ -69,9 +69,14 @@ entity write_back is
 
   --------------------------------------------stalling--------------------------------------------
   --going as a signal
-  lw_lhi_dep_done : out std_logic
+  lw_lhi_dep_done : out std_logic;
 
   --------------------------------------------stalling--------------------------------------------
+  ----------------------------data hazards-------------------------
+  rf_a3_from_wb : out std_logic_vector(2 downto 0);
+  opcode_from_wb : out std_logic_vector(3 downto 0);
+  alu1_out_from_wb : out std_logic_vector(15 downto 0)
+
 
   ) ;
 end entity ; -- instruction_fetch
@@ -79,6 +84,7 @@ end entity ; -- instruction_fetch
 architecture arch of write_back is
 
 begin
+
 	process(clk, reset, lw_lhi_dep_reg_wb)
 	begin 
 		if reset = '1' then 
@@ -154,5 +160,17 @@ begin
 		rf_a3_final <= rf_a3_wb; 
 
 	end process ; 
+
+	
+	-----------------data hazards-----------------------
+	rf_a3_from_wb <= rf_a3_wb;
+	opcode_from_wb <= opcode_wb;
+	alu1_out_from_wb <= alu1_out_wb;
+
+	
+
+
+
+
 
 end architecture ; -- arch

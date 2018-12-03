@@ -29,6 +29,8 @@ entity execute is
     mem_read_ex : in std_logic;
     mem_data_sel_ex : in std_logic;
     mem_address_sel_ex : in std_logic;
+    ir_11_9_ex : in std_logic_vector(2 downto 0);
+    ir_8_6_ex : in std_logic_vector(2 downto 0);
     ir_5_0_ex : in std_logic_vector(15 downto 0); -- Sign extended 
     ir_8_0_ex : in std_logic_vector(15 downto 0); -- Sign extended  
     data_extender_out_ex : in std_logic_vector(15 downto 0); --Data for LHI
@@ -85,8 +87,15 @@ entity execute is
     valid_bit_ex_mem : out std_logic;
 
     ------------stalling----------
-    lw_lhi_dep_reg_mem : out std_logic
+    lw_lhi_dep_reg_mem : out std_logic;
 
+    --------data hazards-------------
+    alu1_a_select_final : in std_logic_vector(2 downto 0);
+    alu1_b_select_final : in std_logic_vector(2 downto 0);
+    data_a_from_wb_ex : in std_logic_vector(15 downto 0);
+		data_b_from_wb_ex : in std_logic_vector(15 downto 0);
+		alu1_out_from_mem : in std_logic_vector(15 downto 0);
+		alu1_out_from_wb : in std_logic_vector(15 downto 0)
   );
 end entity;
 architecture arch of execute is
@@ -94,8 +103,8 @@ architecture arch of execute is
   signal alu1_b_ip : std_logic_vector(15 downto 0); -- Inputs to ALU
   signal alu1_c_op : std_logic;
   signal alu1_z_op : std_logic;
-  signal ra_temp : std_logic_vector(15 downto 0);
-  signal rb_temp : std_logic_vector(15 downto 0);
+  --signal ra_temp : std_logic_vector(15 downto 0);
+  --signal rb_temp : std_logic_vector(15 downto 0);
   signal alu1_out_temp : std_logic_vector(15 downto 0);
   signal c_out : std_logic;
   signal z_out : std_logic;
@@ -103,7 +112,12 @@ architecture arch of execute is
   signal cond_zero : std_logic;
   signal lm_sm_adder_out_signal : std_logic_vector(15 downto 0);
   signal lm_sm_adder_out_old : std_logic_vector(15 downto 0);
+  ----------------
 begin
+
+	opcode_from_ex <= opcode_ex;
+	rf_a3_from_ex <= rf_a3_ex;
+
   logic_unit : alu1
     port map (
       alu_a => alu1_a_ip,
@@ -113,24 +127,52 @@ begin
       carry => alu1_c_op,
       zero => alu1_z_op
     );
-  muxing : process(ra_temp, rb_temp, data_ra, data_rb, data_carry, data_zero, ir_5_0_ex)
-  begin
-    if alu1_a_select_ex = '0' then
-      alu1_a_ip <= ra_temp;
-    else 
-      alu1_a_ip <= rb_temp;
-    end if;
 
-    if alu1_b_select_ex = "00" then
-      alu1_b_ip <= rb_temp;
-    elsif alu1_b_select_ex = "01" then
-      alu1_b_ip <= ir_5_0_ex;
-    elsif alu1_b_select_ex = "10" then
-      alu1_b_ip <= "0000000000000001";
-    else
-      alu1_b_ip <= "0000000000000000";
-    end if;
-  end process ; -- muxing
+  assigning : process(data_ra, data_rb, ir_5_0_ex)
+  begin 
+  	if alu1_a_select_final = "000" then 
+  		alu1_a_ip <= alu1_out_from_mem;
+  	elsif alu1_a_select_final = "001" then
+  		alu1_a_ip <= alu1_out_from_wb;
+  	elsif alu1_a_select_final = "010" then
+  		alu1_a_ip <= data_a_from_wb_ex;
+  	elsif alu1_a_select_final = "011" then
+  		alu1_a_ip <= data_ra;
+  	else 
+  		alu1_a_ip <= data_rb;
+  	end if; 
+
+  	if alu1_b_select_final = "000" then 
+  		alu1_b_ip <= alu1_out_from_mem;
+  	elsif alu1_b_select_final = "001" then
+  		alu1_b_ip <= alu1_out_from_wb;
+  	elsif alu1_b_select_final = "010" then
+  		alu1_b_ip <= data_b_from_wb_ex;
+  	elsif alu1_b_select_final = "011" then
+  		alu1_b_ip <= data_rb;
+  	else 
+  		alu1_b_ip <= ir_5_0_ex;
+  	end if;
+  end process;
+
+  --muxing : process(ra_temp, rb_temp, data_ra, data_rb, data_carry, data_zero, ir_5_0_ex)
+  --begin
+  --  if alu1_a_select_ex = '0' then
+  --    alu1_a_ip <= ra_temp;
+  --  else 
+  --    alu1_a_ip <= rb_temp;
+  --  end if;
+
+  --  if alu1_b_select_ex = "00" then
+  --    alu1_b_ip <= rb_temp;
+  --  elsif alu1_b_select_ex = "01" then
+  --    alu1_b_ip <= ir_5_0_ex;
+  --  elsif alu1_b_select_ex = "10" then
+  --    alu1_b_ip <= "0000000000000001";
+  --  else
+  --    alu1_b_ip <= "0000000000000000";
+  --  end if;
+  --end process ; -- muxing
 
   carry_zero : process(opcode_ex, cz_ex, alu1_c_op, alu1_z_op, carry_en_ex, zero_en_alu_ex)
   begin
@@ -179,8 +221,6 @@ begin
 	);
 
   -- No hazard
-  ra_temp <= data_ra;
-  rb_temp <= data_rb;
 
 -----------------Interfacing registers----------------------------------------
 

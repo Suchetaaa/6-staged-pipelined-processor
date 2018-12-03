@@ -17,7 +17,7 @@ entity mem_access_stage is
     alu1_zero_mem : in std_logic;
     cond_carry_mem : in std_logic;
     cond_zero_mem : in std_logic;
-	 lm_sm_adder_out : in std_logic_vector(15 downto 0);
+lm_sm_adder_out : in std_logic_vector(15 downto 0);
 
     data_ra_mem : in std_logic_vector(15 downto 0);
     data_rb_mem : in std_logic_vector(15 downto 0);
@@ -87,7 +87,12 @@ entity mem_access_stage is
 
     ------------------------stalling----------------------------
 	 lw_lhi_dep_reg_mem : in std_logic;
-	 lw_lhi_dep_reg_wb : out std_logic
+	 lw_lhi_dep_reg_wb : out std_logic;
+   ------------------------data hazards-------------------------
+   rf_a3_from_mem : out std_logic_vector(2 downto 0);
+   opcode_from_mem : out std_logic_vector(3 downto 0);
+   alu1_out_from_mem : out std_logic_vector(15 downto 0)
+
 
   ) ;
 end entity ; -- instruction_memory
@@ -96,6 +101,10 @@ architecture arch of mem_access_stage is
     signal mem_array : data_memory_database_type := memcomp;
     signal mem_data_out_signal : std_logic_vector(15 downto 0);
 begin
+
+alu1_out_from_mem <= alu1_out_mem;
+rf_a3_from_mem <= rf_a3_mem;
+opcode_from_mem <= opcode_mem;
 
 process(clk) is
 
