@@ -52,6 +52,7 @@ entity execute is
     alu1_zero_mem : out std_logic;
     cond_carry_mem : out std_logic;
     cond_zero_mem : out std_logic;
+	 lm_sm_adder_out : out std_logic_vector(15 downto 0);
 
     --Output signals rom older stages 
     data_ra_mem : out std_logic_vector(15 downto 0);
@@ -96,6 +97,8 @@ architecture arch of execute is
   signal z_out : std_logic;
   signal cond_carry : std_logic;
   signal cond_zero : std_logic;
+  signal lm_sm_adder_out_signal : std_logic_vector(15 downto 0);
+  signal lm_sm_adder_out_old : std_logic_vector(15 downto 0);
 begin
   logic_unit : alu1
     port map (
@@ -148,7 +151,28 @@ begin
     end if;
 
   end process ; -- carry_zero
-
+  
+  process(clk)
+  begin 
+		if reset = '1' then 
+			lm_sm_adder_out_old <= "0000000000000000";
+		else 	
+			lm_sm_adder_out_old <= lm_sm_adder_out_signal;
+		end if;
+	end process;
+	
+	lm_sm_adder_out <= lm_sm_adder_out_signal;
+  
+  --port mapping 
+  lm_sm_adder_portmap : lm_sm_adder 
+	port map (
+		clk => clk,
+		data_ra => data_ra,
+		lm_sm_adder_out_old => lm_sm_adder_out_old,
+		first_last_check => first_lw_sw_ex,
+		write_enable => right_shift_lm_sm_bit_ex,
+		lm_sm_adder_out => lm_sm_adder_out_signal
+	);
 
   -- No hazard
   ra_temp <= data_ra;

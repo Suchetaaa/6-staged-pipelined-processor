@@ -255,8 +255,9 @@ begin
 		'0';
 	--memory address and data select pins
 	--0 - ALU1_out
-	--1 - Not yet decided 
-	mem_address_sel_signal <= '0';
+	--1 - Output of lm_sm_adder
+	mem_address_sel_signal <= '1' when instruction_int_out(15 downto 12) = "0110" else 
+		'0';
 	--0 - Data1
 	--1 - not yet decided
 	mem_data_sel_signal <= '0'; 
@@ -285,14 +286,15 @@ begin
 	lw_sw_stop_signal <= '1' when xor_reg_out = "00000000" and first_later_check_out = '1' else 
 		'0';
 
-	stall_if <= ((lm_detect_signal or sm_detect_signal) and valid_bit);
+	stall_if <= '1' when instruction_int_out(15 downto 12) = "0110" else 
+		'0';
 
 	--Right shift signals
 	--right shift out is output of right shift block 
 	--right shift reg out is output of register  
 	right_shift_in <= instruction_int_out(7 downto 0) when first_later_check_out = '0' else 
 		right_shift_reg_out;
-	right_shift_lm_sm_bit_signal <= right_shift_out(0);
+	right_shift_lm_sm_bit <= right_shift_out(0);
 
 	--First later check tells if it is the first stage LM or SM is encountered
 	process(clk) 
@@ -305,6 +307,8 @@ begin
 			first_later_check_in <= '0';
 		end if;
 	end process;
+	
+	first_lw_sw <= first_later_check_out;
 
 	--xor_reg_out <= "00000000" when reset = '1';
 	priority_enc_out <= "00000000" when reset = '1' else 
@@ -684,29 +688,29 @@ begin
 	------------------------------------------------------------------------Interfacing register for lw sw stop ---------------------------------------------------------
 
 	------------------------------------------------------------------------Interfacing register for first lw sw ---------------------------------------------------------
-	firstlwsw : register_1
-		port map (
-			reg_data_in => first_lw_sw_signal,
-			reg_enable => '1',
-			clk => clk,
-			reg_data_out => first_lw_sw
-		);
+	--firstlwsw : register_1
+	--	port map (
+	--		reg_data_in => first_lw_sw_signal,
+	--		reg_enable => '1',
+	--		clk => clk,
+	--		reg_data_out => first_lw_sw
+	--	);
 	------------------------------------------------------------------------Interfacing register for first lw sw ---------------------------------------------------------
 
 	------------------------------------------------------------------------Interfacing register for rightshiftlmsmbit ---------------------------------------------------------
-	rightshiftlwswbit : register_1
-		port map (
-			reg_data_in => right_shift_lm_sm_bit_signal,
-			reg_enable => '1',
-			clk => clk,
-			reg_data_out => right_shift_lm_sm_bit
-		);
+	--rightshiftlwswbit : register_1
+	--	port map (
+	--		reg_data_in => right_shift_lm_sm_bit_signal,
+	--		reg_enable => '1',
+	--		clk => clk,
+	--		reg_data_out => right_shift_lm_sm_bit
+	--	);
 	------------------------------------------------------------------------Interfacing register for right shift lm sm bit ---------------------------------------------------
 
 	------------------------------------------------------------------------Interfacing register for lmsmregwrite ---------------------------------------------------------
 	lmsmregwrite : register_3
 		port map (
-			reg_data_in => lm_sm_reg_write_signal,
+			reg_data_in => decoder_out_signal,
 			reg_enable => '1',
 			clk => clk,
 			reg_data_out => lm_sm_reg_write

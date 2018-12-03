@@ -11,7 +11,7 @@ type memory_database_type is array(0 to 63) of std_logic_vector(15 downto 0);
 
 constant memory_1 : memory_database_type := 
 (
-	0 => "0001000001000001",
+	0 => "0110000001000010",
 	1 => "0000000000000000",
 	2 => "0000000000000000",
 	3 => "0000000000000000",

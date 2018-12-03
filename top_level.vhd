@@ -96,6 +96,7 @@ architecture at of top_level is
   signal alu1_zero_mem : std_logic;
   signal cond_carry_mem : std_logic;
   signal cond_zero_mem : std_logic;
+  signal lm_sm_adder_out : std_logic_vector(15 downto 0);
 
   --Output signals rom older stages 
   signal data_ra_mem : std_logic_vector(15 downto 0);
@@ -321,6 +322,7 @@ begin
       data_rb => data_rb,
       data_carry => data_carry,
       data_zero => data_zero,
+		lm_sm_adder_out => lm_sm_adder_out,
       --signals coming from earlier stages 
       pc_out_ex => pc_out_ex,
       alu1_op_ex => alu1_op_ex,
@@ -396,6 +398,7 @@ begin
       alu1_zero_mem => alu1_zero_mem,
       cond_carry_mem => cond_carry_mem,
       cond_zero_mem => cond_zero_mem,
+		lm_sm_adder_out => lm_sm_adder_out,
 
       data_ra_mem => data_ra_mem,
       data_rb_mem => data_rb_mem,

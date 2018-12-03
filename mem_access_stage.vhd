@@ -17,6 +17,7 @@ entity mem_access_stage is
     alu1_zero_mem : in std_logic;
     cond_carry_mem : in std_logic;
     cond_zero_mem : in std_logic;
+	 lm_sm_adder_out : in std_logic_vector(15 downto 0);
 
     data_ra_mem : in std_logic_vector(15 downto 0);
     data_rb_mem : in std_logic_vector(15 downto 0);
@@ -99,14 +100,15 @@ begin
       --if valid_bit = '1' then -- Where is it coming from????
         if mem_write_mem = '1' then
           if mem_data_sel_mem = '0' then
-            mem_array(to_integer(unsigned(alu1_out_mem(15 downto 0)))) <= data_ra_mem(15 downto 0);    
+            mem_array(to_integer(unsigned(alu1_out_mem(15 downto 0)))) <= data_ra_mem(15 downto 0); 
           --end if;
         end if;
       end if;
     end if;
 end process;
 
-mem_data_out_signal(15 downto 0) <= mem_array(to_integer(unsigned(alu1_out_mem(15 downto 0)))); 
+mem_data_out_signal(15 downto 0) <= mem_array(to_integer(unsigned(alu1_out_mem(15 downto 0)))) when mem_address_sel_mem = '0' else 
+	mem_array(to_integer(unsigned(lm_sm_adder_out)));
 
 mem_data_out_reg : register_16 
   port map (

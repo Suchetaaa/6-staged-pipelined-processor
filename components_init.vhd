@@ -38,6 +38,17 @@ package components_init is
 		);
 	end component register_16;
 	
+	component lm_sm_adder is
+	  port (
+		clk : in std_logic;
+		data_ra : in std_logic_vector(15 downto 0);
+		lm_sm_adder_out_old : in std_logic_vector(15 downto 0);
+		first_last_check : in std_logic;
+		write_enable : in std_logic;
+		lm_sm_adder_out : out std_logic_vector(15 downto 0)
+	  ) ;
+	end component lm_sm_adder ; -- lm_sm_adder
+
 	component instruction_memory is 
 		port (
 			address_in : in std_logic_vector(15 downto 0); 
@@ -358,6 +369,7 @@ package components_init is
 	    alu1_zero_mem : out std_logic;
 	    cond_carry_mem : out std_logic;
 	    cond_zero_mem : out std_logic;
+		 lm_sm_adder_out : out std_logic_vector(15 downto 0);
 	    --Output signals rom older stages 
 	    data_ra_mem : out std_logic_vector(15 downto 0);
 	    data_rb_mem : out std_logic_vector(15 downto 0);
@@ -399,6 +411,7 @@ package components_init is
 	    alu1_zero_mem : in std_logic;	
 		  cond_carry_mem : in std_logic;
 		  cond_zero_mem : in std_logic;
+		  lm_sm_adder_out : in std_logic_vector(15 downto 0);
 	    data_ra_mem : in std_logic_vector(15 downto 0);
 	    data_rb_mem : in std_logic_vector(15 downto 0);
 	    pc_out_mem : in std_logic_vector(15 downto 0);

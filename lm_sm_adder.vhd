@@ -8,7 +8,6 @@ use work.components_init.all;
 entity lm_sm_adder is
   port (
 	clk : in std_logic;
-	reset : in std_logic;
 	data_ra : in std_logic_vector(15 downto 0);
 	lm_sm_adder_out_old : in std_logic_vector(15 downto 0);
 	first_last_check : in std_logic;
@@ -26,11 +25,13 @@ begin
 	begin	
 		if (clk'event and clk = '1') then 
 			if first_last_check = '0' and write_enable = '0' then 
-				lm_sm_adder_out <= data_ra;
+				lm_sm_adder_out <= std_logic_vector(unsigned(data_ra) - 1);
 			elsif first_last_check = '0' and write_enable = '1' then
 				lm_sm_adder_out <= std_logic_vector(unsigned(data_ra) + 1);
-			else
+			elsif write_enable = '1' then 
 				lm_sm_adder_out <= std_logic_vector(unsigned(lm_sm_adder_out_old) + 1);
+			elsif write_enable = '0' then 
+				lm_sm_adder_out <= lm_sm_adder_out_old;
 			end if;
 		end if;
 	end process ; -- adder_lm_sm
