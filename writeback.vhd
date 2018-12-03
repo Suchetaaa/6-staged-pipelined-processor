@@ -50,6 +50,12 @@ entity write_back is
   rf_zero_reg_out : in std_logic;
   valid_bit_mem_wb : in std_logic;
 
+
+  --------------------------------------------stalling--------------------------------------------
+  lw_lhi_dep_reg_wb : in std_logic;
+
+  --------------------------------------------stalling--------------------------------------------
+
   --Output signals 
   --Going to RF or RR block 
   --All these signals should NOT come out of register but as normal signals 
@@ -61,12 +67,29 @@ entity write_back is
   rf_data_final : out std_logic_vector(15 downto 0);
   rf_a3_final : out std_logic_vector(2 downto 0)
 
+  --------------------------------------------stalling--------------------------------------------
+  --going as a signal
+  lw_lhi_dep_done : out std_logic
+
+  --------------------------------------------stalling--------------------------------------------
+
   ) ;
 end entity ; -- instruction_fetch
 
 architecture arch of write_back is
 
 begin
+	process(clk, reset, lw_lhi_dep_reg_wb)
+	begin 
+		if reset = '1' then 
+			lw_lhi_dep_done <= '0'; 
+		elsif lw_lhi_dep_reg_wb = '1' then
+			lw_lhi_dep_done <= '1';
+		else 
+			lw_lhi_dep_done <= '0';
+		end if; 
+	end process;
+
 	final_write_signal : process(clk, rf_carry_reg_out, rf_zero_reg_out, alu1_carry_wb, alu1_zero_wb, right_shift_lm_sm_bit_wb, data_extender_out_wb, pc_out_wb, alu1_out_wb, mem_data_out)
 	begin
 		--ADC  

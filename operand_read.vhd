@@ -55,9 +55,10 @@ entity operand_read is
     rf_data_final : in std_logic_vector(15 downto 0);
     rf_a3_final : in std_logic_vector(2 downto 0);
 
-    --rf_a3_wb_in : in std_logic_vector(2 downto 0);
-    --rf_write_wb_in : in std_logic;
-    --valid_bit_wb_in : in std_logic;
+    -----------------from RR for stalling----------------------------------
+
+    instruction_to_rr : in std_logic_vector(15 downto 0);
+  
     --------------------- Outputs -----------------------------------------
     -- the register values read 
     data_ra : out std_logic_vector(15 downto 0);
@@ -94,7 +95,13 @@ entity operand_read is
     alu2_out_ex : out std_logic_vector(15 downto 0); --alu2_out to IF stage
     rf_carry_reg_out : out std_logic;
     rf_zero_reg_out : out std_logic;
-    valid_bit_or_ex : out std_logic
+    valid_bit_or_ex : out std_logic;
+
+    ------------------------------------output signals for stalling detection----------------------------
+    --lw_lhi_dep : out std_logic;
+    lw_lhi_dep_reg_out : out std_logic;
+    stall_from_rr : out std_logic
+    ------------------------------------output signals for stalling detection----------------------------
   );
 
 end entity;
@@ -105,6 +112,47 @@ architecture op_read of operand_read is
   signal zero_temp : std_logic;
 
 begin
+
+  ---------------------------------------------for stalling for lw and lhi------------------------------------------------
+  --ir_11_9 is tha RA to which writing is taking place in case of LHI and LW
+  process(clk, instruction_to_rr, opcode, ir_11_9)
+  begin 
+    if reset = '1' then 
+      lw_lhi_dep <= '0';
+      stall_from_rr <= '0';
+    --LW or LHI instruction
+    elsif opcode = "0011" or opcode = "0100" then 
+      if instruction_to_rr(15 downto 12) = "0000" or instruction_to_rr(15 downto 12) = "0010" or instruction_to_rr(15 downto 12) = "1100" then 
+        if rf_a3 = instruction_to_rr(11 downto 9) or rf_a3 = instruction_to_rr(8 downto 6) then 
+          lw_lhi_dep <= '1';
+          stall_from_rr <= '1';
+        end if;
+      --ADI and LM and SM - reading from RA
+      elsif instruction_to_rr(15 downto 12) = "0001" or instruction_to_rr(15 downto 12) = "0110" or instruction_to_rr(15 downto 12) = "0111" then
+        if rf_a3 = instruction_to_rr(11 downto 9) then 
+          lw_lhi_dep <= '1';
+          stall_from_rr <= '1';
+        end if;
+      elsif instruction_to_rr(15 downto 12) = "1001" then
+        if rf_a3 = instruction_to_rr(8 downto 6) then 
+          lw_lhi_dep <= '1';
+          stall_from_rr <= '1';
+        end if;
+      end if;
+    end if;
+
+  end process;
+
+  lw_lhi_dep_reg_port_map : register_1 
+    port map (
+      reg_data_in => lw_lhi_dep,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => lw_lhi_dep_reg_out
+    );
+
+  --------------------------------------------------------------------------------------------------------------------------------
+
 
   reg_access_port : reg_file 
     port map(

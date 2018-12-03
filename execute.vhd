@@ -16,6 +16,7 @@ entity execute is
     data_rb : in std_logic_vector(15 downto 0);
     data_carry : in std_logic;
     data_zero : in std_logic;
+    lw_lhi_dep_reg_out : in std_logic;
     --signals coming from earlier stages 
     pc_out_ex : in std_logic_vector(15 downto 0);
     alu1_op_ex : in std_logic_vector(1 downto 0);
@@ -81,7 +82,10 @@ entity execute is
     lm_sm_reg_write_mem : out std_logic_vector(2 downto 0);
     lm_sm_write_load_mem : out std_logic;
     alu2_out_mem : out std_logic_vector(15 downto 0); --alu2_in to IF stage
-    valid_bit_ex_mem : out std_logic
+    valid_bit_ex_mem : out std_logic;
+
+    ------------stalling----------
+    lw_lhi_dep_reg_mem : out std_logic
 
   );
 end entity;
@@ -179,6 +183,18 @@ begin
   rb_temp <= data_rb;
 
 -----------------Interfacing registers----------------------------------------
+
+-----------------stalling----------------------------------------
+
+	lw_lhi_dep_reg_port_map : register_1 
+    port map (
+      reg_data_in => lw_lhi_dep_reg_out,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => lw_lhi_dep_reg_mem
+    );
+
+
 	alu1_out_reg_out : register_16 
 		port map (
 			reg_data_in => alu1_out_temp,

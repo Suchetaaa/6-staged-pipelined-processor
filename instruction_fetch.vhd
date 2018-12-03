@@ -42,6 +42,10 @@ entity instruction_fetch is
 
 	valid_bit : out std_logic
 
+	------------------------------------------------------------------input pins for flushing------------------------------------------------------------------
+	stall_from_rr : in std_logic;
+	lw_lhi_dep_done : in std_logic
+
 
   ) ;
 end entity ; -- instruction_fetch
@@ -59,7 +63,7 @@ architecture arch of instruction_fetch is
 	signal incrementer_pc_out : std_logic_vector(15 downto 0);
 
 	signal enables_the_reg_if_one : std_logic;
-	signal valid_bit_signal :std_logic;
+	signal valid_bit_signal : std_logic;
 
 
 begin
@@ -86,6 +90,7 @@ begin
 
 	end process ; -- PC
 
+
 	--pc_reg : register_16
 	--	port map (
 	--		reg_data_in => pc_register_in,
@@ -93,8 +98,21 @@ begin
 	--		clk => clk,
 	--		reg_data_out => pc_register_out
 	--	);
-
-	enables_the_reg_if_one <= (ir_enable and (not stall_if));
+	enableregister : process(clk,ir_enable, stall_if,stall_from_rr,lw_lhi_dep_done)
+	begin
+		if reset = '1' then 
+			enables_the_reg_if_one <= '1';
+		elsif stall_from_rr = '1' and lw_lhi_dep_done = '0' then
+			enables_the_reg_if_one <= '0';
+		elsif stall_from_rr = '1' and lw_lhi_dep_done = '1' then
+			enables_the_reg_if_one <= '1';
+		elsif stall_if = '1' then
+			enables_the_reg_if_one <= '0';
+		else 
+			enables_the_reg_if_one <= '1';
+		end if;
+	end process ; -- enableregister
+	enables_the_reg_if_one <= (ir_enable and (not stall_if) and (not stall_from_rr));
 
 	incrementer : incrementer_pc 
 		port map (

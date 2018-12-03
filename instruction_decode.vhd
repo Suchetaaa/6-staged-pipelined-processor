@@ -97,6 +97,17 @@ entity instruction_decode is
 
 	valid_bit_id_or : out std_logic
 
+	--------------------------Special ports for stalling for LW and LM instructions--------------------------------
+
+	--instruction going out as a signal and not as register output
+	instruction_to_rr : out std_logic_vector(15 downto 0)
+
+	--Input coming from OR stage 
+	--lw_lhi_dep : in std_logic
+	stall_from_rr : in std_logic;
+	lw_lhi_dep_done : in std_logic
+	---------------------------------------------------------------------------------------------------------------
+
   ) ;
 end entity ; -- instruction_decode
 
@@ -168,11 +179,16 @@ architecture arch of instruction_decode is
 	signal priority_enable : std_logic;
 	
 	signal decoder_out_signal : std_logic_vector(2 downto 0);
-
 	signal valid_bit_signal_id_ex : std_logic;
+
+	--------------------------------special signals for stalling -------------------------
+	--signal stall_from_rr : std_logic;
 
 
 begin
+	-----------special ports for stalling for LW and LHI instructions----------------------
+	instruction_to_rr <= instruction_int_out;
+	----------------------------------------------------------------------------------------
 
 	alu2_a <= pc_register_int_out;
 
@@ -335,7 +351,7 @@ begin
 	first_later_check_reg : register_1 
 		port map (
 			reg_data_in => first_later_check_in,
-			reg_enable => '1',
+			reg_enable => '1' ,
 			clk => clk,
 			reg_data_out => first_later_check_out
 		);
@@ -385,7 +401,7 @@ begin
 	ir_5_0_reg_out : register_16 
 		port map (
 			reg_data_in => se6_out,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => ir_5_0
 		);
@@ -407,7 +423,7 @@ begin
 	alu2_out_reg : register_16 
 		port map (
 			reg_data_in => alu2_out_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => alu2_out
 		);
@@ -431,7 +447,7 @@ begin
 	ir_8_0_reg_out : register_16 
 		port map (
 			reg_data_in => se9_out,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => ir_8_0
 		);
@@ -441,7 +457,7 @@ begin
 	ir_5_3_reg_out : register_3
 		port map (
 			reg_data_in => instruction_int_out(5 downto 3),
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => ir_5_3
 		);
@@ -451,7 +467,7 @@ begin
 	ir_11_9_reg_out : register_3
 		port map (
 			reg_data_in => instruction_int_out(11 downto 9),
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => ir_11_9
 		);
@@ -461,7 +477,7 @@ begin
 	ir_8_6_reg_out : register_3
 		port map (
 			reg_data_in => instruction_int_out(8 downto 6),
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => ir_8_6
 		);
@@ -471,7 +487,7 @@ begin
 	de_reg_out : register_16
 		port map (
 			reg_data_in => data_extender_out_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => data_extender_out
 		);
@@ -481,7 +497,7 @@ begin
 	pc : register_16
 		port map (
 			reg_data_in => pc_register_int_out,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => pc_out
 		);
@@ -491,7 +507,7 @@ begin
 	alu1op : register_2
 		port map (
 			reg_data_in => alu1_op_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => alu1_op
 		);
@@ -501,7 +517,7 @@ begin
 	alu1aselect : register_1
 		port map (
 			reg_data_in => alu1_a_select_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => alu1_a_select
 		);
@@ -511,7 +527,7 @@ begin
 	alu1bselect : register_2
 		port map (
 			reg_data_in => alu1_b_select_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => alu1_b_select
 		);
@@ -521,7 +537,7 @@ begin
 	rfwrite : register_1
 		port map (
 			reg_data_in => rf_write_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => rf_write
 		);
@@ -531,7 +547,7 @@ begin
 	rfa1read : register_1
 		port map (
 			reg_data_in => rf_a1_read_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => rf_a1_read
 		);
@@ -541,7 +557,7 @@ begin
 	rfa2read : register_1
 		port map (
 			reg_data_in => rf_a2_read_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => rf_a2_read
 		);
@@ -551,7 +567,7 @@ begin
 	rfa3 : register_3
 		port map (
 			reg_data_in => rf_a3_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => rf_a3
 		);
@@ -561,7 +577,7 @@ begin
 	rfdataselect : register_3
 		port map (
 			reg_data_in => rf_data_select_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => rf_data_select
 		);
@@ -571,7 +587,7 @@ begin
 	memwrite : register_1
 		port map (
 			reg_data_in => mem_write_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => mem_write
 		);
@@ -581,7 +597,7 @@ begin
 	memread : register_1
 		port map (
 			reg_data_in => mem_read_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => mem_read
 		);
@@ -591,7 +607,7 @@ begin
 	memdatasel : register_1
 		port map (
 			reg_data_in => mem_data_sel_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => mem_data_sel
 		);
@@ -601,7 +617,7 @@ begin
 	memadrsel : register_1
 		port map (
 			reg_data_in => mem_address_sel_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => mem_address_sel
 		);
@@ -611,7 +627,7 @@ begin
 	carryen : register_1
 		port map (
 			reg_data_in => carry_en_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => carry_en
 		);
@@ -621,7 +637,7 @@ begin
 	zeroenalu : register_1
 		port map (
 			reg_data_in => zero_en_alu_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => zero_en_alu
 		);
@@ -631,7 +647,7 @@ begin
 	zeroenmem : register_1
 		port map (
 			reg_data_in => zero_en_mem_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => zero_en_mem
 		);
@@ -641,7 +657,7 @@ begin
 	czzz : register_2
 		port map (
 			reg_data_in => cz_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => cz
 		);
@@ -651,7 +667,7 @@ begin
 	opcodee : register_4
 		port map (
 			reg_data_in => opcode_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => opcode
 		);
@@ -661,7 +677,7 @@ begin
 	lmdetect : register_1
 		port map (
 			reg_data_in => lm_detect_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => lm_detect
 		);
@@ -671,7 +687,7 @@ begin
 	smdetect : register_1
 		port map (
 			reg_data_in => sm_detect_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => sm_detect
 		);
@@ -681,7 +697,7 @@ begin
 	lwswstop : register_1
 		port map (
 			reg_data_in => lw_sw_stop_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => lw_sw_stop
 		);
@@ -691,7 +707,7 @@ begin
 	--firstlwsw : register_1
 	--	port map (
 	--		reg_data_in => first_lw_sw_signal,
-	--		reg_enable => '1',
+	--		reg_enable => stall_from_rr,
 	--		clk => clk,
 	--		reg_data_out => first_lw_sw
 	--	);
@@ -701,7 +717,7 @@ begin
 	--rightshiftlwswbit : register_1
 	--	port map (
 	--		reg_data_in => right_shift_lm_sm_bit_signal,
-	--		reg_enable => '1',
+	--		reg_enable => stall_from_rr,
 	--		clk => clk,
 	--		reg_data_out => right_shift_lm_sm_bit
 	--	);
@@ -711,7 +727,7 @@ begin
 	lmsmregwrite : register_3
 		port map (
 			reg_data_in => decoder_out_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => lm_sm_reg_write
 		);
@@ -721,7 +737,7 @@ begin
 	lmsmwriteload : register_1
 		port map (
 			reg_data_in => lm_sm_write_load_signal,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => lm_sm_write_load
 		);
@@ -730,7 +746,7 @@ begin
 	valid_bit_reg_int : register_1
 		port map(
 			reg_data_in => valid_bit,
-			reg_enable => '1',
+			reg_enable => stall_from_rr,
 			clk => clk,
 			reg_data_out => valid_bit_id_or
 		);
