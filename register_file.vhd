@@ -111,7 +111,7 @@ begin
 		--Writing to registers done!!!
 	end process;
 
-	process(reg_file_read_ra, reg_file_read_rb, address_1, address_2, carry_read, zero_read) is
+	process(reg_file_read_ra, reg_file_read_rb, address_1, address_2, carry_read, zero_read, reg_0, reg_1, reg_2, reg_3, reg_4, reg_5, reg_6, reg_7) is
 	variable data_out_1_var : std_logic_vector(15 downto 0);
 	variable data_out_2_var : std_logic_vector(15 downto 0);
 	begin

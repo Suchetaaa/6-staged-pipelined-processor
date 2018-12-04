@@ -150,11 +150,11 @@ begin
 		if rf_data_select_wb = "000" then 
 			rf_data_final <= alu1_out_wb;
 		elsif rf_data_select_wb = "001" then
-			rf_data_final <= pc_out_wb;
-		elsif rf_data_select_wb = "010" then
 			rf_data_final <= data_extender_out_wb;
-		elsif rf_data_select_wb = "011" then
+		elsif rf_data_select_wb = "010" then
 			rf_data_final <= mem_data_out;
+		elsif rf_data_select_wb = "011" then
+			rf_data_final <= pc_out_wb;
 		end if;
 
 		rf_a3_final <= rf_a3_wb; 
