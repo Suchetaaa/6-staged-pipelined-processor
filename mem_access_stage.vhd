@@ -119,7 +119,7 @@ begin
   if mem_read_mem = '1' then 
     if mem_address_sel_mem = '0' then 
       mem_data_out_signal(15 downto 0) <= mem_array(to_integer(unsigned(alu1_out_mem(15 downto 0))));
-    elsif
+    else
       mem_data_out_signal(15 downto 0) <= mem_array(to_integer(unsigned(lm_sm_adder_out)));
     end if;
   end if;

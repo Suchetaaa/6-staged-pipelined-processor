@@ -256,7 +256,7 @@ begin
         lw_lhi_dep <= '1';
         stall_from_rr <= '1';
       --ADI and LM and SM - reading from RA
-      elsif instruction_to_rr(15 downto 12) = "0001" or instruction_to_rr(15 downto 12) = "0110" or instruction_to_rr(15 downto 12) = "0111" and (rf_a3 = instruction_to_rr(11 downto 9)) then
+      elsif (instruction_to_rr(15 downto 12) = "0001" or instruction_to_rr(15 downto 12) = "0110" or instruction_to_rr(15 downto 12) = "0111") and (rf_a3 = instruction_to_rr(11 downto 9)) then
         lw_lhi_dep <= '1';
         stall_from_rr <= '1';
       elsif instruction_to_rr(15 downto 12) = "1001" and (rf_a3 = instruction_to_rr(8 downto 6)) then

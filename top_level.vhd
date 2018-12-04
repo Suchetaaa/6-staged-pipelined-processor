@@ -11,14 +11,14 @@ entity top_level is
     clk : in std_logic;
     reset: in std_logic;
 
-    external_r0 : std_logic_vector(15 downto 0);
-    external_r1 : std_logic_vector(15 downto 0);
-    external_r2 : std_logic_vector(15 downto 0);
-    external_r3 : std_logic_vector(15 downto 0);
-    external_r4 : std_logic_vector(15 downto 0);
-    external_r5 : std_logic_vector(15 downto 0);
-    external_r6 : std_logic_vector(15 downto 0);
-    external_r7 : std_logic_vector(15 downto 0)
+    external_r0 : out std_logic_vector(15 downto 0);
+    external_r1 : out std_logic_vector(15 downto 0);
+    external_r2 : out std_logic_vector(15 downto 0);
+    external_r3 : out std_logic_vector(15 downto 0);
+    external_r4 : out std_logic_vector(15 downto 0);
+    external_r5 : out std_logic_vector(15 downto 0);
+    external_r6 : out std_logic_vector(15 downto 0);
+    external_r7 : out std_logic_vector(15 downto 0)
   );
 end entity;
 architecture at of top_level is	
