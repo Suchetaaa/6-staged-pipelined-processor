@@ -24,7 +24,7 @@ begin
 	begin 
 	if reset = '1' then 
 		priority_out_var := "00000000";
-	elsif priority_enable = '1' and lm_detect = '1' then 
+	elsif priority_enable = '1' and lm_detect_signal = '1' then 
 		if priority_in(0) = '1' then 
 			priority_out_var := "00000001";
 		elsif priority_in(1) = '1' then
