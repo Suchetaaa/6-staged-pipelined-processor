@@ -116,12 +116,17 @@ begin
             mem_array(to_integer(unsigned(alu1_out_mem(15 downto 0)))) <= data_ra_mem(15 downto 0); 
           --end if;
         end if;
+        if mem_read_mem = '1' then 
+          if mem_address_sel_mem = '0' then 
+            mem_data_out_signal(15 downto 0) <= mem_array(to_integer(unsigned(alu1_out_mem(15 downto 0))));
+          else
+              mem_array(to_integer(unsigned(lm_sm_adder_out)));
+          end if;
       end if;
+    end if;
     end if;
 end process;
 
-mem_data_out_signal(15 downto 0) <= mem_array(to_integer(unsigned(alu1_out_mem(15 downto 0)))) when mem_address_sel_mem = '0' else 
-	mem_array(to_integer(unsigned(lm_sm_adder_out)));
 
 lwlhidepreg : register_1 
   port map (

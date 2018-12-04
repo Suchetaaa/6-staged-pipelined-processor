@@ -43,6 +43,7 @@ package components_init is
 		clk : in std_logic;
 		data_ra : in std_logic_vector(15 downto 0);
 		lm_sm_adder_out_old : in std_logic_vector(15 downto 0);
+		lm_detect : in std_logic;
 		first_last_check : in std_logic;
 		write_enable : in std_logic;
 		lm_sm_adder_out : out std_logic_vector(15 downto 0)
@@ -59,6 +60,9 @@ package components_init is
 	component priority_encoder is
   		port (
 			priority_in : in std_logic_vector(7 downto 0);
+			reset : in std_logic;
+			lm_detect_signal : in std_logic;
+			first_later_check : in std_logic;
 			priority_enable : in std_logic;
 			priority_out : out std_logic_vector(7 downto 0)
 		) ;
@@ -604,6 +608,7 @@ package components_init is
 
 		);
 	end component;
+	
 	
 end components_init;
 	

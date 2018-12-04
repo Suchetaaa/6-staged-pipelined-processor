@@ -316,13 +316,13 @@ begin
 	lw_sw_stop_signal <= '1' when xor_reg_out = "00000000" and first_later_check_out = '1' else 
 		'0';
 
-	stall_if <= '1' when instruction_int_out(15 downto 12) = "0110" else 
+	stall_if <= '1' when lw_sw_stop_signal = '0' and lm_detect_signal = '1' else 
 		'0';
 
 	--Right shift signals
 	--right shift out is output of right shift block 
 	--right shift reg out is output of register  
-	right_shift_in <= instruction_int_out(7 downto 0) when first_later_check_out = '0' else 
+	right_shift_in <= instruction_int_out(7 downto 0) when first_later_check_out = '0' and lm_detect_signal = '1' else 
 		right_shift_reg_out;
 	right_shift_lm_sm_bit <= right_shift_out(0);
 
@@ -331,7 +331,7 @@ begin
 	begin 
 		if reset = '1' then 
 			first_later_check_in <= '0';
-		elsif instruction_int_out(15 downto 12) = "0110" or instruction_int_out(15 downto 12) = "0111" then 
+		elsif lm_detect_signal = '1' or sm_detect_signal = '1' then 
 			first_later_check_in <= '1';
 		else 
 			first_later_check_in <= '0';
@@ -341,8 +341,9 @@ begin
 	first_lw_sw <= first_later_check_out;
 
 	--xor_reg_out <= "00000000" when reset = '1';
-	priority_enc_out <= "00000000" when reset = '1' else 
-		priority_enc_out_tp; 
+	--priority_enc_out <= "00000000" when reset = '1' else 
+	--	"00000000" when lm_detect = '1' and first_later_check_out = '0' and right_shift_out(0) = '0' else
+	--	priority_enc_out_tp; 
 	--first_later_check_in <= '0' when reset = '1';
 
 
@@ -352,11 +353,12 @@ begin
 	xor_2_in <= priority_enc_out;
 
 	--Priority encoder in and enable signals 
-	priority_enc_in <= instruction_int_out(7 downto 0) when first_later_check_out = '0' else 
+	priority_enc_in <= instruction_int_out(7 downto 0) when first_later_check_out = '0' and lm_detect_signal = '1' else 
 		xor_reg_out;
 
-	priority_enable <= instruction_int_out(0) when first_later_check_out = '0' else 
-		right_shift_reg_out(0);
+	priority_enable <= instruction_int_out(0) when first_later_check_out = '0' and lm_detect_signal = '1' else 
+		right_shift_reg_out(0) when first_later_check_out = '1' and lm_detect_signal = '1' else 
+		'0';
 
 	--lm_sm_reg_write <= decoder_out_signal;
 
@@ -385,8 +387,11 @@ begin
 	priorityencoder : priority_encoder 
 		port map (
 			priority_in => priority_enc_in,
+			reset => reset,
+			lm_detect_signal => lm_detect_signal,
+			first_later_check => first_later_check_out,
 			priority_enable => priority_enable,
-			priority_out => priority_enc_out_tp
+			priority_out => priority_enc_out
 		);
 
 	xor_register : register_8 

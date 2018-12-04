@@ -130,7 +130,7 @@ begin
       zero => alu1_z_op
     );
 
-  assigning : process(data_ra, data_rb, ir_5_0_ex)
+  assigning : process(data_ra, data_rb, ir_5_0_ex, clk, alu1_out_from_wb, alu1_out_from_mem, alu1_a_select_final, alu1_b_select_final, data_a_from_wb_ex, data_b_from_wb_ex)
   begin 
   	if alu1_a_select_final = "000" then 
   		alu1_a_ip <= alu1_out_from_mem;
@@ -217,6 +217,7 @@ begin
 		clk => clk,
 		data_ra => data_ra,
 		lm_sm_adder_out_old => lm_sm_adder_out_old,
+		lm_detect => lm_detect_ex,
 		first_last_check => first_lw_sw_ex,
 		write_enable => right_shift_lm_sm_bit_ex,
 		lm_sm_adder_out => lm_sm_adder_out_signal
