@@ -106,26 +106,25 @@ alu1_out_from_mem <= alu1_out_mem;
 rf_a3_from_mem <= rf_a3_mem;
 opcode_from_mem <= opcode_mem;
 
-process(clk) is
-
+process(clk, mem_write_mem, alu1_out_mem, data_ra_mem) is
 begin
-    if rising_edge(clk) then
       --if valid_bit = '1' then -- Where is it coming from????
-        if mem_write_mem = '1' then
-          if mem_data_sel_mem = '0' then
-            mem_array(to_integer(unsigned(alu1_out_mem(15 downto 0)))) <= data_ra_mem(15 downto 0); 
-          --end if;
-        end if;
-        if mem_read_mem = '1' then 
-          if mem_address_sel_mem = '0' then 
-            mem_data_out_signal(15 downto 0) <= mem_array(to_integer(unsigned(alu1_out_mem(15 downto 0))));
-          else
-              mem_data_out_signal(15 downto 0) <= mem_array(to_integer(unsigned(lm_sm_adder_out)));
-          end if;
-      end if;
-    end if;
-    end if;
+  if mem_write_mem = '1' then
+      mem_array(to_integer(unsigned(alu1_out_mem(15 downto 0)))) <= data_ra_mem(15 downto 0); 
+  end if;
 end process;
+
+read : process(clk, reset, mem_read_mem, alu1_out_mem, lm_sm_adder_out)
+begin
+  if mem_read_mem = '1' then 
+    if mem_address_sel_mem = '0' then 
+      mem_data_out_signal(15 downto 0) <= mem_array(to_integer(unsigned(alu1_out_mem(15 downto 0))));
+    elsif
+      mem_data_out_signal(15 downto 0) <= mem_array(to_integer(unsigned(lm_sm_adder_out)));
+    end if;
+  end if;
+  
+end process ; -- read
 
 
 lwlhidepreg : register_1 

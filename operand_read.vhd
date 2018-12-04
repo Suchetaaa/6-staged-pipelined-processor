@@ -150,123 +150,93 @@ architecture op_read of operand_read is
 
 begin
   ---------------------------data hazards-----------------------------------
-  process (clk, rf_a3_from_ex, rf_a3_from_mem, rf_a3_from_wb, opcode_from_ex, opcode_from_mem, opcode_from_wb, opcode)
+  process (clk, rf_a3_from_ex, rf_a3_from_mem, rf_a3_from_wb, opcode_from_ex, opcode_from_mem, opcode_from_wb, opcode, ir_11_9)
   begin 
     --dependency in memory access 
     --AND instructions and NAND instructions
     if (opcode = "0000" or opcode = "0010" or opcode = "1100") then 
       --Execute given more pref
-      if (opcode_from_ex = "0000" or opcode_from_ex = "0010" or opcode_from_ex = "0001") then 
-        if rf_a3_from_ex = ir_11_9 then  
-          alu1_a_select_signal <= "000"; -- ALU1 OUT FROM EX
-          data_a_from_wb <= "0000000000000000";
-        end if;
+      if (opcode_from_ex = "0000" or opcode_from_ex = "0010" or opcode_from_ex = "0001") and (rf_a3_from_ex = ir_11_9) then  
+        alu1_a_select_signal <= "000"; -- ALU1 OUT FROM EX
+        data_a_from_wb <= "0000000000000000";
       --Memory
-      elsif (opcode_from_mem = "0000" or opcode_from_mem = "0010" or opcode_from_mem = "0001") then 
-        if rf_a3_from_mem = ir_11_9 then 
-          alu1_a_select_signal <= "001"; --ALU1 OUT FROM MEMORY
-          data_a_from_wb <= "0000000000000000";
-        end if; 
+      elsif (opcode_from_mem = "0000" or opcode_from_mem = "0010" or opcode_from_mem = "0001") and (rf_a3_from_mem = ir_11_9) then 
+        alu1_a_select_signal <= "001"; --ALU1 OUT FROM MEMORY
+        data_a_from_wb <= "0000000000000000"; 
       --Write back 
-      elsif (opcode_from_wb = "0000" or opcode_from_wb = "0010" or opcode_from_wb = "0001") then
-        if rf_a3_from_wb = ir_11_9 then 
-          alu1_a_select_signal <= "010"; --ALU1 OUT FROM WB 
-          data_a_from_wb <= alu1_out_from_wb;
-        end if;
+      elsif (opcode_from_wb = "0000" or opcode_from_wb = "0010" or opcode_from_wb = "0001") and (rf_a3_from_wb = ir_11_9) then
+        alu1_a_select_signal <= "010"; --ALU1 OUT FROM WB 
+        data_a_from_wb <= alu1_out_from_wb;
       else 
         alu1_a_select_signal <= "011"; -- from data_ra 
         data_a_from_wb <= "0000000000000000";
-    end if;
+      end if;
 
-    if (opcode = "0001") then 
-      if (opcode_from_ex = "0000" or opcode_from_ex = "0001" or opcode_from_ex = "0010") then 
-        if rf_a3_from_ex = ir_11_9 then 
-          alu1_a_select_signal <= "000";
-          data_a_from_wb <= "0000000000000000";
-        end if; 
-      elsif (opcode_from_mem = "0000" or opcode_from_mem = "0001" or opcode_from_mem = "0010") then
-        if rf_a3_from_mem = ir_11_9 then 
-          alu1_a_select_signal <= "001";
-          data_a_from_wb <= "0000000000000000";
-        end if;
-      elsif (opcode_from_wb = "0000" or opcode_from_wb = "0001" or opcode_from_wb = "0010") then
-        if rf_a3_from_wb = ir_11_9 then 
-          alu1_a_select_signal <= "010"; 
-          data_a_from_wb <= alu1_out_from_wb;
-        end if;
+    elsif (opcode = "0001") then 
+      if (opcode_from_ex = "0000" or opcode_from_ex = "0001" or opcode_from_ex = "0010") and (rf_a3_from_ex = ir_11_9) then 
+        alu1_a_select_signal <= "000";
+        data_a_from_wb <= "0000000000000000"; 
+      elsif (opcode_from_mem = "0000" or opcode_from_mem = "0001" or opcode_from_mem = "0010") and (rf_a3_from_mem = ir_11_9) then
+        alu1_a_select_signal <= "001";
+        data_a_from_wb <= "0000000000000000";
+      elsif (opcode_from_wb = "0000" or opcode_from_wb = "0001" or opcode_from_wb = "0010") and (rf_a3_from_wb = ir_11_9) then
+        alu1_a_select_signal <= "010"; 
+        data_a_from_wb <= alu1_out_from_wb;
       else 
         alu1_a_select_signal <= "011"; --from ra
         data_a_from_wb <= "0000000000000000";
       end if;
-    end if;
 
     --LW and SW and 
-    if (opcode = "0100" or opcode = "0101") then 
-      if (opcode_from_ex = "0000" or opcode_from_ex = "0001" or opcode_from_ex = "0010") then 
-        if rf_a3_from_ex = ir_8_6 then 
-          alu1_a_select_signal <= "000";
-          data_a_from_wb <= "0000000000000000";
-        end if;
-      elsif (opcode_from_mem = "0000" or opcode_from_mem = "0001" or opcode_from_mem = "0010") then 
-        if rf_a3_from_mem = ir_8_6 then 
-          alu1_a_select_signal <= "001";
-          data_a_from_wb <= "0000000000000000";
-        end if;
-      elsif (opcode_from_wb = "0000" or opcode_from_wb = "0001" or opcode_from_wb = "0010") then 
-        if rf_a3_from_wb = ir_8_6 then 
-          alu1_a_select_signal <= "010";
-          data_a_from_wb <= alu1_out_from_wb;
-        end if;
+    elsif (opcode = "0100" or opcode = "0101") then 
+      if (opcode_from_ex = "0000" or opcode_from_ex = "0001" or opcode_from_ex = "0010") and (rf_a3_from_ex = ir_8_6) then 
+        alu1_a_select_signal <= "000";
+        data_a_from_wb <= "0000000000000000";
+      elsif (opcode_from_mem = "0000" or opcode_from_mem = "0001" or opcode_from_mem = "0010") and (rf_a3_from_mem = ir_8_6) then 
+        alu1_a_select_signal <= "001";
+        data_a_from_wb <= "0000000000000000";
+      elsif (opcode_from_wb = "0000" or opcode_from_wb = "0001" or opcode_from_wb = "0010") and (rf_a3_from_wb = ir_8_6) then 
+        alu1_a_select_signal <= "010";
+        data_a_from_wb <= alu1_out_from_wb;
       else 
         alu1_a_select_signal <= "100"; -- from data rb
         data_a_from_wb <= "0000000000000000";
       end if;
     end if; 
 
-  end if;
-
   end process;
 
-  process (clk, rf_a3_from_ex, rf_a3_from_mem, rf_a3_from_wb, opcode_from_ex, opcode_from_mem, opcode_from_wb, opcode)
+  process (clk, rf_a3_from_ex, rf_a3_from_mem, rf_a3_from_wb, opcode_from_ex, opcode_from_mem, opcode_from_wb, opcode, ir_8_6)
   begin 
     --dependency in memory access 
     --AND instructions and NAND instructions
     if (opcode = "0000" or opcode = "0010" or opcode = "1100") then 
       --Execute given more pref
-      if (opcode_from_ex = "0000" or opcode_from_ex = "0010" or opcode_from_ex = "0001") then 
-        if rf_a3_from_ex = ir_8_6 then  
-          alu1_b_select_signal <= "000"; -- ALU1 OUT FROM EX
-          data_b_from_wb <= "0000000000000000";
-        end if;
+      if (opcode_from_ex = "0000" or opcode_from_ex = "0010" or opcode_from_ex = "0001") and (rf_a3_from_ex = ir_8_6) then 
+        alu1_b_select_signal <= "000"; -- ALU1 OUT FROM EX
+        data_b_from_wb <= "0000000000000000";
       --Memory
-      elsif (opcode_from_mem = "0000" or opcode_from_mem = "0010" or opcode_from_mem = "0001") then 
-        if rf_a3_from_mem = ir_8_6 then 
-          alu1_b_select_signal <= "001"; --ALU1 OUT FROM MEMORY
-          data_b_from_wb <= "0000000000000000";
-        end if; 
+      elsif (opcode_from_mem = "0000" or opcode_from_mem = "0010" or opcode_from_mem = "0001") and (rf_a3_from_mem = ir_8_6) then 
+        alu1_b_select_signal <= "001"; --ALU1 OUT FROM MEMORY
+        data_b_from_wb <= "0000000000000000"; 
       --Write back 
-      elsif (opcode_from_wb = "0000" or opcode_from_wb = "0010" or opcode_from_wb = "0001") then
-        if rf_a3_from_wb = ir_8_6 then 
-          alu1_b_select_signal <= "010"; --ALU1 OUT FROM WB 
-          data_b_from_wb <= alu1_out_from_wb;
-        end if;
+      elsif (opcode_from_wb = "0000" or opcode_from_wb = "0010" or opcode_from_wb = "0001") and (rf_a3_from_wb = ir_8_6) then 
+        alu1_b_select_signal <= "010"; --ALU1 OUT FROM WB 
+        data_b_from_wb <= alu1_out_from_wb;
       else 
         alu1_b_select_signal <= "011"; -- from data_rb 
         data_b_from_wb <= "0000000000000000";
-    end if;
+      end if;
 
-    if (opcode = "0001") then 
+    elsif (opcode = "0001") then 
       alu1_b_select_signal <= "100"; --SE6 out
       data_b_from_wb <= "0000000000000000"; 
-    end if;
 
     --LW and SW and 
-    if (opcode = "0100" or opcode = "0101") then 
+    elsif (opcode = "0100" or opcode = "0101") then 
       alu1_b_select_signal <= "100"; --se6 out 
       data_b_from_wb <= "0000000000000000";
     end if; 
-
-  end if;
 
   end process;
 
@@ -275,29 +245,23 @@ begin
     --JLR 
   ---------------------------------------------for stalling for lw and lhi------------------------------------------------
   --ir_11_9 is tha RA to which writing is taking place in case of LHI and LW
-  process(clk, instruction_to_rr, opcode, ir_11_9)
+  process(clk, instruction_to_rr, opcode, ir_11_9, rf_a3, reset)
   begin 
     if reset = '1' then 
       lw_lhi_dep <= '0';
       stall_from_rr <= '0';
     --LW or LHI instruction
     elsif opcode = "0011" or opcode = "0100" then 
-      if instruction_to_rr(15 downto 12) = "0000" or instruction_to_rr(15 downto 12) = "0010" or instruction_to_rr(15 downto 12) = "1100" then 
-        if rf_a3 = instruction_to_rr(11 downto 9) or rf_a3 = instruction_to_rr(8 downto 6) then 
-          lw_lhi_dep <= '1';
-          stall_from_rr <= '1';
-        end if;
+      if instruction_to_rr(15 downto 12) = "0000" or instruction_to_rr(15 downto 12) = "0010" or instruction_to_rr(15 downto 12) = "1100" or (rf_a3 = instruction_to_rr(11 downto 9) and rf_a3 = instruction_to_rr(8 downto 6)) then  
+        lw_lhi_dep <= '1';
+        stall_from_rr <= '1';
       --ADI and LM and SM - reading from RA
-      elsif instruction_to_rr(15 downto 12) = "0001" or instruction_to_rr(15 downto 12) = "0110" or instruction_to_rr(15 downto 12) = "0111" then
-        if rf_a3 = instruction_to_rr(11 downto 9) then 
-          lw_lhi_dep <= '1';
-          stall_from_rr <= '1';
-        end if;
-      elsif instruction_to_rr(15 downto 12) = "1001" then
-        if rf_a3 = instruction_to_rr(8 downto 6) then 
-          lw_lhi_dep <= '1';
-          stall_from_rr <= '1';
-        end if;
+      elsif instruction_to_rr(15 downto 12) = "0001" or instruction_to_rr(15 downto 12) = "0110" or instruction_to_rr(15 downto 12) = "0111" and (rf_a3 = instruction_to_rr(11 downto 9)) then
+        lw_lhi_dep <= '1';
+        stall_from_rr <= '1';
+      elsif instruction_to_rr(15 downto 12) = "1001" and (rf_a3 = instruction_to_rr(8 downto 6)) then
+        lw_lhi_dep <= '1';
+        stall_from_rr <= '1';
       else 
         lw_lhi_dep <= '0';
         stall_from_rr <= '0';
