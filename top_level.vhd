@@ -9,7 +9,16 @@ use work.components_init.all;
 entity top_level is
   port(
     clk : in std_logic;
-    reset: in std_logic
+    reset: in std_logic;
+
+    external_r0 : std_logic_vector(15 downto 0);
+    external_r1 : std_logic_vector(15 downto 0);
+    external_r2 : std_logic_vector(15 downto 0);
+    external_r3 : std_logic_vector(15 downto 0);
+    external_r4 : std_logic_vector(15 downto 0);
+    external_r5 : std_logic_vector(15 downto 0);
+    external_r6 : std_logic_vector(15 downto 0);
+    external_r7 : std_logic_vector(15 downto 0)
   );
 end entity;
 architecture at of top_level is	
@@ -169,14 +178,14 @@ architecture at of top_level is
   signal rf_data_final : std_logic_vector(15 downto 0);
   signal rf_a3_final : std_logic_vector(2 downto 0);
 
-  signal external_r0 : std_logic_vector(15 downto 0);
-  signal external_r1 : std_logic_vector(15 downto 0);
-  signal external_r2 : std_logic_vector(15 downto 0);
-  signal external_r3 : std_logic_vector(15 downto 0);
-  signal external_r4 : std_logic_vector(15 downto 0);
-  signal external_r5 : std_logic_vector(15 downto 0);
-  signal external_r6 : std_logic_vector(15 downto 0);
-  signal external_r7 : std_logic_vector(15 downto 0);
+  --signal external_r0 : std_logic_vector(15 downto 0);
+  --signal external_r1 : std_logic_vector(15 downto 0);
+  --signal external_r2 : std_logic_vector(15 downto 0);
+  --signal external_r3 : std_logic_vector(15 downto 0);
+  --signal external_r4 : std_logic_vector(15 downto 0);
+  --signal external_r5 : std_logic_vector(15 downto 0);
+  --signal external_r6 : std_logic_vector(15 downto 0);
+  --signal external_r7 : std_logic_vector(15 downto 0);
 
 
   -------------------stalling--------------------------

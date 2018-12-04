@@ -171,7 +171,6 @@ begin
 	end if;
 	data_out_ra <= data_out_1_var;
 	data_out_rb <= data_out_2_var;
-	end process;
 
 	external_r0_sig <= reg_0; 
 	external_r1_sig <= reg_1; 
@@ -181,5 +180,7 @@ begin
 	external_r5_sig <= reg_5; 
 	external_r6_sig <= reg_6; 
 	external_r7_sig <= reg_7; 
+	end process;
+
 
 end architecture; -- rf

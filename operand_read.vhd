@@ -343,7 +343,15 @@ begin
       data_out_ra => ra_read_temp,
       data_out_rb => rb_read_temp,
       carry_out => carry_temp,
-      zero_out => zero_temp
+      zero_out => zero_temp,
+      external_r0_sig => external_r0, 
+      external_r1_sig => external_r1, 
+      external_r2_sig => external_r2, 
+      external_r3_sig => external_r3, 
+      external_r4_sig => external_r4, 
+      external_r5_sig => external_r5, 
+      external_r6_sig => external_r6, 
+      external_r7_sig => external_r7
     ) ;
 
   rf_carry_reg_out <= carry_temp;
