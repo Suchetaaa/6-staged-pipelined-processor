@@ -220,6 +220,7 @@ architecture at of top_level is
   signal valid_bit_or_or_ex : std_logic;
   signal valid_bit_or_ex_mem : std_logic;
   signal valid_bit_or_mem_wb : std_logic;
+  signal pc_select : std_logic_vector(1 downto 0);
 
 begin
   if_stage : instruction_fetch
@@ -236,7 +237,9 @@ begin
       alu2_out => alu2_out,
       instruction_int_out => ir_if_id,
       pc_register_int_out => pc_if_id,
-      valid_bit => valid_bit
+      valid_bit => valid_bit,
+		pc_imm_from_ex => pc_imm_from_ex,
+		beq_taken => beq_taken
     ) ;
 
   id_stage : instruction_decode 
@@ -280,7 +283,7 @@ begin
       stall_if => stall_if,
 		  stall_from_rr => stall_from_rr,
 		  instruction_to_rr => instruction_to_rr,
-      lw_lhi_dep_done => lw_lhi_dep_done
+      lw_lhi_dep_done => lw_lhi_dep_done,
 
       ---------beq-------------
       valid_bit => valid_bit,
@@ -325,7 +328,7 @@ begin
       lm_sm_reg_write => lm_sm_reg_write,
       lm_sm_write_load => lm_sm_write_load,
       alu2_out => alu2_out, --alu2_out to IF stage
-      valid_bit_id_or => valid_bit_id_or,
+      
       ------------------ From Write Back Stage -----------------------------
       rf_write_final => rf_write_final, -- should actually come from wb stage
       carry_en_final => carry_en_final,
@@ -371,7 +374,7 @@ begin
       alu2_out_ex => alu2_out_ex,
       rf_carry_reg_out => rf_carry_reg_out,
       rf_zero_reg_out => rf_zero_reg_out,
-      valid_bit_or_ex => valid_bit_or_ex,
+      
 
       external_r0 => external_r0, 
       external_r1 => external_r1, 
@@ -397,9 +400,10 @@ begin
       data_b_from_wb_ex => data_b_from_wb_ex,
       alu1_a_select_final => alu1_a_select_final,
       alu1_b_select_final => alu1_b_select_final,
-		alu1_out_from_wb => alu1_out_from_wb
+		alu1_out_from_wb => alu1_out_from_wb,
 
     -------------beq--------------------------
+	 beq_taken => beq_taken,
     valid_bit_id_id_or => valid_bit_id_id_or,
      valid_bit_id_or => valid_bit_id_or,
      valid_bit_or_ex => valid_bit_or_ex,
@@ -491,7 +495,7 @@ begin
       alu1_out_from_mem => alu1_out_from_mem,
       alu1_out_from_wb => alu1_out_from_wb,
   		opcode_from_ex => opcode_from_ex,
-  		rf_a3_from_ex => rf_a3_from_ex
+  		rf_a3_from_ex => rf_a3_from_ex,
 
     ------------------------beq instruction----------------------
       pc_imm_from_ex => pc_imm_from_ex, 
@@ -635,7 +639,7 @@ begin
       --Input signals from RF 
       rf_carry_reg_out => rf_carry_reg_out,
       rf_zero_reg_out => rf_zero_reg_out,
-      valid_bit_mem_wb => valid_bit_mem_wb,
+      
       --Output signals 
       --Going to RF or RR block 
       --All these signals should NOT come out of register but as normal signals 

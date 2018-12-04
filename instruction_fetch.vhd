@@ -77,7 +77,7 @@ begin
 	process(clk, reset, beq_taken, pc_imm_from_ex)
 	begin 
 		if reset = '1' then 
-			valid_bit_signal = '1';
+			valid_bit_signal <= '1';
 		elsif beq_taken = '1' then 
 			valid_bit_signal <= '1';
 		else 
@@ -91,20 +91,15 @@ begin
 	begin
 		if reset = '1' then
 			pc_register_in <= "0000000000000000";
-			valid_bit_signal <= '0';
 		-- reset = 0 
 		elsif pc_select = "00" then 
 			pc_register_in <= alu1_out;
-			valid_bit_signal <= '1';
 		elsif pc_select = "01" then 
 			pc_register_in <= pc_imm_from_ex;
-			valid_bit_signal <= '1';
 		elsif pc_select = "10" then 
 			pc_register_in <= mem_data_out;
-			valid_bit_signal <= '1';
 		else -- pc_select = 11 and reset = 0
 			pc_register_in <= incrementer_pc_out;
-			valid_bit_signal <= '1';
 		end if;
 
 	end process ; -- PC

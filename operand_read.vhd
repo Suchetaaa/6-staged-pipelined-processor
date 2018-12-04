@@ -163,11 +163,11 @@ begin
   process(clk, reset, beq_taken)
   begin 
     if reset = '1' then 
-      valid_bit_signal = '1';
+      valid_bit_signal <= '1';
     elsif beq_taken = '1' then
-      valid_bit_signal = '0';
+      valid_bit_signal <= '0';
     else 
-      valid_bit_signal = '1';
+      valid_bit_signal <= '1';
     end if; 
   end process;
         
@@ -615,7 +615,7 @@ first_lw_sw_ex_reg_out : register_1
       reg_data_out => valid_bit_or_ex
       );
 
-  valid_bit_or_ex_reg : register_1
+  valid_bit_or_ex_reg1 : register_1
     port map(
       reg_data_in => valid_bit_id_id_or,
       reg_enable => '1',
@@ -623,7 +623,7 @@ first_lw_sw_ex_reg_out : register_1
       reg_data_out => valid_bit_id_or_ex
       );
 
-  valid_bit_or_ex_reg : register_1
+  valid_bit_or_ex_re2g : register_1
     port map(
       reg_data_in => valid_bit_signal,
       reg_enable => '1',

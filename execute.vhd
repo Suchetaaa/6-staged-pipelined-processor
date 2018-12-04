@@ -52,7 +52,7 @@ entity execute is
     alu1_out_mem : out std_logic_vector(15 downto 0); -- output of ALU
     alu1_carry_mem : out std_logic;
     alu1_zero_mem : out std_logic;
-    cond_carry_mem : out std_logi
+    cond_carry_mem : out std_logic;
     cond_zero_mem : out std_logic;
 	 lm_sm_adder_out : out std_logic_vector(15 downto 0);
 
@@ -158,7 +158,7 @@ begin
   		pc_select <= "11";
   		pc_imm_from_ex <= alu2_out_ex; 
   	end if;
-  end process
+  end process;
   		
   -------------------------------------beq-------------------------------------
 
@@ -546,14 +546,7 @@ begin
       reg_data_out => valid_bit_or_ex_mem
     );
 
-   valid_bit_ex_ex_mem_reg : register_1
-    port map(
-      reg_data_in => valid_bit_signal,
-      reg_enable => '1',
-      clk => clk,
-      reg_data_out => valid_bit_ex_ex_mem
-    );
-
+   
 
 end architecture ; -- arch
 

@@ -247,7 +247,7 @@ package components_init is
 			-----stalling------
 			stall_from_rr : in std_logic;
 			instruction_to_rr: out std_logic_vector(15 downto 0);
-			lw_lhi_dep_done : in std_logic
+			lw_lhi_dep_done : in std_logic;
 			-----------beq----------
 			valid_bit : in std_logic;
 			valid_bit_id_or : out std_logic;
@@ -414,7 +414,7 @@ package components_init is
 	    lm_sm_reg_write_ex : in std_logic_vector(2 downto 0);
 	    lm_sm_write_load_ex : in std_logic;
 	    alu2_out_ex : in std_logic_vector(15 downto 0); --alu2_in to IF stage
-	    valid_bit_or_ex : in std_logic;
+	    
 	    --Output signals from this stage
 	    alu1_out_mem : out std_logic_vector(15 downto 0); -- output of ALU
 	    alu1_carry_mem : out std_logic;
@@ -449,7 +449,7 @@ package components_init is
 	    lm_sm_reg_write_mem : out std_logic_vector(2 downto 0);
 	    lm_sm_write_load_mem : out std_logic;
 	    alu2_out_mem : out std_logic_vector(15 downto 0); --alu2_in to IF stage
-	    valid_bit_ex_mem : out std_logic;
+	    
 	    ----------stalling-------
 	    lw_lhi_dep_reg_out : in std_logic;
 		 	lw_lhi_dep_reg_mem : out std_logic;
@@ -515,7 +515,7 @@ package components_init is
 	    lm_sm_reg_write_mem : in std_logic_vector(2 downto 0);
 	    lm_sm_write_load_mem : in std_logic;
 			alu2_out_mem : in std_logic_vector(15 downto 0);
-			valid_bit_ex_mem : in std_logic;
+			
 	    -----Outputs----
 	    --From memory access stage
 	    mem_data_out : out std_logic_vector(15 downto 0);
@@ -552,7 +552,7 @@ package components_init is
 	    lm_sm_reg_write_wb : out std_logic_vector(2 downto 0);
 	    lm_sm_write_load_wb : out std_logic;
 		alu2_out_wb : out std_logic_vector(15 downto 0);
-		valid_bit_mem_wb : out std_logic;
+		
 		-----------stalling------------
 		lw_lhi_dep_reg_mem : in std_logic;
 		lw_lhi_dep_reg_wb : out std_logic;
@@ -613,7 +613,7 @@ package components_init is
 		  --Input signals from RF 
 		  rf_carry_reg_out : in std_logic;
 		  rf_zero_reg_out : in std_logic;
-		  valid_bit_mem_wb : in std_logic;
+		  
 		  --Output signals 
 		  --Going to RF or RR block 
 		  --All these signals should NOT come out of register but as normal signals 

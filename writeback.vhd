@@ -119,7 +119,7 @@ begin
 			zero_val_final <= alu1_zero_wb;
 		--NDC
 		elsif opcode_wb = "0010" and cz_wb = "10" then
-			rf_write_final <= (rf_carry_reg_out and and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
+			rf_write_final <= (rf_carry_reg_out and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
 			zero_en_final <= (rf_carry_reg_out and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
 			carry_en_final <= '0';
 			zero_val_final <= alu1_zero_wb;
