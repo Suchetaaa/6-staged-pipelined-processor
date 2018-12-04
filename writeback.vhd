@@ -48,7 +48,6 @@ entity write_back is
   --Input signals from RF 
   rf_carry_reg_out : in std_logic;
   rf_zero_reg_out : in std_logic;
-  valid_bit_mem_wb : in std_logic;
 
 
   --------------------------------------------stalling--------------------------------------------
@@ -75,7 +74,13 @@ entity write_back is
   ----------------------------data hazards-------------------------
   rf_a3_from_wb : out std_logic_vector(2 downto 0);
   opcode_from_wb : out std_logic_vector(3 downto 0);
-  alu1_out_from_wb : out std_logic_vector(15 downto 0)
+  alu1_out_from_wb : out std_logic_vector(15 downto 0);
+
+  ------------------beq-------------------------
+
+  valid_bit_mem_wb : in std_logic;
+  valid_bit_id_mem_wb : in std_logic;
+  valid_bit_or_mem_wb : in std_logic
 
 
   ) ;
@@ -100,35 +105,35 @@ begin
 	begin
 		--ADC  
 		if opcode_wb = "0000" and cz_wb = "10" then 
-			rf_write_final <=  rf_carry_reg_out;
-			carry_en_final <= rf_carry_reg_out;
-			zero_en_final <= rf_carry_reg_out;
+			rf_write_final <=  (rf_carry_reg_out and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
+			carry_en_final <= (rf_carry_reg_out and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
+			zero_en_final <= (rf_carry_reg_out and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
 			carry_val_final <= alu1_carry_wb;
 			zero_val_final <= alu1_zero_wb;
 		--ADZ
 		elsif opcode_wb = "0000" and cz_wb = "01" then 
-			rf_write_final <= rf_zero_reg_out;
-			carry_en_final <= rf_zero_reg_out;
-			zero_en_final <= rf_zero_reg_out;
+			rf_write_final <= (rf_zero_reg_out and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
+			carry_en_final <= (rf_zero_reg_out and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
+			zero_en_final <= (rf_zero_reg_out and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
 			carry_val_final <= alu1_carry_wb;
 			zero_val_final <= alu1_zero_wb;
 		--NDC
 		elsif opcode_wb = "0010" and cz_wb = "10" then
-			rf_write_final <= rf_carry_reg_out;
-			zero_en_final <= rf_carry_reg_out;
+			rf_write_final <= (rf_carry_reg_out and and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
+			zero_en_final <= (rf_carry_reg_out and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
 			carry_en_final <= '0';
 			zero_val_final <= alu1_zero_wb;
 			carry_val_final <= '0';
 		--NDZ
 		elsif opcode_wb = "0010" and cz_wb = "01" then
-			rf_write_final <= rf_zero_reg_out;
-			zero_en_final <= rf_zero_reg_out;
+			rf_write_final <= (rf_zero_reg_out and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
+			zero_en_final <= (rf_zero_reg_out and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
 			carry_en_final <= '0';
 			zero_val_final <= alu1_zero_wb;
 			carry_val_final <= '0';
 		--LM SM done 
 		elsif (opcode_wb = "0110" or opcode_wb = "0111") then 
-			rf_write_final <= right_shift_lm_sm_bit_wb;
+			rf_write_final <= (right_shift_lm_sm_bit_wb and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
 			zero_en_final <= '0';
 			carry_en_final <= '0';
 			carry_val_final <= '0';
@@ -140,9 +145,9 @@ begin
 			carry_val_final <= '0';
 			zero_val_final <= '1';
 		else 
-			rf_write_final <= rf_write_wb;
-			carry_en_final <= carry_en_wb;
-			zero_en_final <= zero_en_mem_wb or zero_en_alu_wb;
+			rf_write_final <= (rf_write_wb and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
+			carry_en_final <= (carry_en_wb and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
+			zero_en_final <= ((zero_en_mem_wb or zero_en_alu_wb) and valid_bit_mem_wb and valid_bit_or_mem_wb and valid_bit_id_mem_wb);
 			zero_val_final <= alu1_zero_wb;
 			carry_val_final <= alu1_carry_wb;
 		end if;

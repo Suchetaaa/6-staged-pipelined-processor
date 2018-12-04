@@ -45,7 +45,6 @@ lm_sm_adder_out : in std_logic_vector(15 downto 0);
     lm_sm_reg_write_mem : in std_logic_vector(2 downto 0);
     lm_sm_write_load_mem : in std_logic;
     alu2_out_mem : in std_logic_vector(15 downto 0);
-    valid_bit_ex_mem : in std_logic;
     -----Outputs----
     --From memory access stage
     mem_data_out : out std_logic_vector(15 downto 0);
@@ -83,7 +82,7 @@ lm_sm_adder_out : in std_logic_vector(15 downto 0);
     lm_sm_reg_write_wb : out std_logic_vector(2 downto 0);
     lm_sm_write_load_wb : out std_logic;
     alu2_out_wb : out std_logic_vector(15 downto 0);
-    valid_bit_mem_wb : out std_logic;
+    
 
     ------------------------stalling----------------------------
 	 lw_lhi_dep_reg_mem : in std_logic;
@@ -91,8 +90,15 @@ lm_sm_adder_out : in std_logic_vector(15 downto 0);
    ------------------------data hazards-------------------------
    rf_a3_from_mem : out std_logic_vector(2 downto 0);
    opcode_from_mem : out std_logic_vector(3 downto 0);
-   alu1_out_from_mem : out std_logic_vector(15 downto 0)
+   alu1_out_from_mem : out std_logic_vector(15 downto 0);
 
+   ----------------beq-----------------------------
+    valid_bit_ex_mem : in std_logic;
+    valid_bit_id_ex_mem : in std_logic;
+    valid_bit_or_ex_mem : in std_logic;
+    valid_bit_mem_wb : out std_logic;
+    valid_bit_id_mem_wb : out std_logic;
+    valid_bit_or_mem_wb : out std_logic
 
   ) ;
 end entity ; -- instruction_memory
@@ -397,6 +403,22 @@ rf_data_select_reg_out : register_3
       reg_enable => '1',
       clk => clk,
       reg_data_out => valid_bit_mem_wb
+    );
+
+  valid_bit_id_mem_wb_reg : register_1
+    port map(
+      reg_data_in => valid_bit_id_ex_mem,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => valid_bit_id_mem_wb
+    );
+
+  valid_bit_or_mem_wb_reg : register_1
+    port map(
+      reg_data_in => valid_bit_or_ex_mem,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => valid_bit_or_mem_wb
     );
 
 

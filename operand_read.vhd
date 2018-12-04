@@ -43,7 +43,6 @@ entity operand_read is
     lm_sm_reg_write : in std_logic_vector(2 downto 0);
     lm_sm_write_load : in std_logic;
     alu2_out : in std_logic_vector(15 downto 0); --alu2_out to IF stage
-    valid_bit_id_or : in std_logic;
     
     ------------------ From Write Back Stage -----------------------------
     -- the address of the write back reg (and if write back)
@@ -97,7 +96,6 @@ entity operand_read is
     alu2_out_ex : out std_logic_vector(15 downto 0); --alu2_out to IF stage
     rf_carry_reg_out : out std_logic;
     rf_zero_reg_out : out std_logic;
-    valid_bit_or_ex : out std_logic;
 
     ------------------------------------output signals for stalling detection----------------------------
     --lw_lhi_dep : out std_logic;
@@ -129,7 +127,16 @@ entity operand_read is
     alu1_a_select_final : out std_logic_vector(2 downto 0);
     alu1_b_select_final : out std_logic_vector(2 downto 0);
 	 
-	 alu1_out_from_wb : in std_logic_vector(15 downto 0)
+	 alu1_out_from_wb : in std_logic_vector(15 downto 0);
+
+   ----------------------beq------------------------
+   beq_taken : in std_logic;
+   
+   valid_bit_id_id_or : in std_logic;
+   valid_bit_id_or : in std_logic;
+   valid_bit_or_ex : out std_logic;
+   valid_bit_id_or_ex : out std_logic;
+   valid_bit_or_or_ex : out std_logic
 
   );
 
@@ -145,10 +152,25 @@ architecture op_read of operand_read is
   signal alu1_b_select_signal : std_logic_vector(2 downto 0);
   signal data_a_from_wb : std_logic_vector(15 downto 0);
   signal data_b_from_wb : std_logic_vector(15 downto 0);
+  signal valid_bit_signal : std_logic;
   
 
 
 begin
+
+-----------------------beq-----------------------------
+
+  process(clk, reset, beq_taken)
+  begin 
+    if reset = '1' then 
+      valid_bit_signal = '1';
+    elsif beq_taken = '1' then
+      valid_bit_signal = '0';
+    else 
+      valid_bit_signal = '1';
+    end if; 
+  end process;
+        
   ---------------------------data hazards-----------------------------------
   process (clk, rf_a3_from_ex, rf_a3_from_mem, rf_a3_from_wb, opcode_from_ex, opcode_from_mem, opcode_from_wb, opcode, ir_11_9)
   begin 
@@ -591,6 +613,22 @@ first_lw_sw_ex_reg_out : register_1
       reg_enable => '1',
       clk => clk,
       reg_data_out => valid_bit_or_ex
+      );
+
+  valid_bit_or_ex_reg : register_1
+    port map(
+      reg_data_in => valid_bit_id_id_or,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => valid_bit_id_or_ex
+      );
+
+  valid_bit_or_ex_reg : register_1
+    port map(
+      reg_data_in => valid_bit_signal,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => valid_bit_or_or_ex
       );
 
 

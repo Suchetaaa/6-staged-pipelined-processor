@@ -44,7 +44,11 @@ entity instruction_fetch is
 
 	------------------------------------------------------------------input pins for flushing------------------------------------------------------------------
 	stall_from_rr : in std_logic;
-	lw_lhi_dep_done : in std_logic
+	lw_lhi_dep_done : in std_logic;
+
+	----------------------beq--------------------------
+	pc_imm_from_ex : in std_logic_vector(15 downto 0);
+	beq_taken : in std_logic
 
 
   ) ;
@@ -69,6 +73,19 @@ architecture arch of instruction_fetch is
 
 
 begin
+---------------------------beq--------------------------------------
+	process(clk, reset, beq_taken, pc_imm_from_ex)
+	begin 
+		if reset = '1' then 
+			valid_bit_signal = '1';
+		elsif beq_taken = '1' then 
+			valid_bit_signal <= '1';
+		else 
+			valid_bit_signal <= '0';
+		end if;
+	end process;
+
+	------------------------------beq--------------------------------
 
 	PC : process(clk, incrementer_pc_out, mem_data_out, pc_select, alu1_out, alu2_out)
 	begin
@@ -80,7 +97,7 @@ begin
 			pc_register_in <= alu1_out;
 			valid_bit_signal <= '1';
 		elsif pc_select = "01" then 
-			pc_register_in <= alu2_out;
+			pc_register_in <= pc_imm_from_ex;
 			valid_bit_signal <= '1';
 		elsif pc_select = "10" then 
 			pc_register_in <= mem_data_out;

@@ -35,6 +35,8 @@ begin
 		decoder_out_var := "001";
 	elsif decoder_in = "10000000" then
 		decoder_out_var := "000";
+	else 
+		decoder_out_var := "000";
 	end if;
 	decoder_out <= decoder_out_var;
 end process;

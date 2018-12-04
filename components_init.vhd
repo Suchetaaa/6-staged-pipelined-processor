@@ -182,6 +182,8 @@ package components_init is
 			stall_if : in std_logic;
 			stall_from_rr : in std_logic;
 			lw_lhi_dep_done : in std_logic;
+			pc_imm_from_ex : in std_logic_vector(15 downto 0);
+			beq_taken : in std_logic;
 			--ir_enable : in std_logic;
 			mem_data_out : in std_logic_vector(15 downto 0);
 			alu1_out : in std_logic_vector(15 downto 0);
@@ -209,7 +211,6 @@ package components_init is
 			reset : in std_logic;
 			pc_register_int_out : in std_logic_vector(15 downto 0);
 			instruction_int_out : in std_logic_vector(15 downto 0);
-			valid_bit : in std_logic;
 			pc_out : out std_logic_vector(15 downto 0);
 			alu1_op : out std_logic_vector(1 downto 0);
 			alu1_a_select : out std_logic;
@@ -243,11 +244,14 @@ package components_init is
 			lm_sm_write_load : out std_logic;
 			alu2_out : out std_logic_vector(15 downto 0);
 			stall_if :out std_logic;
-			valid_bit_id_or : out std_logic;
 			-----stalling------
 			stall_from_rr : in std_logic;
 			instruction_to_rr: out std_logic_vector(15 downto 0);
 			lw_lhi_dep_done : in std_logic
+			-----------beq----------
+			valid_bit : in std_logic;
+			valid_bit_id_or : out std_logic;
+			valid_bit_id_id_or : out std_logic
 	  ) ;
 	 end component instruction_decode;
 
@@ -289,7 +293,6 @@ package components_init is
 	    lm_sm_reg_write : in std_logic_vector(2 downto 0);
 	    lm_sm_write_load : in std_logic;
 	    alu2_out : in std_logic_vector(15 downto 0); --alu2_out to IF stage
-	    valid_bit_id_or : in std_logic;
 	    ------------------ From Write Back Stage -----------------------------
 	    -- the address of the write back reg (and if write back)
 	    rf_write_final : in std_logic;
@@ -337,7 +340,6 @@ package components_init is
 	    alu2_out_ex : out std_logic_vector(15 downto 0); --alu2_out to IF stage
 	    rf_carry_reg_out : out std_logic;
 		rf_zero_reg_out : out std_logic;
-		valid_bit_or_ex : out std_logic;
 
 		external_r0 : out std_logic_vector(15 downto 0);
 	   external_r1 : out std_logic_vector(15 downto 0);
@@ -362,7 +364,14 @@ package components_init is
     	data_b_from_wb_ex : out std_logic_vector(15 downto 0);
     	alu1_a_select_final : out std_logic_vector(2 downto 0);
     	alu1_b_select_final : out std_logic_vector(2 downto 0);
-		alu1_out_from_wb : in std_logic_vector(15 downto 0)
+		alu1_out_from_wb : in std_logic_vector(15 downto 0);
+		-----------------beq-----------------
+		beq_taken : in std_logic;
+		valid_bit_id_or : in std_logic;
+		valid_bit_or_ex : out std_logic;
+		valid_bit_id_id_or : in std_logic;
+		valid_bit_id_or_ex : out std_logic;
+		valid_bit_or_or_ex : out std_logic
 	  );
 	end component;
 	
@@ -446,14 +455,26 @@ package components_init is
 		 	lw_lhi_dep_reg_mem : out std_logic;
 
 		 	----------data hazards----------
-		 	alu1_a_select_final : in std_logic_vector(2 downto 0);
+		alu1_a_select_final : in std_logic_vector(2 downto 0);
 	    alu1_b_select_final : in std_logic_vector(2 downto 0);
 	    data_a_from_wb_ex : in std_logic_vector(15 downto 0);
-			data_b_from_wb_ex : in std_logic_vector(15 downto 0);
-			alu1_out_from_mem : in std_logic_vector(15 downto 0);
-			alu1_out_from_wb : in std_logic_vector(15 downto 0);
-			opcode_from_ex : out std_logic_vector(3 downto 0);
-			rf_a3_from_ex : out std_logic_vector(2 downto 0)
+		data_b_from_wb_ex : in std_logic_vector(15 downto 0);
+		alu1_out_from_mem : in std_logic_vector(15 downto 0);
+		alu1_out_from_wb : in std_logic_vector(15 downto 0);
+		opcode_from_ex : out std_logic_vector(3 downto 0);
+		rf_a3_from_ex : out std_logic_vector(2 downto 0);
+
+		--------------beq-----------------
+		pc_imm_from_ex : out std_logic_vector(15 downto 0);
+		beq_taken : out std_logic;
+		pc_select : out std_logic_vector(1 downto 0);
+		valid_bit_or_ex : in std_logic;
+		valid_bit_id_or_ex : in std_logic;
+		valid_bit_or_or_ex : in std_logic;
+		valid_bit_ex_mem : out std_logic;
+		valid_bit_id_ex_mem : out std_logic;
+		valid_bit_or_ex_mem : out std_logic
+
 	  );	
 	end component;
 
@@ -530,15 +551,22 @@ package components_init is
 	    right_shift_lm_sm_bit_wb : out std_logic;
 	    lm_sm_reg_write_wb : out std_logic_vector(2 downto 0);
 	    lm_sm_write_load_wb : out std_logic;
-			alu2_out_wb : out std_logic_vector(15 downto 0);
-			valid_bit_mem_wb : out std_logic;
-			-----------stalling------------
-			lw_lhi_dep_reg_mem : in std_logic;
-			lw_lhi_dep_reg_wb : out std_logic;
-			------------data hazards---------
-			rf_a3_from_mem : out std_logic_vector(2 downto 0);
-			opcode_from_mem : out std_logic_vector(3 downto 0);
-			alu1_out_from_mem : out std_logic_vector(15 downto 0)
+		alu2_out_wb : out std_logic_vector(15 downto 0);
+		valid_bit_mem_wb : out std_logic;
+		-----------stalling------------
+		lw_lhi_dep_reg_mem : in std_logic;
+		lw_lhi_dep_reg_wb : out std_logic;
+		------------data hazards---------
+		rf_a3_from_mem : out std_logic_vector(2 downto 0);
+		opcode_from_mem : out std_logic_vector(3 downto 0);
+		alu1_out_from_mem : out std_logic_vector(15 downto 0);
+		---------beq------------
+		valid_bit_ex_mem : in std_logic;
+		valid_bit_id_ex_mem : in std_logic;
+		valid_bit_or_ex_mem : in std_logic;
+		valid_bit_mem_wb : out std_logic;
+		valid_bit_id_mem_wb : out std_logic;
+		valid_bit_or_mem_wb : out std_logic
 
 	  ) ;
 	end component;
@@ -604,7 +632,11 @@ package components_init is
 		  -----------data hazards-----------
 		  rf_a3_from_wb : out std_logic_vector(2 downto 0);
 		  opcode_from_wb : out std_logic_vector(3 downto 0);
-		  alu1_out_from_wb : out std_logic_vector(15 downto 0)
+		  alu1_out_from_wb : out std_logic_vector(15 downto 0);
+		  ---------beq-----------
+		  valid_bit_mem_wb : in std_logic;
+		  valid_bit_id_mem_wb : in std_logic;
+		  valid_bit_or_mem_wb : in std_logic
 
 		);
 	end component;

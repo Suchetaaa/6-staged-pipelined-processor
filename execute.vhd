@@ -47,13 +47,12 @@ entity execute is
     lm_sm_reg_write_ex : in std_logic_vector(2 downto 0);
     lm_sm_write_load_ex : in std_logic;
     alu2_out_ex : in std_logic_vector(15 downto 0); --alu2_in to IF stage
-    valid_bit_or_ex : in std_logic;
 
     --Output signals from this stage
     alu1_out_mem : out std_logic_vector(15 downto 0); -- output of ALU
     alu1_carry_mem : out std_logic;
     alu1_zero_mem : out std_logic;
-    cond_carry_mem : out std_logic;
+    cond_carry_mem : out std_logi
     cond_zero_mem : out std_logic;
 	 lm_sm_adder_out : out std_logic_vector(15 downto 0);
 
@@ -84,7 +83,6 @@ entity execute is
     lm_sm_reg_write_mem : out std_logic_vector(2 downto 0);
     lm_sm_write_load_mem : out std_logic;
     alu2_out_mem : out std_logic_vector(15 downto 0); --alu2_in to IF stage
-    valid_bit_ex_mem : out std_logic;
 
     ------------stalling----------
     lw_lhi_dep_reg_mem : out std_logic;
@@ -97,7 +95,20 @@ entity execute is
 		alu1_out_from_mem : in std_logic_vector(15 downto 0);
 		alu1_out_from_wb : in std_logic_vector(15 downto 0);
 		opcode_from_ex : out std_logic_vector(3 downto 0);
-		rf_a3_from_ex : out std_logic_vector(2 downto 0)
+		rf_a3_from_ex : out std_logic_vector(2 downto 0);
+
+		--------------------BEQ ports----------------------------
+		pc_imm_from_ex : out std_logic_vector(15 downto 0);
+		beq_taken : out std_logic;
+		pc_select : out std_logic_vector(1 downto 0);
+
+   	valid_bit_or_ex : in std_logic;
+   	valid_bit_ex_mem : out std_logic;
+   	valid_bit_id_or_ex : in std_logic;
+   	valid_bit_id_ex_mem : out std_logic;
+   	valid_bit_or_or_ex : in std_logic;
+   	valid_bit_or_ex_mem : out std_logic
+
   );
 end entity;
 architecture arch of execute is
@@ -114,6 +125,7 @@ architecture arch of execute is
   signal cond_zero : std_logic;
   signal lm_sm_adder_out_signal : std_logic_vector(15 downto 0);
   signal lm_sm_adder_out_old : std_logic_vector(15 downto 0);
+  signal valid_bit_signal : std_logic;
   ----------------
 begin
 
@@ -130,7 +142,28 @@ begin
       zero => alu1_z_op
     );
 
-  assigning : process(data_ra, data_rb, ir_5_0_ex, clk, alu1_out_from_wb, alu1_out_from_mem, alu1_a_select_final, alu1_b_select_final, data_a_from_wb_ex, data_b_from_wb_ex)
+-------------------------------------beq-------------------------------------
+  process(clk, reset, alu1_out_temp)
+  begin 
+  	if reset = '1' then 
+  		beq_taken <= '0';
+  		pc_select <= "11";
+  		pc_imm_from_ex <= "0000000000000000";
+  	elsif alu1_out_temp = "0000000000000000" and opcode_ex = "1100" then
+  		beq_taken <= '1';
+  		pc_select <= "01";
+  		pc_imm_from_ex <= alu2_out_ex; 
+  	else 
+  		beq_taken <= '0';
+  		pc_select <= "11";
+  		pc_imm_from_ex <= alu2_out_ex; 
+  	end if;
+  end process
+  		
+  -------------------------------------beq-------------------------------------
+
+
+  assigning : process(data_ra, data_rb, ir_5_0_ex, clk, alu1_out_from_wb, alu1_out_from_mem, alu1_a_select_final, alu1_b_select_final, data_a_from_wb_ex, data_b_from_wb_ex, reset)
   begin 
   	if alu1_a_select_final = "000" then 
   		alu1_a_ip <= alu1_out_from_mem;
@@ -200,7 +233,7 @@ begin
 
   end process ; -- carry_zero
   
-  process(clk)
+  process(clk, lm_sm_adder_out_signal)
   begin 
 		if reset = '1' then 
 			lm_sm_adder_out_old <= "0000000000000000";
@@ -495,6 +528,30 @@ begin
       reg_enable => '1',
       clk => clk,
       reg_data_out => valid_bit_ex_mem
+    );
+
+  valid_bit_id_ex_mem_reg : register_1
+    port map(
+      reg_data_in => valid_bit_id_or_ex,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => valid_bit_id_ex_mem
+    );
+
+   valid_bit_or_ex_mem_reg : register_1
+    port map(
+      reg_data_in => valid_bit_or_or_ex,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => valid_bit_or_ex_mem
+    );
+
+   valid_bit_ex_ex_mem_reg : register_1
+    port map(
+      reg_data_in => valid_bit_signal,
+      reg_enable => '1',
+      clk => clk,
+      reg_data_out => valid_bit_ex_ex_mem
     );
 
 

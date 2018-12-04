@@ -15,7 +15,6 @@ entity instruction_decode is
 
 	--instruction 
 	instruction_int_out : in std_logic_vector(15 downto 0);
-	valid_bit : in std_logic;
 
 	--pc_out 
 	pc_out : out std_logic_vector(15 downto 0);
@@ -95,7 +94,7 @@ entity instruction_decode is
 	-- signal to stall the IF stage
 	stall_if : out std_logic;
 
-	valid_bit_id_or : out std_logic;
+	
 
 	--------------------------Special ports for stalling for LW and LM instructions--------------------------------
 
@@ -105,8 +104,14 @@ entity instruction_decode is
 	--Input coming from OR stage 
 	--lw_lhi_dep : in std_logic
 	stall_from_rr : in std_logic;
-	lw_lhi_dep_done : in std_logic
+	lw_lhi_dep_done : in std_logic;
 	---------------------------------------------------------------------------------------------------------------
+
+	------------------beq----------------
+	beq_taken : in std_logic;
+	valid_bit : in std_logic;
+	valid_bit_id_or : out std_logic;
+	valid_bit_id_id_or : out std_logic
 
   ) ;
 end entity ; -- instruction_decode
@@ -179,7 +184,7 @@ architecture arch of instruction_decode is
 	signal priority_enable : std_logic;
 	
 	signal decoder_out_signal : std_logic_vector(2 downto 0);
-	signal valid_bit_signal_id_ex : std_logic;
+	signal valid_bit_signal : std_logic;
 
 	--------------------------------special signals for stalling -------------------------
 	--signal stall_from_rr : std_logic;
@@ -203,6 +208,21 @@ begin
 		end if; 
 	end process;
 	----------------------------------------------------------------------------------------
+
+	-------------------beq---------------------------
+
+	process(clk, reset, beq_taken)
+	begin 
+		if reset = '1' then 
+			valid_bit_signal <= '1';
+		elsif beq_taken = '1' then 
+			valid_bit_signal <= '0'; 
+		else 
+			valid_bit_signal <= '1';
+		end if;
+	end process;
+
+	---------------------------------------------------
 
 	alu2_a <= pc_register_int_out;
 
@@ -768,6 +788,14 @@ begin
 			reg_enable => enables_the_reg_if_one,
 			clk => clk,
 			reg_data_out => valid_bit_id_or
+		);
+
+	valid_bit_reg_int2 : register_1
+		port map(
+			reg_data_in => valid_bit_signal,
+			reg_enable => enables_the_reg_if_one,
+			clk => clk,
+			reg_data_out => valid_bit_id_id_or
 		);
 
 

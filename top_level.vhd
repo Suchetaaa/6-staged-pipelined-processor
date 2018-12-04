@@ -61,7 +61,6 @@ architecture at of top_level is
   signal right_shift_lm_sm_bit : std_logic;
   signal lm_sm_reg_write : std_logic_vector(2 downto 0);
   signal lm_sm_write_load : std_logic;
-  signal valid_bit_id_or : std_logic;
   --Stage 3 to 4
   signal data_ra : std_logic_vector(15 downto 0);
   signal data_rb : std_logic_vector(15 downto 0);
@@ -98,7 +97,6 @@ architecture at of top_level is
   signal alu2_out_ex : std_logic_vector(15 downto 0);
   signal rf_carry_reg_out : std_logic;
   signal rf_zero_reg_out : std_logic;
-  signal valid_bit_or_ex : std_logic;
   --Stage 4 to 5
   signal alu1_out_mem : std_logic_vector(15 downto 0); -- output of ALU
   signal alu1_carry_mem : std_logic;
@@ -134,7 +132,6 @@ architecture at of top_level is
   signal lm_sm_reg_write_mem : std_logic_vector(2 downto 0);
   signal lm_sm_write_load_mem : std_logic;
   signal alu2_out_mem : std_logic_vector(15 downto 0);   
-  signal valid_bit_ex_mem : std_logic;
   --Stage 5 to 6
   signal mem_data_out : std_logic_vector(15 downto 0);
   signal alu1_out_wb : std_logic_vector(15 downto 0);
@@ -168,7 +165,6 @@ architecture at of top_level is
   signal lm_sm_reg_write_wb : std_logic_vector(2 downto 0);
   signal lm_sm_write_load_wb : std_logic;
   signal alu2_out_wb : std_logic_vector(15 downto 0);
-  signal valid_bit_mem_wb : std_logic;
   signal lm_sm_reg_wb : std_logic_vector(2 downto 0);
   signal rf_write_final : std_logic;
   signal carry_en_final : std_logic;
@@ -210,14 +206,27 @@ architecture at of top_level is
   signal alu1_out_from_mem : std_logic_vector(15 downto 0);
   signal alu1_out_from_wb : std_logic_vector(15 downto 0);
 
-
+  --------------------------------beq----------------
+  signal pc_imm_from_ex : std_logic_vector(15 downto 0);
+  signal beq_taken : std_logic;
+  signal valid_bit_id_or : std_logic;
+  signal valid_bit_or_ex : std_logic;
+  signal valid_bit_ex_mem : std_logic;
+  signal valid_bit_mem_wb : std_logic;
+  signal valid_bit_id_id_or : std_logic;
+  signal valid_bit_id_or_ex : std_logic;
+  signal valid_bit_id_ex_mem : std_logic;
+  signal valid_bit_id_mem_wb : std_logic;
+  signal valid_bit_or_or_ex : std_logic;
+  signal valid_bit_or_ex_mem : std_logic;
+  signal valid_bit_or_mem_wb : std_logic;
 
 begin
   if_stage : instruction_fetch
     port map (
       clk => clk,
       reset => reset,
-      pc_select => "11",
+      pc_select => pc_select,
       stall_if =>  stall_if,
 		  stall_from_rr => stall_from_rr,
       lw_lhi_dep_done => lw_lhi_dep_done,
@@ -236,7 +245,6 @@ begin
       reset => reset,
       pc_register_int_out => pc_if_id,
       instruction_int_out => ir_if_id,
-      valid_bit => valid_bit,
       pc_out => pc_out,
       alu1_op => alu1_op,
       alu1_a_select => alu1_a_select,
@@ -271,9 +279,13 @@ begin
       alu2_out => alu2_out,
       stall_if => stall_if,
 		  stall_from_rr => stall_from_rr,
-      valid_bit_id_or => valid_bit_id_or,
 		  instruction_to_rr => instruction_to_rr,
       lw_lhi_dep_done => lw_lhi_dep_done
+
+      ---------beq-------------
+      valid_bit => valid_bit,
+      valid_bit_id_or => valid_bit_id_or,
+      valid_bit_id_id_or => valid_bit_id_id_or
     ) ;
 
   operandread : operand_read 
@@ -386,6 +398,13 @@ begin
       alu1_a_select_final => alu1_a_select_final,
       alu1_b_select_final => alu1_b_select_final,
 		alu1_out_from_wb => alu1_out_from_wb
+
+    -------------beq--------------------------
+    valid_bit_id_id_or => valid_bit_id_id_or,
+     valid_bit_id_or => valid_bit_id_or,
+     valid_bit_or_ex => valid_bit_or_ex,
+     valid_bit_id_or_ex => valid_bit_id_or_ex,
+     valid_bit_or_or_ex => valid_bit_or_or_ex
     );
 
   executestage : execute 
@@ -428,7 +447,6 @@ begin
       lm_sm_reg_write_ex => lm_sm_reg_write_ex,
       lm_sm_write_load_ex => lm_sm_write_load_ex,
       alu2_out_ex => alu2_out_ex,
-      valid_bit_or_ex => valid_bit_or_ex,
       --Output signals from this stage
       alu1_out_mem => alu1_out_mem,
       alu1_carry_mem => alu1_carry_mem,
@@ -462,7 +480,6 @@ begin
       lm_sm_reg_write_mem => lm_sm_reg_write_mem,
       lm_sm_write_load_mem => lm_sm_write_load_mem,
       alu2_out_mem => alu2_out_mem, --alu2_in to IF stage
-      valid_bit_ex_mem => valid_bit_ex_mem,
       -------------stalling------------
       lw_lhi_dep_reg_out => lw_lhi_dep_reg_out,
 		  lw_lhi_dep_reg_mem => lw_lhi_dep_reg_mem,
@@ -473,8 +490,18 @@ begin
       data_b_from_wb_ex => data_b_from_wb_ex,
       alu1_out_from_mem => alu1_out_from_mem,
       alu1_out_from_wb => alu1_out_from_wb,
-		opcode_from_ex => opcode_from_ex,
-		rf_a3_from_ex => rf_a3_from_ex
+  		opcode_from_ex => opcode_from_ex,
+  		rf_a3_from_ex => rf_a3_from_ex
+
+    ------------------------beq instruction----------------------
+      pc_imm_from_ex => pc_imm_from_ex, 
+      beq_taken => beq_taken,
+      valid_bit_or_ex => valid_bit_or_ex,
+      valid_bit_ex_mem => valid_bit_ex_mem,
+      valid_bit_id_or_ex => valid_bit_id_or_ex,
+      valid_bit_id_ex_mem => valid_bit_id_ex_mem,
+      valid_bit_or_or_ex => valid_bit_or_or_ex,
+      valid_bit_or_ex_mem => valid_bit_or_ex_mem
     );
 
   memstageportmap : mem_access_stage 
@@ -514,7 +541,6 @@ begin
       lm_sm_reg_write_mem => lm_sm_reg_write_mem,
       lm_sm_write_load_mem => lm_sm_write_load_ex,
       alu2_out_mem => alu2_out_mem,
-      valid_bit_ex_mem => valid_bit_ex_mem,
       -----Outputs----
       mem_data_out => mem_data_out,
       alu1_out_wb => alu1_out_wb,
@@ -548,7 +574,6 @@ begin
       lm_sm_reg_write_wb => lm_sm_reg_write_wb,
       lm_sm_write_load_wb => lm_sm_write_load_wb,
       alu2_out_wb => alu2_out_wb,
-      valid_bit_mem_wb => valid_bit_mem_wb,
 
       --------------stalling-----------------
       lw_lhi_dep_reg_mem => lw_lhi_dep_reg_mem,
@@ -557,7 +582,14 @@ begin
       -----------------data hazards----------------
       rf_a3_from_mem => rf_a3_from_mem,
       opcode_from_mem => opcode_from_mem,
-      alu1_out_from_mem => alu1_out_from_mem
+      alu1_out_from_mem => alu1_out_from_mem,
+      ------------beq-----------------
+      valid_bit_ex_mem => valid_bit_ex_mem,
+      valid_bit_id_ex_mem => valid_bit_id_ex_mem,
+      valid_bit_or_ex_mem => valid_bit_or_ex_mem,
+      valid_bit_mem_wb => valid_bit_mem_wb,
+      valid_bit_id_mem_wb => valid_bit_id_mem_wb,
+      valid_bit_or_mem_wb => valid_bit_or_mem_wb
     );
 
   writeback : write_back 
@@ -621,7 +653,10 @@ begin
       --------------data hazards---------------
       rf_a3_from_wb => rf_a3_from_wb,
       opcode_from_wb => opcode_from_wb,
-      alu1_out_from_wb => alu1_out_from_wb
+      alu1_out_from_wb => alu1_out_from_wb,
+      valid_bit_mem_wb => valid_bit_mem_wb,
+      valid_bit_id_mem_wb => valid_bit_id_mem_wb,
+      valid_bit_or_mem_wb => valid_bit_or_mem_wb
 
       );
 
