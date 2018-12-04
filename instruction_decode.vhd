@@ -313,7 +313,7 @@ begin
 	sm_detect_signal <= '1' when instruction_int_out(15 downto 12) = "0111" else 
 		'0';
 
-	lw_sw_stop_signal <= '1' when xor_reg_out = "00000000" and first_later_check_out = '1' else 
+	lw_sw_stop_signal <= '1' when xor_reg_out = "00000000" and first_later_check_out = '1' and lm_detect_signal = '1' else 
 		'0';
 
 	stall_if <= '1' when lw_sw_stop_signal = '0' and lm_detect_signal = '1' else 
@@ -324,7 +324,7 @@ begin
 	--right shift reg out is output of register  
 	right_shift_in <= instruction_int_out(7 downto 0) when first_later_check_out = '0' and lm_detect_signal = '1' else 
 		right_shift_reg_out;
-	right_shift_lm_sm_bit <= right_shift_out(0);
+	right_shift_lm_sm_bit <= right_shift_in(0);
 
 	--First later check tells if it is the first stage LM or SM is encountered
 	process(clk) 
